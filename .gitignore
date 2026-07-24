@@ -1,0 +1,26 @@
+# build output
+dist/
+.output/
+
+# dependencies
+node_modules/
+
+# generated types
+.astro/
+
+# generated PDFs (rendered fresh in CI, never committed — see spec)
+*.pdf
+docs/assets/
+
+# environment
+.env
+.env.production
+
+# logs
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# macOS / editor cruft
+.DS_Store

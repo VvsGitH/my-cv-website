@@ -1,6 +1,6 @@
 # 01 — Project scaffold
 
-Status: ready-for-agent
+Status: done
 
 ## Goal
 

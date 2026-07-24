@@ -50,7 +50,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 ### Stack
 - **Astro** (static output) + exactly one **React island** for the Toolbar and Drawer — see ADR-0003. One component tree is the single source of truth for both the live page and the PDF-captured page.
 - **Playwright** headless Chromium for the build-time PDF — see ADR-0001.
-- Deployed static to **GitHub Pages** via **GitHub Actions**, at the default `github.io` URL under base `/react_my-cv/`.
+- Deployed static to **GitHub Pages** via **GitHub Actions**, at the default `github.io` URL under base `/my-cv-website/`.
 
 ### The CV as paper
 - A **Sheet** is exactly A4 (210×297mm), sized in real `mm`, scaled responsively with `transform: scale()` — never by rewriting the mm box. The CV is **two Sheets**.
@@ -104,7 +104,7 @@ Floating cluster, bottom-right, four actions:
 
 ### Deployment
 - GitHub Actions: `npm ci` → `npx playwright install --with-deps` → `astro build` → PDF render step → deploy site + PDFs to GitHub Pages.
-- Astro `base: '/react_my-cv/'`; i18n with `it` as default (unprefixed) and `en` prefixed. Custom-domain switch left as a future one-line change.
+- Astro `base: '/my-cv-website/'`; i18n with `it` as default (unprefixed) and `en` prefixed. Custom-domain switch left as a future one-line change.
 
 ### SEO / sharing
 - Per-Locale `<title>`, meta description, favicon, and an OpenGraph preview image (a render of Sheet 1). `lang` attribute + `hreflang` alternates between `it` and `en`.
@@ -138,7 +138,7 @@ Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel
 ### Owner-provided assets / dependencies
 - **Profile photo** → `docs/assets/` (build against a placeholder circle until it lands).
 - Fonts — already provided in `docs/assets/fonts/`.
-- **GitHub username** for the final Pages URL (`<username>.github.io/react_my-cv/`).
+- **GitHub username** for the final Pages URL (`<username>.github.io/my-cv-website/`).
 - Signature: rendered with a **script web-font** (no image), "Bari, `<date>`" line kept.
 
 ### Implementation tickets

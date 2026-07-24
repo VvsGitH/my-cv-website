@@ -5,7 +5,7 @@ import react from '@astrojs/react';
 // https://astro.build/config
 export default defineConfig({
   // GitHub Pages serves the site under the repository name.
-  base: '/react_my-cv/',
+  base: '/my-cv-website/',
   output: 'static',
   integrations: [react()],
   i18n: {

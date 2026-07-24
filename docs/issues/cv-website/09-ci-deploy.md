@@ -14,7 +14,7 @@ GitHub Actions pipeline that builds the site, renders the PDFs, and deploys to G
 
 ## Acceptance
 
-- A push deploys a working site at `<username>.github.io/react_my-cv/` with both locales and both downloadable PDFs.
+- A push deploys a working site at `<username>.github.io/my-cv-website/` with both locales and both downloadable PDFs.
 
 ## Depends on
 

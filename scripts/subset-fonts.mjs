@@ -24,6 +24,10 @@ const FACES = [
   ['docs/assets/fonts/lato/Lato-Regular.ttf', 'src/fonts/lato/Lato-Regular.woff2'],
   ['docs/assets/fonts/lato/Lato-Bold.ttf', 'src/fonts/lato/Lato-Bold.woff2'],
   ['docs/assets/fonts/lato/Lato-Italic.ttf', 'src/fonts/lato/Lato-Italic.woff2'],
+  [
+    'docs/assets/fonts/primera-signature/PrimeraSignature-ALLy7.ttf',
+    'src/fonts/primera-signature/PrimeraSignature.woff2',
+  ],
 ];
 
 for (const [src, dest] of FACES) {

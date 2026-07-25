@@ -1,10 +1,14 @@
 ---
+import { Image } from 'astro:assets';
 import type { PhotoBlock } from '../../../content/types';
+import profilePhoto from '../../../images/profile.png';
 
 /**
- * The circular portrait. The reference sets a cut-out photo over a
- * pale-yellow disc; until the real photo lands (spec US30 — swappable via a
- * file drop) the disc renders on its own as the placeholder.
+ * The circular portrait: the reference's cut-out photo over a pale-yellow
+ * disc (spec US30 — swappable by dropping a new file at
+ * `docs/assets/images/` and re-running the copy, see ticket 14). The disc
+ * colour stays behind the `<Image>` as a safety layer in case the source
+ * photo isn't fully opaque at its edges.
  */
 interface Props {
   block: PhotoBlock;
@@ -13,7 +17,9 @@ interface Props {
 const { block } = Astro.props;
 ---
 
-<div class="photo" role="img" aria-label={block.alt}></div>
+<div class="photo">
+  <Image src={profilePhoto} alt={block.alt} width={353} height={353} />
+</div>
 
 <style>
   @layer components {
@@ -24,6 +30,14 @@ const { block } = Astro.props;
       margin-inline: auto;
       border-radius: 50%;
       background-color: var(--color-photo-circle);
+      overflow: hidden;
+    }
+
+    .photo :global(img) {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
     }
   }
 </style>

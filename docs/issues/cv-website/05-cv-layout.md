@@ -99,6 +99,10 @@ hand-placed in Canva rather than to anything derivable:
 
 ### Signature — needs an owner decision
 
+> **Resolved in ticket 13.** The owner provided Primera Signature; it's now
+> self-hosted and `.signature` uses it via `--font-signature`. Kept below for
+> the reasoning that led to the blocker.
+
 Spec US29 wants the signature approximated with a script web-font, never a
 scan. No script face is self-hosted (ticket 02 shipped Garet/Now/Lato only)
 and none is in `docs/assets/fonts/`, so `.signature` currently falls back to
@@ -158,6 +162,7 @@ Not changed, with reasons:
 - **Photo has no `<img>` yet.** The spec's own note says to "build against a
   placeholder circle until it lands" and lists the photo as an owner-provided
   asset, so the placeholder is the instruction, not a gap.
+  **Resolved in ticket 14** once the owner dropped the real photo.
 - **Section gaps keyed to `.block--header + .block`** couple spacing to the
   shape of the content. The alternative is per-Block spacing in the content
   files, which is layout leaking the other way; keeping it here.

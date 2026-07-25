@@ -70,6 +70,17 @@
   font-display: block;
 }
 
+/* The owner's script face for the signature approximation (spec US29),
+   self-hosted so headless Chromium renders it deterministically in CI's
+   PDF capture — see ticket 13. */
+@font-face {
+  font-family: 'Primera Signature';
+  src: url('../fonts/primera-signature/PrimeraSignature.woff2') format('woff2');
+  font-weight: 400;
+  font-style: normal;
+  font-display: block;
+}
+
 :root {
   /* 'X fallback' entries are generated at build time by the fontaine Vite
      plugin (astro.config.mjs) — metric-matched local faces that keep line
@@ -93,4 +104,8 @@
   --font-body: 'Lato', 'Lato fallback', sans-serif;
   --font-weight-body: 400;
   --font-weight-body-strong: 700;
+
+  /* The Privacy block's signature approximation only. */
+  --font-signature: 'Primera Signature', 'Primera Signature fallback', cursive;
+  --font-weight-signature: 400;
 }

@@ -35,13 +35,12 @@ const { block } = Astro.props;
     }
 
     /* Spec US29: an approximation in a script face, never a scan of the
-       real signature. No script font is self-hosted yet (ticket 02 shipped
-       Garet/Now/Lato only), so this falls back to a system cursive — see
-       the ticket notes. */
+       real signature. Self-hosted Primera Signature — see ticket 13. */
     .signature {
       margin-block-start: 0.1rem;
-      font-family: 'Segoe Script', 'Brush Script MT', cursive;
-      font-size: 1.05rem;
+      font-family: var(--font-signature);
+      font-weight: var(--font-weight-signature);
+      font-size: 1.6rem;
       line-height: 1.6;
       color: var(--color-signature);
     }

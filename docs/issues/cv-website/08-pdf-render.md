@@ -41,3 +41,5 @@ Two things ticket 05 left on this ticket's doorstep:
   won't have — the PDF would render it in a default face. Needs an owner
   decision on which script face to license and self-host; blocks this
   ticket's "visually identical to the desktop Sheets" acceptance.
+  **Resolved in ticket 13** — Primera Signature is now self-hosted, so this
+  is no longer a blocker.

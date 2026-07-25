@@ -77,7 +77,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 | `--color-dark-bg` | `#1b2432` | Background behind Sheets in dark theme only |
 
 - Type scale (from the PDF): name ~28pt · section headings ~17pt · sub-headings ~10pt · body ~8pt.
-- Fonts: **Garet** (Heavy → name/headings, Book → lighter display), **Now**, **Lato** (body). Source files in `docs/assets/fonts/` (`Garet-*` has woff2; `Lato-*` is ttf-only, `Now*` is otf-only → generate woff2). Match exact weight usage against the screenshots.
+- Fonts: **Garet** (Heavy → name/headings, Book → lighter display), **Now**, **Lato** (body), **Primera Signature** (script, signature only). Source files in `docs/assets/fonts/` (`Garet-*` has woff2; `Lato-*`/`PrimeraSignature-*` are ttf-only, `Now*` is otf-only → generate woff2). Match exact weight usage against the screenshots.
 - Colored backgrounds (Aside cream, photo disc, proficiency bars) must survive into the PDF: `printBackground: true` + `-webkit-print-color-adjust: exact` / `print-color-adjust: exact`.
 
 ### Responsive — three tiers
@@ -136,10 +136,10 @@ Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel
 ## Further Notes
 
 ### Owner-provided assets / dependencies
-- **Profile photo** → `docs/assets/` (build against a placeholder circle until it lands).
-- Fonts — already provided in `docs/assets/fonts/`.
+- **Profile photo** → landed at `docs/assets/images/CV_Image.png`, self-hosted at `src/images/profile.png`, rendered circular over the photo disc (ticket 14).
+- Fonts — provided in `docs/assets/fonts/`, including the signature script face at `docs/assets/fonts/primera-signature/` (ticket 13).
 - **GitHub username** for the final Pages URL (`<username>.github.io/my-cv-website/`).
-- Signature: rendered with a **script web-font** (no image), "Bari, `<date>`" line kept.
+- Signature: rendered with the self-hosted **Primera Signature** script web-font (no image), "Bari, `<date>`" line kept.
 
 ### Implementation tickets
 1. `01-scaffold.md` — Astro + TS scaffold, i18n routing (it default, en), Pages base, React island wiring.
@@ -154,3 +154,5 @@ Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel
 10. `10-seo-meta.md` — per-Locale meta, favicon, OG image.
 11. `11-italian-content.md` — draft Italian translation for owner review.
 12. `12-e2e-tests.md` — Playwright E2E suite (the single test seam).
+13. `13-signature-font.md` — self-host the owner's script font, wire it into the Privacy block's signature.
+14. `14-profile-photo.md` — self-host and render the owner's real profile photo, replacing the placeholder disc.

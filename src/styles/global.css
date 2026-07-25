@@ -1,0 +1,19 @@
+/* Cascade layer order (lowest to highest precedence): reset < base <
+   components < print. This bare statement must come first — the only
+   place a `@layer` statement is allowed to precede `@import` — so the
+   full order is fixed regardless of which layer each import populates or
+   how a minifier reorders things afterward. `components`/`print` are
+   populated by later tickets (05+). */
+@layer reset, base, components, print;
+
+@import './reset.css' layer(reset);
+@import './fonts.css' layer(base);
+@import './tokens.css' layer(base);
+
+/* Real A4 geometry for print/PDF capture (Playwright's page.pdf() reads
+   this via preferCSSPageSize). Not layered: it isn't a selector-based rule
+   competing in the cascade, and must apply regardless of any layer. */
+@page {
+  size: A4;
+  margin: 0;
+}

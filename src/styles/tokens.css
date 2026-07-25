@@ -1,0 +1,21 @@
+/* Colors from spec.md's Design tokens table, converted sRGB hex -> OKLCH
+   (round-tripped to confirm an exact match before committing to these
+   values). Sheets stay white paper in both themes — only the background
+   behind the Sheets switches (`--color-dark-bg`, applied in reset.css). */
+:root {
+  --color-heading: oklch(33.22% 0.0228 264.2); /* #303642 */
+  --color-text: oklch(40% 0.0051 301.29); /* #48474a */
+  --color-muted: oklch(55.55% 0 89.88); /* #737373 */
+  --color-ink: oklch(27.48% 0.0029 196.99); /* #262828 */
+  --color-aside-bg: oklch(97.94% 0.0331 97.68); /* #fef9e0 */
+  --color-photo-circle: oklch(90.15% 0.0848 95.96); /* #efdf9e */
+  --color-main-bg: oklch(100% 0 89.88); /* #ffffff */
+  --color-dark-bg: oklch(25.84% 0.0295 259.07); /* #1b2432 */
+
+  /* Type scale from the reference PDF (28pt/17pt/10pt/8pt), in rem at the
+     standard 16px root so it still respects user font-size preferences. */
+  --font-size-name: 2.333rem; /* ~28pt */
+  --font-size-heading: 1.417rem; /* ~17pt */
+  --font-size-subheading: 0.833rem; /* ~10pt */
+  --font-size-body: 0.667rem; /* ~8pt */
+}

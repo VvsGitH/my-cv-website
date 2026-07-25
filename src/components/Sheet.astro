@@ -1,0 +1,42 @@
+---
+/**
+ * The A4 Sheet primitive (CONTEXT.md: "Sheet"). Always a real 210mm x 297mm
+ * box — responsive scaling is purely visual via `--sheet-scale`, so print/
+ * PDF capture (which reads the untransformed layout box via `@page` in
+ * global.css) is never affected by whatever scale the screen is showing.
+ */
+interface Props {
+  class?: string;
+}
+
+const { class: className } = Astro.props;
+---
+
+<div class:list={['sheet-wrapper', className]}>
+  <div class="sheet">
+    <slot />
+  </div>
+</div>
+
+<style>
+  /* `components` layer (see global.css) — kept in the cascade-layer system
+     so a later `print`-layer rule (05+) can still override this without a
+     specificity fight; unlayered styles would always win otherwise. */
+  @layer components {
+    .sheet-wrapper {
+      /* Reserves the visually scaled footprint in normal layout flow,
+         since `transform: scale()` on .sheet below doesn't affect its
+         layout box. */
+      width: calc(210mm * var(--sheet-scale, 1));
+      height: calc(297mm * var(--sheet-scale, 1));
+    }
+
+    .sheet {
+      width: 210mm;
+      height: 297mm;
+      background: var(--color-main-bg);
+      transform: scale(var(--sheet-scale, 1));
+      transform-origin: top left;
+    }
+  }
+</style>

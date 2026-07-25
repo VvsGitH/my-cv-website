@@ -21,7 +21,7 @@ export const en: CvContent = {
       column: 'aside',
       heading: 'About Me',
       paragraphs: [
-        'Senior frontend engineer with 5 years of experience across consulting and product companies, working on large-scale applications (from internal enterprise tools to high-traffic news platforms serving 40k+ concurrent users). I’ve led small teams, mentored junior developers, and collaborated closely with product managers, designers and non-technical stakeholders to translate business needs into pragmatic technical solutions. I care about maintainable, well-tested code and I’m genuinely curious about the why behind what I build.',
+        'Senior Software Developer with 5 years of experience across consulting and product companies, working on large-scale applications (from internal enterprise tools to high-traffic news platforms serving 40k+ concurrent users). I’ve led small teams, mentored junior developers, and collaborated closely with product managers, designers and non-technical stakeholders to translate business needs into pragmatic technical solutions. I care about maintainable, well-tested code and I’m genuinely curious about the why behind what I build.',
       ],
     },
     {
@@ -96,7 +96,7 @@ export const en: CvContent = {
       sheet: 1,
       column: 'main',
       name: 'Vito Paparella Santorsola',
-      title: 'Professional software developer',
+      title: 'Senior Software Developer',
       contacts: [
         { label: 'Location', value: 'Bari, Italy' },
         { label: 'Phone', value: '+39 346 403 9932' },

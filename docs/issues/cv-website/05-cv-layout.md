@@ -26,6 +26,12 @@ Build the Sheet layout and all section components so two Sheets reproduce the re
 
 ### Implementation
 
+> **Paths and names below are pre-ticket-15.** That ticket moved the tree to
+> `components/{primitives,blocks,structure}/` and dropped the `Cv` prefix, so
+> read `CvDocument` → `structure/Document`, `CvSheet` → `structure/Sheet`
+> (which also absorbed `components/Sheet.astro`), `CvBlock` →
+> `structure/Block`. See ADR-0004. The rendering is unchanged.
+
 Components live in `src/components/cv/`: `CvDocument` (both Sheets) →
 `CvSheet` (Aside + Main grid, filtered by `sheet`/`column`) → `CvBlock`
 (dispatch on `kind`) → one component per Block kind, with `SectionHeading`,

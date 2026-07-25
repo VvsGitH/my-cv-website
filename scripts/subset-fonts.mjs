@@ -17,16 +17,16 @@ const PUNCTUATION = '–—‘’‚“”„†‡•…‰′″‹›€™';
 const TEXT = BASIC_LATIN + LATIN1_ACCENTS + LATIN_EXTENDED_A + PUNCTUATION;
 
 const FACES = [
-  ['docs/assets/fonts/garet/Garet-Book.otf', 'src/fonts/garet/Garet-Book.woff2'],
-  ['docs/assets/fonts/garet/Garet-Heavy.otf', 'src/fonts/garet/Garet-Heavy.woff2'],
-  ['docs/assets/fonts/now/Now-Bold.otf', 'src/fonts/now/Now-Bold.woff2'],
-  ['docs/assets/fonts/now/Now-Regular.otf', 'src/fonts/now/Now-Regular.woff2'],
-  ['docs/assets/fonts/lato/Lato-Regular.ttf', 'src/fonts/lato/Lato-Regular.woff2'],
-  ['docs/assets/fonts/lato/Lato-Bold.ttf', 'src/fonts/lato/Lato-Bold.woff2'],
-  ['docs/assets/fonts/lato/Lato-Italic.ttf', 'src/fonts/lato/Lato-Italic.woff2'],
+  ['docs/assets/fonts/garet/Garet-Book.otf', 'src/assets/fonts/garet/Garet-Book.woff2'],
+  ['docs/assets/fonts/garet/Garet-Heavy.otf', 'src/assets/fonts/garet/Garet-Heavy.woff2'],
+  ['docs/assets/fonts/now/Now-Bold.otf', 'src/assets/fonts/now/Now-Bold.woff2'],
+  ['docs/assets/fonts/now/Now-Regular.otf', 'src/assets/fonts/now/Now-Regular.woff2'],
+  ['docs/assets/fonts/lato/Lato-Regular.ttf', 'src/assets/fonts/lato/Lato-Regular.woff2'],
+  ['docs/assets/fonts/lato/Lato-Bold.ttf', 'src/assets/fonts/lato/Lato-Bold.woff2'],
+  ['docs/assets/fonts/lato/Lato-Italic.ttf', 'src/assets/fonts/lato/Lato-Italic.woff2'],
   [
     'docs/assets/fonts/primera-signature/PrimeraSignature-ALLy7.ttf',
-    'src/fonts/primera-signature/PrimeraSignature.woff2',
+    'src/assets/fonts/primera-signature/PrimeraSignature.woff2',
   ],
 ];
 

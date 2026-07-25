@@ -1,6 +1,6 @@
 ---
 import type { CvContent } from '../../content/types';
-import CvSheet from './CvSheet.astro';
+import Sheet from './Sheet.astro';
 
 /** The whole CV: its two Sheets, laid out as paper. */
 interface Props {
@@ -11,8 +11,8 @@ const { content } = Astro.props;
 ---
 
 <div class="sheets">
-  <CvSheet content={content} sheet={1} />
-  <CvSheet content={content} sheet={2} />
+  <Sheet content={content} sheet={1} />
+  <Sheet content={content} sheet={2} />
 </div>
 
 <style>

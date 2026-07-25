@@ -16,7 +16,7 @@
 
 @font-face {
   font-family: 'Garet';
-  src: url('../fonts/garet/Garet-Book.woff2') format('woff2');
+  src: url('../assets/fonts/garet/Garet-Book.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: block;
@@ -24,7 +24,7 @@
 
 @font-face {
   font-family: 'Garet';
-  src: url('../fonts/garet/Garet-Heavy.woff2') format('woff2');
+  src: url('../assets/fonts/garet/Garet-Heavy.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: block;
@@ -32,7 +32,7 @@
 
 @font-face {
   font-family: 'Now';
-  src: url('../fonts/now/Now-Regular.woff2') format('woff2');
+  src: url('../assets/fonts/now/Now-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: block;
@@ -40,7 +40,7 @@
 
 @font-face {
   font-family: 'Now';
-  src: url('../fonts/now/Now-Bold.woff2') format('woff2');
+  src: url('../assets/fonts/now/Now-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: block;
@@ -48,7 +48,7 @@
 
 @font-face {
   font-family: 'Lato';
-  src: url('../fonts/lato/Lato-Regular.woff2') format('woff2');
+  src: url('../assets/fonts/lato/Lato-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: block;
@@ -56,7 +56,7 @@
 
 @font-face {
   font-family: 'Lato';
-  src: url('../fonts/lato/Lato-Italic.woff2') format('woff2');
+  src: url('../assets/fonts/lato/Lato-Italic.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
   font-display: block;
@@ -64,7 +64,7 @@
 
 @font-face {
   font-family: 'Lato';
-  src: url('../fonts/lato/Lato-Bold.woff2') format('woff2');
+  src: url('../assets/fonts/lato/Lato-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
   font-display: block;
@@ -75,7 +75,7 @@
    PDF capture — see ticket 13. */
 @font-face {
   font-family: 'Primera Signature';
-  src: url('../fonts/primera-signature/PrimeraSignature.woff2') format('woff2');
+  src: url('../assets/fonts/primera-signature/PrimeraSignature.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: block;

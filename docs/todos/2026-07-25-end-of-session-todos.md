@@ -1,5 +1,5 @@
-- Rivedere la struttura di cartelle, soprattutto components
-  
+# TODOS
+
 - Le proporzioni della sheet sembrano corrette, ma la dimensione effettiva che vede l'utente sullo schermo è più piccola: 
   - potrebbe dipendere dalla risoluzione dello schermo? 
   - Si può scalare in base alla risoluzione dello schermo dell'utente?

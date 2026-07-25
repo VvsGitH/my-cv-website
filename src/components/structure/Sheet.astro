@@ -1,12 +1,17 @@
 ---
 import type { Column, CvContent, SheetNumber } from '../../content/types';
-import Sheet from '../Sheet.astro';
-import CvBlock from './CvBlock.astro';
+import Block from './Block.astro';
 
 /**
- * One Sheet of the CV: the cream Aside panel and the white Main column,
- * each filled with the Blocks that name it (Explicit Paging, ADR-0002).
- * Blocks render in content order.
+ * One Sheet of the CV (CONTEXT.md: "Sheet") — a real 210mm × 297mm box
+ * holding the cream Aside panel and the white Main column, each filled with
+ * the Blocks that name it (Explicit Paging, ADR-0002). Blocks render in
+ * content order.
+ *
+ * The A4 box is always physically real: responsive scaling is purely visual
+ * via `--sheet-scale`, so print/PDF capture — which reads the untransformed
+ * layout box via `@page` in global.css — is never affected by whatever scale
+ * the screen happens to be showing.
  */
 interface Props {
   content: CvContent;
@@ -18,17 +23,37 @@ const blocksIn = (column: Column) =>
   content.blocks.filter((block) => block.sheet === sheet && block.column === column);
 ---
 
-<Sheet class="cv-sheet">
-  <div class="columns">
-    <aside class="aside">
-      {blocksIn('aside').map((block) => <CvBlock block={block} />)}
-    </aside>
-    <div class="main">{blocksIn('main').map((block) => <CvBlock block={block} />)}</div>
+<div class="sheet-wrapper">
+  <div class="sheet">
+    <div class="columns">
+      <aside class="aside">
+        {blocksIn('aside').map((block) => <Block block={block} />)}
+      </aside>
+      <div class="main">{blocksIn('main').map((block) => <Block block={block} />)}</div>
+    </div>
   </div>
-</Sheet>
+</div>
 
 <style>
+  /* `components` layer (see global.css) — kept in the cascade-layer system so
+     a later `print`-layer rule can still override this without a specificity
+     fight; unlayered styles would always win otherwise. */
   @layer components {
+    .sheet-wrapper {
+      /* Reserves the visually scaled footprint in normal layout flow, since
+         `transform: scale()` on .sheet doesn't affect its layout box. */
+      width: calc(210mm * var(--sheet-scale, 1));
+      height: calc(297mm * var(--sheet-scale, 1));
+    }
+
+    .sheet {
+      width: 210mm;
+      height: 297mm;
+      background: var(--color-main-bg);
+      transform: scale(var(--sheet-scale, 1));
+      transform-origin: top left;
+    }
+
     .columns {
       display: grid;
       grid-template-areas: 'aside main';
@@ -56,8 +81,8 @@ const blocksIn = (column: Column) =>
       padding-block-start: var(--main-inset-block-start);
     }
 
-    /* Gap above a new section. The reference hand-places these, so one
-       value can't hit every one exactly — see the ticket notes. */
+    /* Gap above a new section. The reference hand-places these, so one value
+       can't hit every one exactly — see the ticket notes. */
     .aside :global(.block > .section-heading) {
       margin-block-start: 2.5rem;
     }
@@ -66,9 +91,9 @@ const blocksIn = (column: Column) =>
       margin-block-start: 5.35rem;
     }
 
-    /* Needs the column prefix: the two rules above are scoped (Astro adds
-       an attribute to `.aside`/`.main`), so an unprefixed override would
-       lose on specificity and the first section would gain a gap. */
+    /* Needs the column prefix: the two rules above are scoped (Astro adds an
+       attribute to `.aside`/`.main`), so an unprefixed override would lose on
+       specificity and the first section would gain a gap. */
     .aside :global(.block:first-child > .section-heading),
     .main :global(.block:first-child > .section-heading) {
       margin-block-start: 0;

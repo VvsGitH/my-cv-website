@@ -20,7 +20,8 @@ Versions in use: Astro 7.1.3, React 19.2.8, TypeScript, Node ≥22.12.
 
 - **Author in `.astro` by default.** `.astro` components ship zero client JS. Use React only where interactivity is genuinely required.
 - **Keep `output: 'static'`** (the default). No adapter. Never set `output: 'server'` for this project.
-- `src/pages/` is the only reserved directory — routes live there. Group the rest under `src/components/`, `src/layouts/`, `src/styles/` by convention.
+- `src/pages/` is the only reserved directory — routes live there. Group the rest under `src/components/`, `src/layouts/`, `src/styles/` by convention. Local fonts and images go under `src/assets/`, matching Astro's own docs.
+- **Component tiers** (ADR-0004): `components/primitives/` — reusable, never autonomous; `components/blocks/` — the Blocks of `CONTEXT.md`, autonomous units of CV content, keeping the `Block` suffix; `components/structure/` — the Document → Sheet → Block spine; `components/chrome/` — everything that is not paper (Toolbar, Drawer). The cut is *autonomy on a Sheet*, not composition depth; deliberately not `atoms`/`molecules`/`organisms`.
 - Type component props with `interface Props {}` and read via `Astro.props`; destructure with defaults.
 - Capitalize component names. Use `class:list` for conditional classes; `define:vars` to pass server values into `<style>`/`<script>`.
 - Config via `defineConfig` from `astro/config`. For GitHub Pages set `site` and `base`.

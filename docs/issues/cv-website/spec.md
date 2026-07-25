@@ -136,7 +136,7 @@ Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel
 ## Further Notes
 
 ### Owner-provided assets / dependencies
-- **Profile photo** → landed at `docs/assets/images/CV_Image.png`, self-hosted at `src/images/profile.png`, rendered circular over the photo disc (ticket 14).
+- **Profile photo** → landed at `docs/assets/images/CV_Image.png`, self-hosted at `src/assets/images/profile.png`, rendered circular over the photo disc (ticket 14).
 - Fonts — provided in `docs/assets/fonts/`, including the signature script face at `docs/assets/fonts/primera-signature/` (ticket 13).
 - **GitHub username** for the final Pages URL (`<username>.github.io/my-cv-website/`).
 - Signature: rendered with the self-hosted **Primera Signature** script web-font (no image), "Bari, `<date>`" line kept.
@@ -156,3 +156,4 @@ Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel
 12. `12-e2e-tests.md` — Playwright E2E suite (the single test seam).
 13. `13-signature-font.md` — self-host the owner's script font, wire it into the Privacy block's signature.
 14. `14-profile-photo.md` — self-host and render the owner's real profile photo, replacing the placeholder disc.
+15. `15-folder-structure.md` — `src/assets/` for fonts and images; component tiers `primitives`/`blocks`/`structure` (+ `chrome`), per ADR-0004.

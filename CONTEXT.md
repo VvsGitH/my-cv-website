@@ -40,6 +40,10 @@ _Avoid_: sidebar, menu
 The floating control cluster (bottom-right) carrying the four actions: language, download, share, theme. The site's only chrome.
 _Avoid_: header, navbar, controls
 
+**Chrome**:
+Everything the site shows that is not the paper — the Toolbar and the Drawer. Never captured into the PDF.
+_Avoid_: UI, shell, frame
+
 **Locale**:
 One of the two supported languages, `it` (default) or `en`. Each Locale has its own content, its own route, and its own generated PDF.
 _Avoid_: language variant, translation

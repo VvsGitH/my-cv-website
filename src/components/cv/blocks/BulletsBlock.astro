@@ -1,0 +1,30 @@
+---
+import type { BulletsBlock } from '../../../content/types';
+import SectionHeading from '../SectionHeading.astro';
+import Bullets from '../Bullets.astro';
+
+interface Props {
+  block: BulletsBlock;
+}
+
+const { block } = Astro.props;
+---
+
+{block.heading && <SectionHeading text={block.heading} />}
+<div class="plain-list">
+  <Bullets items={block.items} />
+</div>
+
+<style>
+  @layer components {
+    /* Soft Skills and Other Info: the display face, set looser than the
+       achievement bullets under an Experience or Project entry. */
+    .plain-list {
+      --bullet-gap: 0.97rem;
+      --bullet-leading: 1.333;
+
+      font-family: var(--font-display);
+      font-weight: var(--font-weight-display);
+    }
+  }
+</style>

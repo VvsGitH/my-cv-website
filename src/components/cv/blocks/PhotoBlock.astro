@@ -1,0 +1,29 @@
+---
+import type { PhotoBlock } from '../../../content/types';
+
+/**
+ * The circular portrait. The reference sets a cut-out photo over a
+ * pale-yellow disc; until the real photo lands (spec US30 — swappable via a
+ * file drop) the disc renders on its own as the placeholder.
+ */
+interface Props {
+  block: PhotoBlock;
+}
+
+const { block } = Astro.props;
+---
+
+<div class="photo" role="img" aria-label={block.alt}></div>
+
+<style>
+  @layer components {
+    .photo {
+      /* 176.4px disc, centred in the Aside panel. */
+      width: 11.025rem;
+      aspect-ratio: 1;
+      margin-inline: auto;
+      border-radius: 50%;
+      background-color: var(--color-photo-circle);
+    }
+  }
+</style>

@@ -1,0 +1,48 @@
+---
+import type { CvContent } from '../../content/types';
+import CvSheet from './CvSheet.astro';
+
+/** The whole CV: its two Sheets, laid out as paper. */
+interface Props {
+  content: CvContent;
+}
+
+const { content } = Astro.props;
+---
+
+<div class="sheets">
+  <CvSheet content={content} sheet={1} />
+  <CvSheet content={content} sheet={2} />
+</div>
+
+<style>
+  @layer components {
+    /* Paper Mode only for now — ticket 06 adds the responsive tiers and
+       Reading Mode. */
+    .sheets {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 1.5rem;
+      padding: 1.5rem;
+    }
+  }
+
+  @layer print {
+    /* The screen gutter must not reach paper: with it, the first Sheet is
+       pushed off its A4 page and every Sheet spills onto a second one. The
+       Sheets themselves are untouched, so print output equals the screen
+       rendering (ADR-0001). */
+    @media print {
+      .sheets {
+        display: block;
+        gap: 0;
+        padding: 0;
+      }
+
+      .sheets > * + * {
+        break-before: page;
+      }
+    }
+  }
+</style>

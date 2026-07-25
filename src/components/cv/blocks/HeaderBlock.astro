@@ -1,0 +1,95 @@
+---
+import type { HeaderBlock } from '../../../content/types';
+
+interface Props {
+  block: HeaderBlock;
+}
+
+const { block } = Astro.props;
+---
+
+<header class="cv-header">
+  <h1 class="name">{block.name}</h1>
+  <p class="title">{block.title}</p>
+  <dl class="contacts">
+    {
+      block.contacts.map((contact) => (
+        <div class="contact">
+          <dt>{contact.label}</dt>
+          <dd>
+            {
+              contact.url ? (
+                // The reference underlines the web link, whose text is a name
+                // rather than an address, but leaves the mailto plain.
+                <a
+                  href={contact.url}
+                  class:list={{ underlined: contact.url.startsWith('http') }}
+                >
+                  {contact.value}
+                </a>
+              ) : (
+                contact.value
+              )
+            }
+          </dd>
+        </div>
+      ))
+    }
+  </dl>
+</header>
+
+<style>
+  @layer components {
+    .name {
+      font-family: var(--font-name);
+      font-weight: var(--font-weight-name);
+      font-size: var(--font-size-name);
+      /* Two lines, 33px apart in the reference. */
+      line-height: 0.884;
+      letter-spacing: 0.038em;
+      text-transform: uppercase;
+      color: var(--color-ink);
+    }
+
+    .title {
+      margin-block-start: 0.2225rem;
+      font-family: var(--font-subtitle);
+      font-weight: var(--font-weight-subtitle);
+      font-size: var(--font-size-subtitle);
+      letter-spacing: 0.055em;
+      color: var(--color-heading);
+    }
+
+    /* Three 145px columns; LinkedIn wraps onto the second row. */
+    .contacts {
+      display: grid;
+      grid-template-columns: repeat(3, 9.0625rem);
+      margin-block-start: 1.8625rem;
+    }
+
+    .contact {
+      height: 2.25rem;
+    }
+
+    dt {
+      font-family: var(--font-heading);
+      font-weight: var(--font-weight-heading);
+      font-size: var(--font-size-subheading);
+      line-height: 1.2;
+      color: var(--color-heading);
+    }
+
+    dd {
+      margin-inline-start: 0;
+      /* 16px between the label and value baselines. */
+      margin-block-start: 0.16rem;
+      line-height: 1.2;
+      color: var(--color-heading);
+    }
+
+    a.underlined {
+      text-decoration: underline;
+      text-underline-offset: 0.15em;
+    }
+  }
+</style>

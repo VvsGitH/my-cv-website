@@ -20,8 +20,10 @@ const FACES = [
   ['docs/assets/fonts/garet/Garet-Book.otf', 'src/fonts/garet/Garet-Book.woff2'],
   ['docs/assets/fonts/garet/Garet-Heavy.otf', 'src/fonts/garet/Garet-Heavy.woff2'],
   ['docs/assets/fonts/now/Now-Bold.otf', 'src/fonts/now/Now-Bold.woff2'],
+  ['docs/assets/fonts/now/Now-Regular.otf', 'src/fonts/now/Now-Regular.woff2'],
   ['docs/assets/fonts/lato/Lato-Regular.ttf', 'src/fonts/lato/Lato-Regular.woff2'],
   ['docs/assets/fonts/lato/Lato-Bold.ttf', 'src/fonts/lato/Lato-Bold.woff2'],
+  ['docs/assets/fonts/lato/Lato-Italic.ttf', 'src/fonts/lato/Lato-Italic.woff2'],
 ];
 
 for (const [src, dest] of FACES) {

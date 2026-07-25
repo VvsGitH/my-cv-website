@@ -1,0 +1,32 @@
+---
+import type { ProjectBlock } from '../../../content/types';
+import SectionHeading from '../SectionHeading.astro';
+import EntryTitle from '../EntryTitle.astro';
+import EntryMeta from '../EntryMeta.astro';
+import Rich from '../Rich.astro';
+import Bullets from '../Bullets.astro';
+
+interface Props {
+  block: ProjectBlock;
+}
+
+const { block } = Astro.props;
+---
+
+{block.heading && <SectionHeading text={block.heading} />}
+<EntryTitle text={block.name} />
+<EntryMeta lines={[block.role, block.client]} period={block.period} />
+<p class="summary">
+  <Rich text={block.summary} />
+</p>
+<Bullets items={block.bullets} />
+
+<style>
+  @layer components {
+    .summary {
+      margin-block-start: 0.52rem;
+      line-height: 1.25;
+      color: var(--color-text);
+    }
+  }
+</style>

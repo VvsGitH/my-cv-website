@@ -1,15 +1,9 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
-import HydrationProbe from '../../components/HydrationProbe.tsx';
-import Sheet from '../../components/Sheet.astro';
+import CvDocument from '../../components/cv/CvDocument.astro';
+import { cv } from '../../content';
 ---
 
 <BaseLayout lang="en">
-  <h1>CV — Vito Paparella Santorsola</h1>
-  <p>English version.</p>
-  <HydrationProbe client:load />
-  {/* Bare Sheet, temporary — real CV content lands in ticket 05. */}
-  <Sheet>
-    <p>Sheet primitive smoke check.</p>
-  </Sheet>
+  <CvDocument content={cv.en} />
 </BaseLayout>

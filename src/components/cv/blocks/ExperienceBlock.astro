@@ -1,0 +1,36 @@
+---
+import type { ExperienceBlock } from '../../../content/types';
+import SectionHeading from '../SectionHeading.astro';
+import EntryTitle from '../EntryTitle.astro';
+import EntryMeta from '../EntryMeta.astro';
+import Rich from '../Rich.astro';
+import Bullets from '../Bullets.astro';
+
+interface Props {
+  block: ExperienceBlock;
+}
+
+const { block } = Astro.props;
+---
+
+{block.heading && <SectionHeading text={block.heading} />}
+<EntryTitle text={block.role} />
+<EntryMeta lines={[block.company]} period={block.period} />
+{
+  block.summary && (
+    <p class="summary">
+      <Rich text={block.summary} />
+    </p>
+  )
+}
+{block.bullets && <Bullets items={block.bullets} />}
+
+<style>
+  @layer components {
+    .summary {
+      margin-block-start: 0.52rem;
+      line-height: 1.417;
+      color: var(--color-text);
+    }
+  }
+</style>

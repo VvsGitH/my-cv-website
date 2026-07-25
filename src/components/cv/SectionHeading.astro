@@ -1,0 +1,27 @@
+---
+/**
+ * A section title with its underline rule. Rendered only by the Block that
+ * opens a section (see `heading?` in src/content/types.ts), so a section
+ * spanning both Sheets prints its title once.
+ */
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+<h2 class="section-heading">{text}</h2>
+
+<style>
+  @layer components {
+    .section-heading {
+      font-size: var(--font-size-heading);
+      /* The reference sets the heading solid: a 22.66px face on a 23px
+         em-box, with the rule 5.5px under the baseline. */
+      line-height: 1.015;
+      padding-block-end: 0.0625rem;
+      border-block-end: 1px solid currentcolor;
+    }
+  }
+</style>

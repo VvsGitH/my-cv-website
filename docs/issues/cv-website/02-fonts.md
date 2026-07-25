@@ -26,6 +26,17 @@ Self-host Garet, Now, and Lato as web fonts and expose them via tokens, matching
 
 ## Comments
 
+> **Superseded — the mapping below is wrong.** It was inferred by comparing
+> renders against the screenshots; ticket 05 read the roles straight out of
+> the reference PDF's font resources and found Now and Garet swapped. The
+> source actually uses **Now-Bold** for the name, **Now-Regular** for the
+> subtitle, **Garet-Bold** for section headings / entry titles / contact
+> labels, **Garet-Regular** for employer-period lines and most Aside prose,
+> and **Lato** for dense prose. Two further faces (Now-Regular, Lato-Italic)
+> were subset in 05. `src/styles/fonts.css` is now the accurate record; the
+> rest of this section is kept for the subsetting and fallback decisions,
+> which still hold.
+
 Weight mapping confirmed by rendering each candidate face against the CV
 screenshots (`docs/assets/CV_page1.png`/`CV_page2.png`) rather than eyeballing:
 

@@ -1,0 +1,49 @@
+---
+import type { Block } from '../../content/types';
+import PhotoBlock from './blocks/PhotoBlock.astro';
+import HeaderBlock from './blocks/HeaderBlock.astro';
+import AboutBlock from './blocks/AboutBlock.astro';
+import SkillsBlock from './blocks/SkillsBlock.astro';
+import ExperienceBlock from './blocks/ExperienceBlock.astro';
+import ProjectBlock from './blocks/ProjectBlock.astro';
+import EducationBlock from './blocks/EducationBlock.astro';
+import BulletsBlock from './blocks/BulletsBlock.astro';
+import LanguagesBlock from './blocks/LanguagesBlock.astro';
+import CertificationsBlock from './blocks/CertificationsBlock.astro';
+import PrivacyBlock from './blocks/PrivacyBlock.astro';
+
+/** Renders one Block, dispatching on its `kind`. */
+interface Props {
+  block: Block;
+}
+
+const { block } = Astro.props;
+---
+
+<article class:list={['block', `block--${block.kind}`]}>
+  {block.kind === 'photo' && <PhotoBlock block={block} />}
+  {block.kind === 'header' && <HeaderBlock block={block} />}
+  {block.kind === 'about' && <AboutBlock block={block} />}
+  {block.kind === 'skills' && <SkillsBlock block={block} />}
+  {block.kind === 'experience' && <ExperienceBlock block={block} />}
+  {block.kind === 'project' && <ProjectBlock block={block} />}
+  {block.kind === 'education' && <EducationBlock block={block} />}
+  {block.kind === 'bullets' && <BulletsBlock block={block} />}
+  {block.kind === 'languages' && <LanguagesBlock block={block} />}
+  {block.kind === 'certifications' && <CertificationsBlock block={block} />}
+  {block.kind === 'privacy' && <PrivacyBlock block={block} />}
+</article>
+
+<style>
+  @layer components {
+    .block {
+      /* Never split a Block across Sheets — Explicit Paging owns that. */
+      break-inside: avoid;
+    }
+
+    /* The reference sets Project bullets tighter than Experience ones. */
+    .block--project {
+      --bullet-leading: 1.25;
+    }
+  }
+</style>

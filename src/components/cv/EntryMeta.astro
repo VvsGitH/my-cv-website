@@ -1,0 +1,42 @@
+---
+/**
+ * The line(s) under an entry's title — employer / institution on the left,
+ * the period right-aligned and muted, both in the display face.
+ */
+interface Props {
+  lines: string[];
+  period: string;
+}
+
+const { lines, period } = Astro.props;
+---
+
+<div class="meta">
+  <div class="lines">{lines.map((line) => <p>{line}</p>)}</div>
+  <p class="period">{period}</p>
+</div>
+
+<style>
+  @layer components {
+    .meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: start;
+      gap: 1rem;
+      margin-block-start: 0.3825rem;
+      font-family: var(--font-display);
+      font-weight: var(--font-weight-display);
+      font-size: var(--font-size-meta);
+      line-height: 1.13;
+    }
+
+    .lines {
+      color: var(--color-heading);
+    }
+
+    .period {
+      flex: none;
+      color: var(--color-muted);
+    }
+  }
+</style>

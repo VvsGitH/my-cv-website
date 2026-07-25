@@ -1,12 +1,23 @@
-/* Weight mapping verified against docs/assets/CV_page1.png / CV_page2.png:
-   Garet Heavy — name + section headings. Garet Book — lighter display text
-   (e.g. the "Professional software developer" tagline). Now Bold —
-   sub-headings (job/project titles, contact labels). Lato — body copy. */
+/* Weight/role mapping read out of the reference PDF's own font resources
+   during ticket 05 (ticket 02 had inferred it from the screenshots and got
+   Now and Garet the wrong way round). What the source actually uses:
+
+     Now-Bold      -> the name
+     Now-Regular   -> the "Professional software developer" subtitle
+     Garet-Bold    -> section headings, entry titles, contact labels
+     Garet-Regular -> employer / period lines, and the Aside's prose
+     Lato-Regular  -> dense prose: bullets, summaries, Tech Skills items
+     Lato-Bold     -> the bold runs inside that prose (the source names
+                      this face Lato-Heavy; Bold is what ships here)
+     Lato-Italic   -> Languages proficiency labels
+
+   Garet ships only Book and Heavy in docs/assets/fonts/, so Garet-Bold is
+   rendered with Heavy — the nearest available weight. */
 
 @font-face {
   font-family: 'Garet';
   src: url('../fonts/garet/Garet-Book.woff2') format('woff2');
-  font-weight: 300;
+  font-weight: 400;
   font-style: normal;
   font-display: block;
 }
@@ -14,7 +25,15 @@
 @font-face {
   font-family: 'Garet';
   src: url('../fonts/garet/Garet-Heavy.woff2') format('woff2');
-  font-weight: 850;
+  font-weight: 700;
+  font-style: normal;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Now';
+  src: url('../fonts/now/Now-Regular.woff2') format('woff2');
+  font-weight: 400;
   font-style: normal;
   font-display: block;
 }
@@ -37,6 +56,14 @@
 
 @font-face {
   font-family: 'Lato';
+  src: url('../fonts/lato/Lato-Italic.woff2') format('woff2');
+  font-weight: 400;
+  font-style: italic;
+  font-display: block;
+}
+
+@font-face {
+  font-family: 'Lato';
   src: url('../fonts/lato/Lato-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
@@ -47,15 +74,22 @@
   /* 'X fallback' entries are generated at build time by the fontaine Vite
      plugin (astro.config.mjs) — metric-matched local faces that keep line
      breaks stable while the real face loads. */
+
+  /* The name and its subtitle — the only Now on the page. */
+  --font-name: 'Now', 'Now fallback', sans-serif;
+  --font-weight-name: 700;
+  --font-subtitle: 'Now', 'Now fallback', sans-serif;
+  --font-weight-subtitle: 400;
+
+  /* Section headings, entry titles, contact labels. */
   --font-heading: 'Garet', 'Garet fallback', sans-serif;
-  --font-weight-heading: 850;
+  --font-weight-heading: 700;
 
+  /* Employer / period lines and the Aside's prose. */
   --font-display: 'Garet', 'Garet fallback', sans-serif;
-  --font-weight-display: 300;
+  --font-weight-display: 400;
 
-  --font-subheading: 'Now', 'Now fallback', sans-serif;
-  --font-weight-subheading: 700;
-
+  /* Bullets, summaries and other dense prose. */
   --font-body: 'Lato', 'Lato fallback', sans-serif;
   --font-weight-body: 400;
   --font-weight-body-strong: 700;

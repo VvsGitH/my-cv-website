@@ -1,0 +1,33 @@
+---
+import type { AboutBlock } from '../../../content/types';
+import SectionHeading from '../SectionHeading.astro';
+import Rich from '../Rich.astro';
+
+interface Props {
+  block: AboutBlock;
+}
+
+const { block } = Astro.props;
+---
+
+{block.heading && <SectionHeading text={block.heading} />}
+{
+  block.paragraphs.map((paragraph) => (
+    <p class="about">
+      <Rich text={paragraph} />
+    </p>
+  ))
+}
+
+<style>
+  @layer components {
+    .about {
+      margin-block-start: 1.125rem;
+      font-family: var(--font-display);
+      font-weight: var(--font-weight-display);
+      line-height: 1.333;
+      text-align: justify;
+      color: var(--color-text);
+    }
+  }
+</style>

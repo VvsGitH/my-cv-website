@@ -12,10 +12,39 @@
   --color-main-bg: oklch(100% 0 89.88); /* #ffffff */
   --color-dark-bg: oklch(25.84% 0.0295 259.07); /* #1b2432 */
 
-  /* Type scale from the reference PDF (28pt/17pt/10pt/8pt), in rem at the
-     standard 16px root so it still respects user font-size preferences. */
-  --font-size-name: 2.333rem; /* ~28pt */
-  --font-size-heading: 1.417rem; /* ~17pt */
-  --font-size-subheading: 0.833rem; /* ~10pt */
-  --font-size-body: 0.667rem; /* ~8pt */
+  /* Unfilled part of a Languages proficiency bar. Absent from spec.md's
+     table — sampled off CV_page2.png during ticket 05 (the filled part is
+     --color-muted). */
+  --color-bar-track: oklch(79.06% 0.0518 267.66); /* #b1c0e1 */
+
+  /* Signature ink — the reference signs in blue ballpoint. */
+  --color-signature: oklch(45% 0.09 265);
+
+  /* Type scale read out of the reference PDF's own text operators (ticket
+     05), not estimated from the screenshots. Sizes are px at 96dpi in the
+     source, expressed here in rem at the standard 16px root so they still
+     respect user font scaling. Note the source draws its display lines
+     directly on the page but its prose inside forms carrying their own
+     ~2.78 scale — hence the two different "body" sizes below. */
+  --font-size-name: 2.3331rem; /* 37.33px / 28pt */
+  --font-size-heading: 1.4163rem; /* 22.66px / 17pt */
+  --font-size-subtitle: 1rem; /* 16px / 12pt */
+  --font-size-subheading: 0.8331rem; /* 13.33px / 10pt */
+  --font-size-meta: 0.75rem; /* 12px — employer / period / institution */
+  --font-size-body: 0.6669rem; /* 10.67px / 8pt — prose, bullets */
+  --font-size-skill: 0.5925rem; /* 9.48px — Tech Skills items */
+  --font-size-level: 0.5831rem; /* 9.33px — Languages proficiency labels */
+
+  /* Sheet geometry, measured off the reference PDF in CSS px at 96dpi
+     (A4 = 794 x 1123px), expressed in rem. The Aside is a panel inset from
+     the page edges, not a full-bleed column. */
+  --aside-inset-inline: 1.1063rem; /* 17.7px from the Sheet's left edge */
+  --aside-width: 16.6rem; /* 265.6px */
+  --aside-height: 68.9438rem; /* 1103.1px — stops short of the bottom */
+  --aside-pad-inline-start: 1.2563rem; /* 20.1px -> text starts at 37.8px */
+  --aside-pad-inline-end: 1.1688rem; /* 18.7px; heading rules span it */
+  --column-gap: 2.4063rem; /* 38.5px between panel edge and Main */
+  --main-width: 27.2375rem; /* 435.8px */
+  --main-inset-block-start: 2.525rem; /* 40.4px -> name ink lands at y=42 */
+  --sheet-pad-inline-end: 2.2813rem; /* 36.5px right margin */
 }

@@ -1,0 +1,75 @@
+---
+import type { CertificationsBlock } from '../../../content/types';
+import SectionHeading from '../SectionHeading.astro';
+
+interface Props {
+  block: CertificationsBlock;
+}
+
+const { block } = Astro.props;
+---
+
+{block.heading && <SectionHeading text={block.heading} />}
+<ul class="certifications">
+  {
+    block.entries.map((entry) => (
+      <li>
+        <p class="issued">
+          {entry.date} | {entry.issuer}
+        </p>
+        <p class="title">
+          {entry.title}
+          {entry.url && (
+            <a href={entry.url} aria-label={`${entry.title} — certificate`}>
+              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                <path
+                  d="M10 13a5 5 0 0 0 7.1 0l3-3a5 5 0 0 0-7.1-7.1L11.5 4.4M14 11a5 5 0 0 0-7.1 0l-3 3a5 5 0 0 0 7.1 7.1l1.4-1.4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.4"
+                  stroke-linecap="round"
+                />
+              </svg>
+            </a>
+          )}
+        </p>
+      </li>
+    ))
+  }
+</ul>
+
+<style>
+  @layer components {
+    .certifications {
+      margin-block-start: 1.1rem;
+      font-family: var(--font-display);
+      font-weight: var(--font-weight-display);
+      line-height: 1.25;
+    }
+
+    li + li {
+      margin-block-start: 0.86rem;
+    }
+
+    .issued {
+      color: var(--color-text);
+    }
+
+    .title {
+      margin-block-start: 0.06rem;
+      color: var(--color-heading);
+    }
+
+    a {
+      display: inline-block;
+      vertical-align: -0.1em;
+      margin-inline-start: 0.25em;
+    }
+
+    svg {
+      display: inline-block;
+      width: 0.85em;
+      height: 0.85em;
+    }
+  }
+</style>

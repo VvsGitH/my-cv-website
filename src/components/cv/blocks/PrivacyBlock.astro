@@ -1,0 +1,49 @@
+---
+import type { PrivacyBlock } from '../../../content/types';
+import SectionHeading from '../SectionHeading.astro';
+import Rich from '../Rich.astro';
+
+interface Props {
+  block: PrivacyBlock;
+}
+
+const { block } = Astro.props;
+---
+
+{block.heading && <SectionHeading text={block.heading} />}
+<p class="statement">
+  <Rich text={block.statement} />
+</p>
+<p class="place-date">{block.place}, {block.date}</p>
+<p class="signature" aria-hidden="true">{block.signature}</p>
+
+<style>
+  @layer components {
+    .statement {
+      margin-block-start: 0.94rem;
+      line-height: 1.417;
+      text-align: justify;
+      color: var(--color-text);
+    }
+
+    .place-date {
+      margin-block-start: 0.84rem;
+      font-family: var(--font-display);
+      font-weight: var(--font-weight-display);
+      text-align: end;
+      color: var(--color-text);
+    }
+
+    /* Spec US29: an approximation in a script face, never a scan of the
+       real signature. No script font is self-hosted yet (ticket 02 shipped
+       Garet/Now/Lato only), so this falls back to a system cursive — see
+       the ticket notes. */
+    .signature {
+      margin-block-start: 0.1rem;
+      font-family: 'Segoe Script', 'Brush Script MT', cursive;
+      font-size: 1.05rem;
+      line-height: 1.6;
+      color: var(--color-signature);
+    }
+  }
+</style>

@@ -1,0 +1,15 @@
+---
+import { renderRichText } from '../../lib/rich-text';
+
+/**
+ * Inline `RichText` — emits no wrapper of its own, so the caller picks the
+ * element (`<p>`, `<li>`, a table cell…).
+ */
+interface Props {
+  text: string;
+}
+
+const { text } = Astro.props;
+---
+
+<Fragment set:html={renderRichText(text)} />

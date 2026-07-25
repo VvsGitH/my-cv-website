@@ -1,0 +1,66 @@
+---
+import type { LanguagesBlock } from '../../../content/types';
+import SectionHeading from '../SectionHeading.astro';
+
+interface Props {
+  block: LanguagesBlock;
+}
+
+const { block } = Astro.props;
+---
+
+{block.heading && <SectionHeading text={block.heading} />}
+<dl class="languages">
+  {
+    block.entries.map((entry) => (
+      <div class="language">
+        <dt>{entry.name}</dt>
+        <dd>{entry.level}</dd>
+        <div
+          class="bar"
+          style={`--fill: ${(entry.proficiency * 100).toFixed(1)}%`}
+        ></div>
+      </div>
+    ))
+  }
+</dl>
+
+<style>
+  @layer components {
+    .languages {
+      margin-block-start: 0.9rem;
+      color: var(--color-heading);
+    }
+
+    .language {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      align-items: baseline;
+      line-height: 1.15;
+    }
+
+    .language + .language {
+      margin-block-start: 0.71rem;
+    }
+
+    dd {
+      margin-inline-start: 0;
+      font-style: italic;
+      font-size: var(--font-size-level);
+      color: var(--color-muted);
+    }
+
+    .bar {
+      grid-column: 1 / -1;
+      /* The reference draws a ~5px rule: the filled run in --color-muted
+         over a pale-blue track. */
+      height: 0.3125rem;
+      margin-block-start: 0.22rem;
+      background-image: linear-gradient(
+        to right,
+        var(--color-muted) var(--fill),
+        var(--color-bar-track) var(--fill)
+      );
+    }
+  }
+</style>

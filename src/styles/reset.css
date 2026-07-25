@@ -42,14 +42,17 @@
   margin-block: 0;
 }
 
-:where(h1, h2, h3) {
+:where(h2, h3) {
   font-family: var(--font-heading);
   font-weight: var(--font-weight-heading);
   color: var(--color-heading);
 }
 
 :where(h1) {
+  font-family: var(--font-name);
+  font-weight: var(--font-weight-name);
   font-size: var(--font-size-name);
+  color: var(--color-heading);
 }
 
 :where(h2) {
@@ -57,8 +60,6 @@
 }
 
 :where(h3) {
-  font-family: var(--font-subheading);
-  font-weight: var(--font-weight-subheading);
   font-size: var(--font-size-subheading);
 }
 

@@ -22,12 +22,14 @@ export interface Placement {
 }
 
 /**
- * A Block that belongs to a titled section. The heading is carried by the
- * Block that *opens* the section and omitted by the rest, which is how a
- * section spanning both Sheets (Selected Projects) prints its title once.
+ * A Block that belongs to a titled section. Every one carries its heading —
+ * a section spanning both Sheets prints its title twice, the second time
+ * marked `continues` and rendered for screen readers only (ADR-0005). The
+ * older convention, where omitting the heading *meant* "this continues", is
+ * gone: it made a forgotten heading indistinguishable from a deliberate one.
  */
 interface SectionBlock extends Placement {
-  heading?: string;
+  heading: string;
 }
 
 /**
@@ -78,33 +80,45 @@ export interface SkillsBlock extends SectionBlock {
   groups: SkillGroup[];
 }
 
-/** One job. `summary` and `bullets` are both optional — short roles use prose. */
-export interface ExperienceBlock extends SectionBlock {
-  kind: 'experience';
-  role: string;
-  company: string;
-  period: string;
-  summary?: RichText;
-  bullets?: RichText[];
-}
+/**
+ * One Group of a Main section (CONTEXT.md: "Group") — one job, one project,
+ * one qualification. The three read identically in the reference, so they
+ * share a shape rather than a type each.
+ *
+ * The union is the load-bearing part. A Group that *opens* must carry its
+ * `meta` and `period`; a Group that *continues* one interrupted by a Sheet
+ * boundary must not repeat them, and carries only a copy of the title. That
+ * distinction is what makes "split anywhere, even between two bullets" a
+ * type error when done wrong rather than a layout bug found by eye.
+ */
+export type MainSectionGroup =
+  | {
+      continues?: false;
+      title: string;
+      /** Organisations only: `[company]`, `[role, client]`, `[institution]`. */
+      meta: string[];
+      period: string;
+      summary?: RichText[];
+      bullets?: RichText[];
+    }
+  | {
+      continues: true;
+      title: string;
+      summary?: RichText[];
+      bullets?: RichText[];
+    };
 
-export interface ProjectBlock extends SectionBlock {
-  kind: 'project';
-  name: string;
-  role: string;
-  /** Employer and end client, e.g. "CyberSecurity S.r.l. ~ A2A S.p.a". */
-  client: string;
-  period: string;
-  summary: RichText;
-  bullets: RichText[];
-}
-
-export interface EducationBlock extends SectionBlock {
-  kind: 'education';
-  qualification: string;
-  institution: string;
-  period: string;
-  details: RichText[];
+/**
+ * A titled section of the Main column — Experience, Selected Projects,
+ * Education — or as much of one as fits in a single Sheet (ADR-0005). The
+ * remainder is a **Continuation**: a second Block with `continues: true`,
+ * whose heading is a marked copy of the original ("… (continued)") shown
+ * only to screen readers. `content/index.ts` asserts the copies stay in sync.
+ */
+export interface MainSectionBlock extends SectionBlock {
+  kind: 'mainSection';
+  continues?: true;
+  groups: MainSectionGroup[];
 }
 
 /** A plain bulleted section — Soft Skills, Other Info. */
@@ -153,9 +167,7 @@ export type Block =
   | HeaderBlock
   | AboutBlock
   | SkillsBlock
-  | ExperienceBlock
-  | ProjectBlock
-  | EducationBlock
+  | MainSectionBlock
   | BulletsBlock
   | LanguagesBlock
   | CertificationsBlock

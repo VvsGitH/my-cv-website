@@ -113,60 +113,66 @@ export const en: CvContent = {
       ],
     },
     {
-      kind: 'experience',
+      kind: 'mainSection',
       sheet: 1,
       column: 'main',
       heading: 'Experience',
-      role: 'Senior Software Developer',
-      company: 'RCS Innovation S.r.l.',
-      period: '2024.05 - now',
-      bullets: [
-        'Active development and maintenance of RCS’s flagship news platforms: **Corriere della Sera** (serving up to **40k concurrent users**) and **Gazzetta dello Sport**, with a strong focus on **stability**, **performance** and user experience.',
-        '**Subject matter expert** for the video-manager component, coordinating the maintenance team and driving precise, continuous refactors.',
-        '**Lead frontend developer** for the new Gazzetta homepage and the ongoing Gazzetta restyle, coordinating development and owning stability and performance trade-offs.',
-        'Working on a **hybrid micro-frontend architecture based on the islands pattern**, with components written in both **vanilla JS/TS and React**, balancing legacy integration with modern development.',
-        'Drove **incremental modernization of legacy codebases**: progressive adoption of **TypeScript and JSDoc** across multiple repositories, introduction of **Jest unit testing** and team-wide testing guidelines — including best practices for **AI-assisted coding tools**.',
+      groups: [
+        {
+          title: 'Senior Software Developer',
+          meta: ['RCS Innovation S.r.l.'],
+          period: '2024.05 - now',
+          bullets: [
+            'Active development and maintenance of RCS’s flagship news platforms: **Corriere della Sera** (serving up to **40k concurrent users**) and **Gazzetta dello Sport**, with a strong focus on **stability**, **performance** and user experience.',
+            '**Subject matter expert** for the video-manager component, coordinating the maintenance team and driving precise, continuous refactors.',
+            '**Lead frontend developer** for the new Gazzetta homepage and the ongoing Gazzetta restyle, coordinating development and owning stability and performance trade-offs.',
+            'Working on a **hybrid micro-frontend architecture based on the islands pattern**, with components written in both **vanilla JS/TS and React**, balancing legacy integration with modern development.',
+            'Drove **incremental modernization of legacy codebases**: progressive adoption of **TypeScript and JSDoc** across multiple repositories, introduction of **Jest unit testing** and team-wide testing guidelines — including best practices for **AI-assisted coding tools**.',
+          ],
+        },
+        {
+          title: 'Software Developer',
+          meta: ['CyberSecurity S.r.l.'],
+          period: '2021.07 - 2024.05',
+          bullets: [
+            '**Full-stack development** as a consultant for both medium and large scale projects across multiple domains (utilities, energy, finance, AI platforms).',
+            '**Technical leader** of small teams (up to 4 developers), responsible for architecture decisions, PR reviews, task estimation and technical support.',
+            '**Mentored and trained** new joiners in JavaScript, TypeScript and React.js, with structured onboarding and pairing sessions.',
+            'Technical interviewer for frontend candidates, contributing to hiring decisions.',
+          ],
+        },
+        {
+          title: 'Trainee Software Developer',
+          meta: ['CyberSecurity S.r.l.'],
+          period: '2021.04 - 2021.07',
+          summary: [
+            'Reinforced core programming and software development skills through **hands-on training** and project work: **Clean Code**, **SOLID** principles, **OO** programming and **design patterns**.',
+          ],
+        },
       ],
     },
     {
-      kind: 'experience',
-      sheet: 1,
-      column: 'main',
-      role: 'Software Developer',
-      company: 'CyberSecurity S.r.l.',
-      period: '2021.07 - 2024.05',
-      bullets: [
-        '**Full-stack development** as a consultant for both medium and large scale projects across multiple domains (utilities, energy, finance, AI platforms).',
-        '**Technical leader** of small teams (up to 4 developers), responsible for architecture decisions, PR reviews, task estimation and technical support.',
-        '**Mentored and trained** new joiners in JavaScript, TypeScript and React.js, with structured onboarding and pairing sessions.',
-        'Technical interviewer for frontend candidates, contributing to hiring decisions.',
-      ],
-    },
-    {
-      kind: 'experience',
-      sheet: 1,
-      column: 'main',
-      role: 'Trainee Software Developer',
-      company: 'CyberSecurity S.r.l.',
-      period: '2021.04 - 2021.07',
-      summary:
-        'Reinforced core programming and software development skills through **hands-on training** and project work: **Clean Code**, **SOLID** principles, **OO** programming and **design patterns**.',
-    },
-    {
-      kind: 'project',
+      kind: 'mainSection',
       sheet: 1,
       column: 'main',
       heading: 'Selected Projects',
-      name: 'B2B Environment',
-      role: 'Senior Frontend Developer & Team Leader',
-      client: 'CyberSecurity S.r.l. ~ A2A S.p.a',
-      period: '2024.03 - 2024.05',
-      summary:
-        '“B2B Environment” is a small web application, structured like a wizard, that will be used by the clients of A2A to order and customize garbage collecting services.',
-      bullets: [
-        'Initial setup and configuration of the Next.js application, with app-router, state-management, i18n and standalone deploy. Definition of folder structure and code patterns.',
-        'Team coordination, PR review and technical support over more complex tasks.',
-        'Technical documentation and testing.',
+      groups: [
+        {
+          title: 'B2B Environment',
+          meta: [
+            'Senior Frontend Developer & Team Leader',
+            'CyberSecurity S.r.l. ~ A2A S.p.a',
+          ],
+          period: '2024.03 - 2024.05',
+          summary: [
+            '“B2B Environment” is a small web application, structured like a wizard, that will be used by the clients of A2A to order and customize garbage collecting services.',
+          ],
+          bullets: [
+            'Initial setup and configuration of the Next.js application, with app-router, state-management, i18n and standalone deploy. Definition of folder structure and code patterns.',
+            'Team coordination, PR review and technical support over more complex tasks.',
+            'Technical documentation and testing.',
+          ],
+        },
       ],
     },
 
@@ -241,96 +247,97 @@ export const en: CvContent = {
     },
 
     // ── Sheet 2 · Main ───────────────────────────────────────────────────
-    // Selected Projects continues here; the heading stays on Sheet 1.
     {
-      kind: 'project',
+      kind: 'mainSection',
       sheet: 2,
       column: 'main',
-      name: 'Registro Ufficiale degli Operatori Professionali',
-      role: 'Senior Frontend Developer & Team Leader',
-      client: 'CyberSecurity S.r.l. ~ Leonardo S.p.a.',
-      period: '2023.07 - 2024.02',
-      summary:
-        '“Registro Ufficiale degli Operatori Professionali”, or RUOP, is one of the applications inside the MASAF portal of the Italian minister of agriculture. Businesses have to subscribe to the RUOP registry in order to run activities related to import/export of plants.',
-      bullets: [
-        'Coordination of the fronted team, composed by me and other 3 developers.',
-        'Definition of the architecture of the React.js application.',
-        'Translation of the client’s requirements into technical requirements; estimation and task assignment.',
-        'Development of a single-page, responsive, web application in React.js, with 4 different types of users, OAuth2.0 authentication and routing.',
-        'Management of the GitHub repository.',
+      // A Continuation (ADR-0005) — see the note in `it.ts`.
+      heading: 'Selected Projects (continued)',
+      continues: true,
+      groups: [
+        {
+          title: 'Registro Ufficiale degli Operatori Professionali',
+          meta: [
+            'Senior Frontend Developer & Team Leader',
+            'CyberSecurity S.r.l. ~ Leonardo S.p.a.',
+          ],
+          period: '2023.07 - 2024.02',
+          summary: [
+            '“Registro Ufficiale degli Operatori Professionali”, or RUOP, is one of the applications inside the MASAF portal of the Italian minister of agriculture. Businesses have to subscribe to the RUOP registry in order to run activities related to import/export of plants.',
+          ],
+          bullets: [
+            'Coordination of the fronted team, composed by me and other 3 developers.',
+            'Definition of the architecture of the React.js application.',
+            'Translation of the client’s requirements into technical requirements; estimation and task assignment.',
+            'Development of a single-page, responsive, web application in React.js, with 4 different types of users, OAuth2.0 authentication and routing.',
+            'Management of the GitHub repository.',
+          ],
+        },
+        {
+          title: 'Beyond Knowledge',
+          meta: ['Senior Frontend Developer', 'CyberSecurity S.r.l. ~ Beyond Knowledge'],
+          period: '2023.01 - 2023.06',
+          summary: [
+            '“Beyond Knowledge” is an in-development subscription based platform for AI services. It offers solutions for Industry4.0, Network Monitoring and Financial Planning.',
+          ],
+          bullets: [
+            'Development of a single-page, responsive, web application in React.js, using state of the art libraries like @tanstack/react-query and @tanstack/react-table.',
+            'Development of a design-system with tailwind.css, based on Figma mockups.',
+            'Teamwork in an scrum based project, using the Atlassian suite.',
+          ],
+        },
+        {
+          title: 'VEDO Tool & ABC Monitoring',
+          meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ ENI Italia'],
+          period: '2022.10 - 2022.12',
+          summary: [
+            '“VEDO Tool” is an application based of Microsoft Power Apps, used by ENI employees for internal organization. “ABC Monitoring” (Anti Bribery Compliance) is a SharePoint application used by ENI to monitor some legal aspects of joints ventures.',
+          ],
+          bullets: [
+            'Development of a multipage web application using Typescript, JQuery and Boostrap 4.',
+            'Using Open Data Protocol (OData) to communicate with Microsoft Dataverse.',
+          ],
+        },
+        {
+          title: 'Dam Dossier',
+          meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ Enel Green Power'],
+          period: '2022.04 - 2022.10',
+          summary: [
+            '“Dam Dossier” is a web application to catalogue and manage all the dams used by ENEL in Italy. It’s one of the many applications inside the Enel Platform.',
+          ],
+          bullets: [
+            'Development of a responsive spa with Angular 14 and SCSS.',
+            'Integrating and improving the components from the Enel Design System.',
+            'Implementing new angular components based on Adobe XD mockups.',
+            'Web Accessibility WCAG 2.1 compliance.',
+            'Unit testing with Karma and Jasmine.',
+            'Working in an agile (scrum) context, supported by the Atlassian suite.',
+          ],
+        },
       ],
     },
     {
-      kind: 'project',
-      sheet: 2,
-      column: 'main',
-      name: 'Beyond Knowledge',
-      role: 'Senior Frontend Developer',
-      client: 'CyberSecurity S.r.l. ~ Beyond Knowledge',
-      period: '2023.01 - 2023.06',
-      summary:
-        '“Beyond Knowledge” is an in-development subscription based platform for AI services. It offers solutions for Industry4.0, Network Monitoring and Financial Planning.',
-      bullets: [
-        'Development of a single-page, responsive, web application in React.js, using state of the art libraries like @tanstack/react-query and @tanstack/react-table.',
-        'Development of a design-system with tailwind.css, based on Figma mockups.',
-        'Teamwork in an scrum based project, using the Atlassian suite.',
-      ],
-    },
-    {
-      kind: 'project',
-      sheet: 2,
-      column: 'main',
-      name: 'VEDO Tool & ABC Monitoring',
-      role: 'Frontend Developer',
-      client: 'CyberSecurity S.r.l. ~ ENI Italia',
-      period: '2022.10 - 2022.12',
-      summary:
-        '“VEDO Tool” is an application based of Microsoft Power Apps, used by ENI employees for internal organization. “ABC Monitoring” (Anti Bribery Compliance) is a SharePoint application used by ENI to monitor some legal aspects of joints ventures.',
-      bullets: [
-        'Development of a multipage web application using Typescript, JQuery and Boostrap 4.',
-        'Using Open Data Protocol (OData) to communicate with Microsoft Dataverse.',
-      ],
-    },
-    {
-      kind: 'project',
-      sheet: 2,
-      column: 'main',
-      name: 'Dam Dossier',
-      role: 'Frontend Developer',
-      client: 'CyberSecurity S.r.l. ~ Enel Green Power',
-      period: '2022.04 - 2022.10',
-      summary:
-        '“Dam Dossier” is a web application to catalogue and manage all the dams used by ENEL in Italy. It’s one of the many applications inside the Enel Platform.',
-      bullets: [
-        'Development of a responsive spa with Angular 14 and SCSS.',
-        'Integrating and improving the components from the Enel Design System.',
-        'Implementing new angular components based on Adobe XD mockups.',
-        'Web Accessibility WCAG 2.1 compliance.',
-        'Unit testing with Karma and Jasmine.',
-        'Working in an agile (scrum) context, supported by the Atlassian suite.',
-      ],
-    },
-    {
-      kind: 'education',
+      kind: 'mainSection',
       sheet: 2,
       column: 'main',
       heading: 'Education',
-      qualification: 'Bachelor of Information and Automation Engineering',
-      institution: 'Polytechnic University of Bari, Bari, Italy',
-      period: '2014.08 - 2018.10',
-      details: [
-        'Grade: **110/110** | EQF Level: **6**',
-        'Experimental thesis: **Analisi e Miglioramento delle Prestazioni di Processi Produttivi Industriali mediante Reti di Petri, il caso Dream Project**.',
+      groups: [
+        {
+          title: 'Bachelor of Information and Automation Engineering',
+          meta: ['Polytechnic University of Bari, Bari, Italy'],
+          period: '2014.08 - 2018.10',
+          summary: [
+            'Grade: **110/110** | EQF Level: **6**',
+            'Experimental thesis: **Analisi e Miglioramento delle Prestazioni di Processi Produttivi Industriali mediante Reti di Petri, il caso Dream Project**.',
+          ],
+        },
+        {
+          title: 'High School Diploma',
+          meta: ['Liceo Scientifico Amaldi, Bitetto, Italy'],
+          period: '2009.09 - 2014.07',
+          summary: ['Grade: **100/100** | EQF Level: **4**'],
+        },
       ],
-    },
-    {
-      kind: 'education',
-      sheet: 2,
-      column: 'main',
-      qualification: 'High School Diploma',
-      institution: 'Liceo Scientifico Amaldi, Bitetto, Italy',
-      period: '2009.09 - 2014.07',
-      details: ['Grade: **100/100** | EQF Level: **4**'],
     },
   ],
 };

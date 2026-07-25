@@ -1,0 +1,30 @@
+---
+/**
+ * The title line of a Group (CONTEXT.md: "Group") — the job role, the project
+ * name, the qualification. All three are set identically in the reference.
+ *
+ * `srOnly` marks a Continuation: a Group split across the Sheet boundary
+ * repeats its title so the resumed material still has a heading in the
+ * outline, but the title is not printed a second time.
+ */
+interface Props {
+  text: string;
+  srOnly?: boolean;
+}
+
+const { text, srOnly } = Astro.props;
+---
+
+<h3 class:list={['group-title', { 'is-sr-only': srOnly }]}>{text}</h3>
+
+<style>
+  @layer components {
+    .group-title {
+      font-family: var(--font-heading);
+      font-weight: var(--font-weight-heading);
+      font-size: var(--font-size-subheading);
+      line-height: 1.5;
+      color: var(--color-heading);
+    }
+  }
+</style>

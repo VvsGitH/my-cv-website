@@ -136,70 +136,76 @@ export const it: CvContent = {
       ],
     },
     {
-      kind: 'experience',
+      kind: 'mainSection',
       sheet: 1,
       column: 'main',
       heading: 'Esperienza',
-      role: 'Senior Software Developer',
-      company: 'RCS Innovation S.r.l.',
-      // The one period that isn't just digits — "oggi" is prose ("now").
-      period: '2024.05 - oggi',
-      bullets: [
-        'Sviluppo attivo e manutenzione delle piattaforme news di punta di RCS: **Corriere della Sera** (fino a **40k utenti concorrenti**) e **Gazzetta dello Sport**, con forte attenzione a **stabilità**, **performance** ed esperienza utente.',
-        '**Subject matter expert** per il componente video-manager, con coordinamento del team di manutenzione e refactoring continui e puntuali.',
-        // KEEP TIGHT (1 of 3): phrased shorter than en.ts to hold 2 lines.
-        // The literal reading — "coordinamento dello sviluppo e
-        // responsabilità sui compromessi tra…" — wraps to 3 and overflows
-        // Sheet 1 Main. Measurements in ticket 11.
-        '**Lead frontend developer** per la nuova homepage e il restyling in corso di Gazzetta, coordinando sviluppo e trade-off tra stabilità e performance.',
-        'Lavoro su un’**architettura micro-frontend ibrida basata sull’islands pattern**, con componenti scritti sia in **vanilla JS/TS sia in React**, bilanciando integrazione del legacy e sviluppo moderno.',
-        'Ho guidato la **modernizzazione incrementale di codebase legacy**: adozione progressiva di **TypeScript e JSDoc** su più repository, introduzione dello **unit testing con Jest** e di linee guida di testing per tutto il team — incluse le best practice per gli **strumenti di coding assistito da AI**.',
+      groups: [
+        {
+          title: 'Senior Software Developer',
+          meta: ['RCS Innovation S.r.l.'],
+          // The one period that isn't just digits — "oggi" is prose ("now").
+          period: '2024.05 - oggi',
+          bullets: [
+            'Sviluppo attivo e manutenzione delle piattaforme news di punta di RCS: **Corriere della Sera** (fino a **40k utenti concorrenti**) e **Gazzetta dello Sport**, con forte attenzione a **stabilità**, **performance** ed esperienza utente.',
+            '**Subject matter expert** per il componente video-manager, con coordinamento del team di manutenzione e refactoring continui e puntuali.',
+            // KEEP TIGHT (1 of 3): phrased shorter than en.ts to hold 2 lines.
+            // The literal reading — "coordinamento dello sviluppo e
+            // responsabilità sui compromessi tra…" — wraps to 3 and overflows
+            // Sheet 1 Main. Measurements in ticket 11.
+            '**Lead frontend developer** per la nuova homepage e il restyling in corso di Gazzetta, coordinando sviluppo e trade-off tra stabilità e performance.',
+            'Lavoro su un’**architettura micro-frontend ibrida basata sull’islands pattern**, con componenti scritti sia in **vanilla JS/TS sia in React**, bilanciando integrazione del legacy e sviluppo moderno.',
+            'Ho guidato la **modernizzazione incrementale di codebase legacy**: adozione progressiva di **TypeScript e JSDoc** su più repository, introduzione dello **unit testing con Jest** e di linee guida di testing per tutto il team — incluse le best practice per gli **strumenti di coding assistito da AI**.',
+          ],
+        },
+        {
+          title: 'Software Developer',
+          meta: ['CyberSecurity S.r.l.'],
+          period: '2021.07 - 2024.05',
+          bullets: [
+            '**Sviluppo full-stack** come consulente su progetti di media e larga scala in domini diversi (utility, energia, finanza, piattaforme AI).',
+            '**Technical leader** di piccoli team (fino a 4 sviluppatori), con responsabilità su scelte architetturali, revisione delle PR, stima delle attività e supporto tecnico.',
+            '**Mentoring e formazione** dei nuovi ingressi su JavaScript, TypeScript e React.js, con onboarding strutturato e sessioni di pairing.',
+            'Colloqui tecnici per candidati frontend, con contributo alle decisioni di assunzione.',
+          ],
+        },
+        {
+          title: 'Trainee Software Developer',
+          meta: ['CyberSecurity S.r.l.'],
+          period: '2021.04 - 2021.07',
+          summary: [
+            'Consolidamento delle competenze di base di programmazione e sviluppo software attraverso **formazione pratica** e lavoro su progetto: **Clean Code**, principi **SOLID**, programmazione **OO** e **design pattern**.',
+          ],
+        },
       ],
     },
     {
-      kind: 'experience',
-      sheet: 1,
-      column: 'main',
-      role: 'Software Developer',
-      company: 'CyberSecurity S.r.l.',
-      period: '2021.07 - 2024.05',
-      bullets: [
-        '**Sviluppo full-stack** come consulente su progetti di media e larga scala in domini diversi (utility, energia, finanza, piattaforme AI).',
-        '**Technical leader** di piccoli team (fino a 4 sviluppatori), con responsabilità su scelte architetturali, revisione delle PR, stima delle attività e supporto tecnico.',
-        '**Mentoring e formazione** dei nuovi ingressi su JavaScript, TypeScript e React.js, con onboarding strutturato e sessioni di pairing.',
-        'Colloqui tecnici per candidati frontend, con contributo alle decisioni di assunzione.',
-      ],
-    },
-    {
-      kind: 'experience',
-      sheet: 1,
-      column: 'main',
-      role: 'Trainee Software Developer',
-      company: 'CyberSecurity S.r.l.',
-      period: '2021.04 - 2021.07',
-      summary:
-        'Consolidamento delle competenze di base di programmazione e sviluppo software attraverso **formazione pratica** e lavoro su progetto: **Clean Code**, principi **SOLID**, programmazione **OO** e **design pattern**.',
-    },
-    {
-      kind: 'project',
+      kind: 'mainSection',
       sheet: 1,
       column: 'main',
       heading: 'Progetti selezionati',
-      name: 'B2B Environment',
-      role: 'Senior Frontend Developer & Team Leader',
-      client: 'CyberSecurity S.r.l. ~ A2A S.p.a',
-      period: '2024.03 - 2024.05',
-      summary:
-        '“B2B Environment” è una piccola web application, strutturata come un wizard, che sarà utilizzata dai clienti di A2A per ordinare e personalizzare i servizi di raccolta rifiuti.',
-      bullets: [
-        // KEEP TIGHT (2 of 3): colon instead of "con", and "di struttura
-        // cartelle e pattern" instead of "della struttura delle cartelle e
-        // dei pattern" — holds 2 lines instead of 3.
-        'Setup e configurazione iniziale dell’applicazione Next.js: app-router, state management, i18n, deploy standalone. Definizione di struttura cartelle e pattern di codice.',
-        // KEEP TIGHT (3 of 3): "revisione PR" and "attività complesse"
-        // without articles — holds 1 line instead of 2.
-        'Coordinamento del team, revisione PR e supporto tecnico sulle attività complesse.',
-        'Documentazione tecnica e testing.',
+      groups: [
+        {
+          title: 'B2B Environment',
+          meta: [
+            'Senior Frontend Developer & Team Leader',
+            'CyberSecurity S.r.l. ~ A2A S.p.a',
+          ],
+          period: '2024.03 - 2024.05',
+          summary: [
+            '“B2B Environment” è una piccola web application, strutturata come un wizard, che sarà utilizzata dai clienti di A2A per ordinare e personalizzare i servizi di raccolta rifiuti.',
+          ],
+          bullets: [
+            // KEEP TIGHT (2 of 3): colon instead of "con", and "di struttura
+            // cartelle e pattern" instead of "della struttura delle cartelle e
+            // dei pattern" — holds 2 lines instead of 3.
+            'Setup e configurazione iniziale dell’applicazione Next.js: app-router, state management, i18n, deploy standalone. Definizione di struttura cartelle e pattern di codice.',
+            // KEEP TIGHT (3 of 3): "revisione PR" and "attività complesse"
+            // without articles — holds 1 line instead of 2.
+            'Coordinamento del team, revisione PR e supporto tecnico sulle attività complesse.',
+            'Documentazione tecnica e testing.',
+          ],
+        },
       ],
     },
 
@@ -282,103 +288,110 @@ export const it: CvContent = {
     },
 
     // ── Sheet 2 · Main ───────────────────────────────────────────────────
-    // Progetti selezionati continues here; the heading stays on Sheet 1.
     {
-      kind: 'project',
+      kind: 'mainSection',
       sheet: 2,
       column: 'main',
-      name: 'Registro Ufficiale degli Operatori Professionali',
-      role: 'Senior Frontend Developer & Team Leader',
-      client: 'CyberSecurity S.r.l. ~ Leonardo S.p.a.',
-      period: '2023.07 - 2024.02',
-      summary:
-        '“Registro Ufficiale degli Operatori Professionali”, o RUOP, è una delle applicazioni all’interno del portale MASAF del Ministero dell’Agricoltura. Le imprese devono iscriversi al registro RUOP per svolgere attività di import/export di piante.',
-      bullets: [
-        'Coordinamento del team frontend, composto da me e altri 3 sviluppatori.',
-        'Definizione dell’architettura dell’applicazione React.js.',
-        'Traduzione dei requisiti del cliente in requisiti tecnici; stima e assegnazione delle attività.',
-        'Sviluppo di una web application single-page e responsive in React.js, con 4 tipologie di utenti, autenticazione OAuth2.0 e routing.',
-        'Gestione del repository GitHub.',
+      // A Continuation (ADR-0005): the heading is a marked copy of Sheet 1's,
+      // rendered for screen readers only. Five unrelated Aside headings sit
+      // between the two halves in reading order, so the marker is what tells
+      // a screen reader user "this resumes" rather than "I went backwards".
+      heading: 'Progetti selezionati (continua)',
+      continues: true,
+      groups: [
+        {
+          title: 'Registro Ufficiale degli Operatori Professionali',
+          meta: [
+            'Senior Frontend Developer & Team Leader',
+            'CyberSecurity S.r.l. ~ Leonardo S.p.a.',
+          ],
+          period: '2023.07 - 2024.02',
+          summary: [
+            '“Registro Ufficiale degli Operatori Professionali”, o RUOP, è una delle applicazioni all’interno del portale MASAF del Ministero dell’Agricoltura. Le imprese devono iscriversi al registro RUOP per svolgere attività di import/export di piante.',
+          ],
+          bullets: [
+            'Coordinamento del team frontend, composto da me e altri 3 sviluppatori.',
+            'Definizione dell’architettura dell’applicazione React.js.',
+            'Traduzione dei requisiti del cliente in requisiti tecnici; stima e assegnazione delle attività.',
+            'Sviluppo di una web application single-page e responsive in React.js, con 4 tipologie di utenti, autenticazione OAuth2.0 e routing.',
+            'Gestione del repository GitHub.',
+          ],
+        },
+        {
+          title: 'Beyond Knowledge',
+          meta: ['Senior Frontend Developer', 'CyberSecurity S.r.l. ~ Beyond Knowledge'],
+          period: '2023.01 - 2023.06',
+          summary: [
+            '“Beyond Knowledge” è una piattaforma in sviluppo, su modello ad abbonamento, per servizi di AI. Offre soluzioni per Industry4.0, Network Monitoring e Financial Planning.',
+          ],
+          bullets: [
+            'Sviluppo di una web application single-page e responsive in React.js, con librerie allo stato dell’arte come @tanstack/react-query e @tanstack/react-table.',
+            'Sviluppo di un design system con tailwind.css, a partire da mockup Figma.',
+            'Lavoro in team su progetto in metodologia scrum, con la suite Atlassian.',
+          ],
+        },
+        {
+          title: 'VEDO Tool & ABC Monitoring',
+          meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ ENI Italia'],
+          period: '2022.10 - 2022.12',
+          summary: [
+            '“VEDO Tool” è un’applicazione basata su Microsoft Power Apps, utilizzata dai dipendenti ENI per l’organizzazione interna. “ABC Monitoring” (Anti Bribery Compliance) è un’applicazione SharePoint usata da ENI per monitorare alcuni aspetti legali delle joint venture.',
+          ],
+          bullets: [
+            'Sviluppo di una web application multipagina con Typescript, JQuery e Bootstrap 4.',
+            'Utilizzo di Open Data Protocol (OData) per la comunicazione con Microsoft Dataverse.',
+          ],
+        },
+        {
+          title: 'Dam Dossier',
+          meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ Enel Green Power'],
+          period: '2022.04 - 2022.10',
+          summary: [
+            '“Dam Dossier” è una web application per catalogare e gestire tutte le dighe utilizzate da ENEL in Italia. È una delle tante applicazioni all’interno della Enel Platform.',
+          ],
+          bullets: [
+            'Sviluppo di una SPA responsive con Angular 14 e SCSS.',
+            'Integrazione e miglioramento dei componenti dell’Enel Design System.',
+            'Implementazione di nuovi componenti Angular a partire da mockup Adobe XD.',
+            'Conformità all’accessibilità web WCAG 2.1.',
+            'Unit testing con Karma e Jasmine.',
+            'Lavoro in contesto agile (scrum), con il supporto della suite Atlassian.',
+          ],
+        },
       ],
     },
     {
-      kind: 'project',
-      sheet: 2,
-      column: 'main',
-      name: 'Beyond Knowledge',
-      role: 'Senior Frontend Developer',
-      client: 'CyberSecurity S.r.l. ~ Beyond Knowledge',
-      period: '2023.01 - 2023.06',
-      summary:
-        '“Beyond Knowledge” è una piattaforma in sviluppo, su modello ad abbonamento, per servizi di AI. Offre soluzioni per Industry4.0, Network Monitoring e Financial Planning.',
-      bullets: [
-        'Sviluppo di una web application single-page e responsive in React.js, con librerie allo stato dell’arte come @tanstack/react-query e @tanstack/react-table.',
-        'Sviluppo di un design system con tailwind.css, a partire da mockup Figma.',
-        'Lavoro in team su progetto in metodologia scrum, con la suite Atlassian.',
-      ],
-    },
-    {
-      kind: 'project',
-      sheet: 2,
-      column: 'main',
-      name: 'VEDO Tool & ABC Monitoring',
-      role: 'Frontend Developer',
-      client: 'CyberSecurity S.r.l. ~ ENI Italia',
-      period: '2022.10 - 2022.12',
-      summary:
-        '“VEDO Tool” è un’applicazione basata su Microsoft Power Apps, utilizzata dai dipendenti ENI per l’organizzazione interna. “ABC Monitoring” (Anti Bribery Compliance) è un’applicazione SharePoint usata da ENI per monitorare alcuni aspetti legali delle joint venture.',
-      bullets: [
-        'Sviluppo di una web application multipagina con Typescript, JQuery e Bootstrap 4.',
-        'Utilizzo di Open Data Protocol (OData) per la comunicazione con Microsoft Dataverse.',
-      ],
-    },
-    {
-      kind: 'project',
-      sheet: 2,
-      column: 'main',
-      name: 'Dam Dossier',
-      role: 'Frontend Developer',
-      client: 'CyberSecurity S.r.l. ~ Enel Green Power',
-      period: '2022.04 - 2022.10',
-      summary:
-        '“Dam Dossier” è una web application per catalogare e gestire tutte le dighe utilizzate da ENEL in Italia. È una delle tante applicazioni all’interno della Enel Platform.',
-      bullets: [
-        'Sviluppo di una SPA responsive con Angular 14 e SCSS.',
-        'Integrazione e miglioramento dei componenti dell’Enel Design System.',
-        'Implementazione di nuovi componenti Angular a partire da mockup Adobe XD.',
-        'Conformità all’accessibilità web WCAG 2.1.',
-        'Unit testing con Karma e Jasmine.',
-        'Lavoro in contesto agile (scrum), con il supporto della suite Atlassian.',
-      ],
-    },
-    {
-      kind: 'education',
+      kind: 'mainSection',
       sheet: 2,
       column: 'main',
       heading: 'Formazione',
-      // OWNER: the official Italian name of the degree — please confirm.
-      // "Bachelor of Information and Automation Engineering" rendered as the
-      // most likely Politecnico di Bari wording.
-      qualification: 'Laurea triennale in Ingegneria Informatica e dell’Automazione',
-      institution: 'Politecnico di Bari, Bari, Italia',
-      period: '2014.08 - 2018.10',
-      details: [
-        'Voto: **110/110** | Livello EQF: **6**',
-        // Thesis title is already Italian in the source — left verbatim.
-        'Tesi sperimentale: **Analisi e Miglioramento delle Prestazioni di Processi Produttivi Industriali mediante Reti di Petri, il caso Dream Project**.',
+      groups: [
+        {
+          // OWNER: the official Italian name of the degree — please confirm.
+          // "Bachelor of Information and Automation Engineering" rendered as the
+          // most likely Politecnico di Bari wording.
+          title: 'Laurea triennale in Ingegneria Informatica e dell’Automazione',
+          meta: ['Politecnico di Bari, Bari, Italia'],
+          period: '2014.08 - 2018.10',
+          // The grade line is body prose, not `meta`: `meta` renders plain
+          // text in the display face, so `**110/110**` would print its
+          // asterisks. See ticket 16.
+          summary: [
+            'Voto: **110/110** | Livello EQF: **6**',
+            // Thesis title is already Italian in the source — left verbatim.
+            'Tesi sperimentale: **Analisi e Miglioramento delle Prestazioni di Processi Produttivi Industriali mediante Reti di Petri, il caso Dream Project**.',
+          ],
+        },
+        {
+          // OWNER: "Diploma di Maturità Scientifica" assumes the Liceo
+          // Scientifico track; "Diploma di scuola secondaria superiore" is the
+          // neutral form.
+          title: 'Diploma di Maturità Scientifica',
+          meta: ['Liceo Scientifico Amaldi, Bitetto, Italia'],
+          period: '2009.09 - 2014.07',
+          summary: ['Voto: **100/100** | Livello EQF: **4**'],
+        },
       ],
-    },
-    {
-      kind: 'education',
-      sheet: 2,
-      column: 'main',
-      // OWNER: "Diploma di Maturità Scientifica" assumes the Liceo
-      // Scientifico track; "Diploma di scuola secondaria superiore" is the
-      // neutral form.
-      qualification: 'Diploma di Maturità Scientifica',
-      institution: 'Liceo Scientifico Amaldi, Bitetto, Italia',
-      period: '2009.09 - 2014.07',
-      details: ['Voto: **100/100** | Livello EQF: **4**'],
     },
   ],
 };

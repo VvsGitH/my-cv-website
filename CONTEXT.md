@@ -17,8 +17,16 @@ The wider right column of a Sheet — holds the header (name, title, contacts), 
 _Avoid_: content column, right column
 
 **Block**:
-An individually placeable unit of CV content (e.g. one Experience entry, the Languages section). Each Block is assigned to a Sheet and a column via Explicit Paging.
-_Avoid_: section (a Block may be part of a section), item
+An individually placeable unit of CV content — one titled section of the CV, or as much of one as fits in a single column of a single Sheet. Each Block is assigned to a Sheet and a column via Explicit Paging.
+_Avoid_: section (a Block may be only part of a section), item
+
+**Group**:
+A titled sub-unit of a Block — one job, one project, one qualification, one cluster of skills.
+_Avoid_: entry, record, item
+
+**Continuation**:
+A Block or Group that resumes one interrupted by a Sheet boundary. It repeats the interrupted heading rather than restating it, and never introduces new material.
+_Avoid_: followup, overflow, reflow (reserved for what Explicit Paging refuses to do)
 
 **Explicit Paging**:
 The rule that every Block declares which Sheet and which column (Aside/Main) it belongs to, in the content itself — as opposed to letting content flow across Sheets automatically.

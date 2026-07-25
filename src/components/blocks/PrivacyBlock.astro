@@ -10,7 +10,7 @@ interface Props {
 const { block } = Astro.props;
 ---
 
-{block.heading && <SectionHeading text={block.heading} />}
+<SectionHeading text={block.heading} />
 <p class="statement">
   <Rich text={block.statement} />
 </p>

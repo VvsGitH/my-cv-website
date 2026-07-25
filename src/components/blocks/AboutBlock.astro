@@ -10,7 +10,7 @@ interface Props {
 const { block } = Astro.props;
 ---
 
-{block.heading && <SectionHeading text={block.heading} />}
+<SectionHeading text={block.heading} />
 {
   block.paragraphs.map((paragraph) => (
     <p class="about">

@@ -2,7 +2,7 @@
 
 Status: ready-for-agent
 
-The reference design is the existing CV (`docs/assets/CV_page1.png`, `CV_page2.png`, and the source `docs/assets/CV_Vito_Paparella_Santorsola_2026_06.pdf`) and must be reproduced pixel-perfect. See `CONTEXT.md` for the ubiquitous language (Sheet, Aside, Main, Block, Paper Mode, Reading Mode, Drawer, Toolbar, Locale) and `docs/adr/` for the load-bearing decisions. Background research: `docs/research/pdf-web-stack.md`.
+The reference design is the existing CV (`docs/assets/CV_page1.png`, `CV_page2.png`, and the source `docs/assets/CV_Vito_Paparella_Santorsola_2026_06.pdf`) and must be reproduced pixel-perfect — **except for spacing and body leading, which ticket 17 will deliberately regularise**. The reference was hand-set in Canva and its gaps are irregular; from ticket 17 onward they are to follow a 42/28/14/7px scale with one documented exception, so on those two axes the scale becomes authoritative and the reference does not. That ticket has not landed yet. Everything else — geometry, colour, faces, display type sizes — still matches the reference exactly. See `CONTEXT.md` for the ubiquitous language (Sheet, Aside, Main, Block, Group, Continuation, Explicit Paging, Paper Mode, Reading Mode, Drawer, Toolbar, Chrome, Locale) and `docs/adr/` for the load-bearing decisions. Background research: `docs/research/pdf-web-stack.md`.
 
 ## Problem Statement
 
@@ -76,7 +76,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 | `--color-main-bg` | `#ffffff` | Main column / Sheet base |
 | `--color-dark-bg` | `#1b2432` | Background behind Sheets in dark theme only |
 
-- Type scale (from the PDF): name ~28pt · section headings ~17pt · sub-headings ~10pt · body ~8pt.
+- Type scale (from the PDF): name ~28pt · section headings ~17pt · sub-headings ~10pt · body ~8pt. Ticket 17 will re-set the body sizes and leading as a designed scale rather than a transcription; once it lands, the display sizes above still come from the PDF and the body sizes no longer do. Until then this line describes the shipped state.
 - Fonts: **Garet** (Heavy → name/headings, Book → lighter display), **Now**, **Lato** (body), **Primera Signature** (script, signature only). Source files in `docs/assets/fonts/` (`Garet-*` has woff2; `Lato-*`/`PrimeraSignature-*` are ttf-only, `Now*` is otf-only → generate woff2). Match exact weight usage against the screenshots.
 - Colored backgrounds (Aside cream, photo disc, proficiency bars) must survive into the PDF: `printBackground: true` + `-webkit-print-color-adjust: exact` / `print-color-adjust: exact`.
 

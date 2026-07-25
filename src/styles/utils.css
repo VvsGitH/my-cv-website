@@ -1,0 +1,18 @@
+/* Announced but never shown — a Continuation's repeated heading (ADR-0005).
+    `position: absolute` is the load-bearing part: it takes the heading out
+    of flow, so a heading that exists only for the outline contributes no
+    height to the column and cannot push content off the Sheet. The clip and
+    the 1px box keep it off the page and out of the PDF while leaving it in
+    the accessibility tree — `display: none` and `visibility: hidden` would
+    both remove it from there too, which is the one thing it is for. */
+.is-sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}

@@ -9,6 +9,7 @@
 @import './reset.css' layer(reset);
 @import './fonts.css' layer(base);
 @import './tokens.css' layer(base);
+@import './utils.css' layer(base);
 
 /* Real A4 geometry for print/PDF capture (Playwright's page.pdf() reads
    this via preferCSSPageSize). Not layered: it isn't a selector-based rule

@@ -11,3 +11,4 @@ Each content Block declares which Sheet (1 or 2) and which column (Aside/Main) i
 - Adding a lot of content requires manually rebalancing Blocks across the two Sheets.
 - Each Locale carries its own page/column tags (Italian text runs ~10–15% longer, so a Block that fits on Sheet 1 in English may need reassigning in Italian).
 - The content schema encodes `sheet` and `column`, validated at build by the TypeScript compiler.
+- **Refined by ADR-0005.** The rule above is unchanged — every Block still declares its `sheet` and `column` — but the unit it applies to is no longer "one entry". A Block is now a whole section, or as much of one as fits in a column, with the remainder resuming in an explicit Continuation.

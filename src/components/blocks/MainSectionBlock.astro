@@ -1,0 +1,70 @@
+---
+import type { MainSectionBlock } from '../../content/types';
+import SectionHeading from '../primitives/SectionHeading.astro';
+import GroupTitle from '../primitives/GroupTitle.astro';
+import GroupMeta from '../primitives/GroupMeta.astro';
+import Rich from '../primitives/Rich.astro';
+import Bullets from '../primitives/Bullets.astro';
+
+/**
+ * One Main section — Experience, Selected Projects, Education — as one
+ * `<article>`, one `<h2>` and n `<section>` Groups (ADR-0005). The three read
+ * identically in the reference, so they render through one component rather
+ * than three near-copies.
+ */
+interface Props {
+  block: MainSectionBlock;
+}
+
+const { block } = Astro.props;
+---
+
+<SectionHeading text={block.heading} srOnly={block.continues} />
+{
+  block.groups.map((group) => (
+    <section class="group">
+      <GroupTitle text={group.title} srOnly={group.continues} />
+      {/* A Continuation resumes mid-Group, so it never repeats the
+          organisation or the period — the union makes them unavailable. */}
+      {!group.continues && <GroupMeta lines={group.meta} period={group.period} />}
+      {group.summary && (
+        <div class="summary">
+          {group.summary.map((paragraph) => (
+            <p>
+              <Rich text={paragraph} />
+            </p>
+          ))}
+        </div>
+      )}
+      {group.bullets && <Bullets items={group.bullets} />}
+    </section>
+  ))
+}
+
+<style>
+  @layer components {
+    .summary {
+      margin-block-start: 0.52rem;
+      line-height: 1.417;
+      color: var(--color-text);
+    }
+
+    /* Carries the gap `.main .block + .block` used to give between entries,
+       at the same value, now that the entries are Groups rather than sibling
+       Blocks. That rule still sits in `Sheet.astro` and is now dead —
+       measured, not assumed: neutralising it leaves Main's slack unchanged
+       on both Sheets. Ticket 17 deletes it and retunes this to the 14px step;
+       until then the same number lives in two files. */
+    .group + .group {
+      margin-block-start: 0.9rem;
+    }
+
+    /* `.section-heading` comes from the SectionHeading component, so it
+       carries a different scope hash and has to be matched globally.
+       `:not(.is-sr-only)` because a Continuation's heading is out of flow —
+       a heading nobody sees must not push the resumed content down. */
+    :global(.section-heading:not(.is-sr-only)) + .group {
+      margin-block-start: 1.19rem;
+    }
+  }
+</style>

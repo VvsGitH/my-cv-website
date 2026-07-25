@@ -1,7 +1,8 @@
 ---
 /**
- * The line(s) under an entry's title — employer / institution on the left,
- * the period right-aligned and muted, both in the display face.
+ * The line(s) under a Group's title — employer / institution on the left,
+ * the period right-aligned and muted, both in the display face. Only a Group
+ * that opens carries this; a Continuation never repeats it.
  */
 interface Props {
   lines: string[];
@@ -11,14 +12,14 @@ interface Props {
 const { lines, period } = Astro.props;
 ---
 
-<div class="meta">
+<div class="group-meta">
   <div class="lines">{lines.map((line) => <p>{line}</p>)}</div>
   <p class="period">{period}</p>
 </div>
 
 <style>
   @layer components {
-    .meta {
+    .group-meta {
       display: flex;
       justify-content: space-between;
       align-items: start;

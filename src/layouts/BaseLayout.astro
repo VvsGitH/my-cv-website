@@ -1,4 +1,6 @@
 ---
+import '../styles/fonts.css';
+
 interface Props {
   lang: string;
   title?: string;
@@ -20,3 +22,17 @@ const { lang, title = 'CV — Vito Paparella Santorsola' } = Astro.props;
     </main>
   </body>
 </html>
+
+<style>
+  /* :global() is required — content passed via <slot /> isn't scoped to
+     this component's own styles. */
+  :global(main h1) {
+    font-family: var(--font-heading);
+    font-weight: var(--font-weight-heading);
+  }
+
+  :global(main p) {
+    font-family: var(--font-body);
+    font-weight: var(--font-weight-body);
+  }
+</style>

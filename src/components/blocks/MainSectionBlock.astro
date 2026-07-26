@@ -62,5 +62,13 @@ const { block } = Astro.props;
     :global(.section-heading:not(.is-sr-only)) + .group {
       margin-block-start: var(--space-m);
     }
+
+    /* In reading mode there's only one long page. The group should keep the default spacing with
+         the elements above, event if they are from a different sheet */
+    @media screen and (width < 48rem) {
+      .group:first-of-type {
+        margin-block-start: var(--space-m);
+      }
+    }
   }
 </style>

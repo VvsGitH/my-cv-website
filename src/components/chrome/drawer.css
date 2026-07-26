@@ -33,8 +33,12 @@
   .drawer {
     /* A dialog is centred by its own `margin: auto` and capped by its default
        max-width/max-height; a Drawer is pinned to the inline start, full
-       height, and as wide as a phone can spare. */
-    width: min(20rem, 85vw);
+       height, and as wide as a phone can spare.
+
+       Changed from min(20rem, 85vw) to max() post-ticket 06 to ensure the
+       Drawer takes up 85vw on wider phones while maintaining 20rem minimum on
+       very narrow ones. See ADR-0006. */
+    width: max(20rem, 85vw);
     max-width: none;
     height: 100%;
     max-height: none;

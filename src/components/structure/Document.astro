@@ -45,22 +45,14 @@ const { content } = Astro.props;
       }
     }
 
-    /* The width one Sheet may occupy; Sheet.astro turns it into a scale.
-       Declared per tier and only under `screen`, so print never sets it and
-       the Sheet stays at a scale of 1. `100vw` over a container query, and the
-       scrollbar it ignores: ticket 06, "Scaling". */
-    @media screen and (width >= 48rem) {
-      .sheets {
-        --sheet-fit-width: calc(100vw - 2 * var(--sheets-pad));
-      }
-    }
-
     /* Wide: two Sheets side by side, sharing the row with the gap between
-       them — the grid of pages. */
-    @media screen and (width >= 80rem) {
-      .sheets {
-        --sheet-fit-width: calc((100vw - 2 * var(--sheets-pad) - var(--sheets-gap)) / 2);
+       them — the grid of pages.
 
+       Changed from ticket 06's 80rem to 101rem (1616px) to prevent layout
+       overflow at 1280px. The dynamic --sheet-fit-width scaling was removed
+       in favor of fixed A4 dimensions; see ADR-0006. */
+    @media screen and (width >= 101rem) {
+      .sheets {
         grid-template-columns: repeat(2, max-content);
       }
     }
@@ -75,8 +67,9 @@ const { content } = Astro.props;
     @media screen and (width < 48rem) {
       .sheets {
         grid-template-columns: minmax(0, 1fr);
-        gap: var(--space-xl);
+        gap: 0;
         max-width: 34rem;
+        min-width: 23rem;
         margin-inline: auto;
         padding: var(--space-xl) var(--space-l);
         background-color: var(--color-main-bg);

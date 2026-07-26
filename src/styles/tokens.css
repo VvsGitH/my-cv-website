@@ -129,12 +129,13 @@
 @media screen and (width < 48rem) {
   :root {
     --font-size-name: 1.75rem;
-    --font-size-subtitle: 0.9375rem;
-    --font-size-subheading: 1.0625rem;
+    --font-size-subtitle: 1rem;
+    --font-size-heading: 1.25rem;
+    --font-size-subheading: 1rem;
     --font-size-meta: 0.875rem;
-    --font-size-body: 1rem;
-    --font-size-skill: 1rem;
-    --font-size-level: 0.875rem;
+    --font-size-body: 0.875rem;
+    --font-size-skill: 0.875rem;
+    --font-size-level: 0.75rem;
     --prose-leading: 1.55;
     --prose-align: start;
 

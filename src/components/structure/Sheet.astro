@@ -48,22 +48,17 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
     .sheet-wrapper {
       /* Paper is 1:1, and print never leaves this branch. A literal 1 on
          purpose, not the computed one below — ticket 06, "Print parity was
-         measured". */
+         measured".
+
+         Dynamic scaling via tan(atan2(a, b)) was removed post-ticket 06; see
+         ADR-0006. Sheets now stay at 210mm × 297mm in all screen modes, with
+         layout relying on breakpoints rather than responsive scaling. */
       --sheet-scale: 1;
 
       /* Reserves the visually scaled footprint in normal layout flow, since
          `transform: scale()` on .sheet doesn't affect its layout box. */
       width: calc(210mm * var(--sheet-scale));
       height: calc(297mm * var(--sheet-scale));
-    }
-
-    /* Screen only: shrink the Sheet to the width Document.astro offers it.
-       `tan(atan2(a, b))` is how CSS divides one length by another — calc()
-       only divides by a number. On the `min(1, …)` cap, see ticket 06. */
-    @media screen and (width >= 48rem) {
-      .sheet-wrapper {
-        --sheet-scale: min(1, tan(atan2(var(--sheet-fit-width, 210mm), 210mm)));
-      }
     }
 
     .sheet {
@@ -160,15 +155,8 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
       }
 
       .aside > :global(.block--photo) {
-        order: -1;
         justify-self: center;
-      }
-
-      /* `display: contents` keeps the landmark even with every child hidden,
-         so the Aside carrying no portrait goes altogether. On the attribute
-         rather than `:has(> .block--photo)`: ticket 06. */
-      .aside:not([data-carries-portrait]) {
-        display: none;
+        margin-block-end: var(--space-xl);
       }
 
       .main {
@@ -178,6 +166,12 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
            column off-centre. */
         grid-area: auto;
         padding-block-start: 0;
+      }
+
+      /* In reading mode there's only one long page. The heading should keep the default spacing with
+         the elements above, event if they are from a different sheet */
+      .main :global(.block:first-child > .section-heading) {
+        margin-block-start: var(--space-xl);
       }
 
       /* --main-first-heading-gap exists to align Main's first heading with the

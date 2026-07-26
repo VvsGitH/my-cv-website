@@ -2,10 +2,9 @@
 import Rich from './Rich.astro';
 
 /**
- * A bulleted list. The owning Block tunes it through `--bullet-gap` and
- * `--bullet-leading`, and by setting a font on the wrapper — the reference
- * sets its Aside lists looser and in the display face, but the marker,
- * indent and hanging alignment are the same everywhere.
+ * A bulleted list. The owning Block tunes the gap above it through
+ * `--bullet-gap`and sets its own font on the wrapper; the marker, 
+ * indent, hanging alignment and leading are the same everywhere.
  */
 interface Props {
   items: string[];
@@ -27,11 +26,9 @@ const { items } = Astro.props;
 <style>
   @layer components {
     .bullets {
-      margin-block-start: var(--bullet-gap, 0.125rem);
+      margin-block-start: var(--bullet-gap, var(--space-s));
       padding-inline-start: 0.22rem;
-      /* Experience sets its bullets looser than Projects does in the
-         reference; the owning Block picks via --bullet-leading. */
-      line-height: var(--bullet-leading, 1.417);
+      line-height: var(--prose-leading);
       color: var(--color-text);
     }
 

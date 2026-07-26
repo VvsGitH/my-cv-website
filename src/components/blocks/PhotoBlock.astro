@@ -24,8 +24,9 @@ const { block } = Astro.props;
 <style>
   @layer components {
     .photo {
-      /* 176.4px disc, centred in the Aside panel. */
-      width: 11.025rem;
+      /* Centred in the Aside panel. Its height is one of the four inputs to
+         --main-first-heading-gap; see tokens.css. */
+      width: var(--photo-size);
       aspect-ratio: 1;
       margin-inline: auto;
       border-radius: 50%;

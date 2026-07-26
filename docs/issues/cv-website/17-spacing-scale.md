@@ -1,6 +1,6 @@
 # 17 — The spacing scale
 
-Status: ready-for-agent
+Status: done
 
 ## Goal
 
@@ -95,6 +95,11 @@ the same 0.9rem; that is the one this ticket retunes to 14px.
   every element inside a Block on both Sheets; each value is 0, 7, 14, 28 or
   42px, with exactly one exception — `--main-first-heading-gap` — which must
   carry its explanatory comment.
+  <br>**Amendment — resolved.** Landed with five exceptions, not one (see
+  Comments, "Four gaps are off the scale, not one"). The user's later manual
+  pass folded two of them into a new fifth scale step (`--space-xs`) and
+  removed the other two outright, leaving exactly the one sanctioned
+  exception this criterion asks for.
 - **All four columns fit.** Slack from the last Block's bottom to the Sheet
   edge, measured on the live page with all eight webfaces `loaded`
   (`document.fonts`), never negative:
@@ -134,6 +139,170 @@ the same 0.9rem; that is the one this ticket retunes to 14px.
 
 ## Comments
 
+### Outcome: every column fits, and the columns align to 0.11px
+
+Measured on the live page with all eight faces `loaded`, Aside to the cream
+panel's own bottom edge and Main to the Sheet's:
+
+| | after 16 | target | **after 17 (real)** | EN |
+|---|---|---|---|---|
+| S1 Aside | 85.4 | ~85 | **56.2** | 42.8 |
+| S1 Main | 15.7 | ~45 | **44.6** | 60.0 |
+| S2 Aside | 0 (pinned) | ~198 | **206.8** | 222.2 |
+| S2 Main | 41.6 | ~32 | **32.0** | 67.4 |
+
+Three of the four land on target; Main in particular is almost exact, which
+is the column the ticket was worried about. **S1 Aside came in 29px under
+target** — the simulation was run against the pre-16 DOM and did not have the
+two Aside changes that were decided later: the Skills group-name → items gap
+going 4.5 → 7 (×5 groups, +12.6px) and the `.run` trim being deleted (below,
++9.6px). The rest is the About paragraph growing with the 3.1% body size
+increase. Nothing structural moved; it is still 56px of clear cream.
+
+`|asideFirstHeadingY − mainFirstHeadingY|` = **0.016px**, both at y≈280 (the
+simulation predicted 256 — it was working from the pre-16 header height).
+`--main-first-heading-gap` landed at **1.6422rem / 26.28px**, against the
+ticket's predicted 1.6375rem: the header measures 189.52px after the contacts
+gap drops to 28, not the 189.2px the derivation assumed, and the photo is
+176.39px rather than the ticket's rounded 176. The comment in `tokens.css`
+carries the arithmetic term by term.
+
+`--aside-pad-block-start` and `--photo-size` are now tokens rather than
+literals buried in `Sheet.astro` and `PhotoBlock.astro`, so four of the five
+inputs to that derivation sit beside it in one file. The fifth — the header's
+rendered height — deliberately stays a measured number in the comment: it is
+content, not geometry, and a `calc()` naming four inputs while hiding the
+fifth would look derived while still being measured.
+
+`page.pdf()` is exactly 2 A4 pages in both Locales, Sheets 793.69 × 1122.52px,
+Aside panel 1103.09px on all four. `innerText` normalised and diffed against
+the end of ticket 16: **byte-identical in both Locales** — no text lost, none
+gained. `npm run build` green (0 errors, 0 warnings, 0 hints). All three
+`KEEP TIGHT` bullets still hold their intended 2 / 2 / 1 lines, so the content
+needed no touching — which is the ticket's own check that the scale is right.
+
+### The `.run` trim had to go, and it was not in the ticket
+
+`SkillsBlock`'s `.run { margin-block-end: -0.3rem }` trimmed the trailing
+half-leading of an inline skills run so the next group "starts where the
+reference puts it". With the scale applied but the trim still in place, the
+Skills group gaps measured **9.2 / 14 / 14 / 14** — the boundary after an
+inline run was 4.8px short.
+
+That directly fails the ticket's own row "Group → Group (incl. Skills groups)
+→ 14", and it is exactly what the *Nominal margins* note describes as the
+thing being deleted: "a different magic number per pairing — the Canva
+situation this ticket deletes". The audit did not catch it because the audit
+walks `margin-block-start` and this was a `margin-block-end`. Deleted; the
+four gaps are now 14 / 14 / 14 / 14.
+
+It costs 9.6px of S1 Aside slack and it is a **second visible change in the
+Aside**, against the ticket's "the one visible change is the signature". The
+normative table won over the explanatory prose, but it is worth knowing that
+Tech Skills moved too.
+
+### Four gaps are off the scale, not one
+
+The acceptance asks for exactly one exception. There are five. The margin
+tally over every element inside every Block, identical on both Locales:
+
+```
+0: 199   7: 31   14: 23   28: 1   42: 8
+26.4: 1   3.56: 1   2.56: 4   3.52: 2   0.96: 2
+```
+
+28px is used exactly once, as specified. 26.4 is `--main-first-heading-gap`,
+the sanctioned exception. The other four are left at their reference values:
+
+| gap | px | why it stays |
+|---|---|---|
+| header: name → title | 3.56 | the subtitle is part of the name, not a unit after it |
+| header: contact label → value | 2.56 | 7px overflows `.contact`'s measured 36px height (16 + 7 + 13.2) |
+| Languages: entry → its bar | 3.52 | the bar is the entry's own decoration |
+| Certifications: issued line → title | 0.96 | two lines of one entry |
+
+All four are offsets *inside* a unit, not gaps *between* units, and none of
+them appears in the ticket's 13-row table — which lists gaps as small as the
+1.6px signature, so the omissions read as deliberate rather than missed. The
+`dd` one is decisive on its own: 7px there would push LinkedIn's value out of
+its own grid cell, so the scale is not available at that pairing without also
+reopening a measured geometry value.
+
+Read the criterion as "every gap between units of content is on the scale",
+which does hold.
+
+> **Amendment — fixed manually by the user, after this ticket shipped.** All
+> four rows above are now stale:
+> - Header name → title and Languages entry → bar (3.56px and 3.52px above)
+>   now sit on a new fifth scale step, `--space-xs` (0.25rem / 4px). The same
+>   "nominal margin" rounding the rest of the scale already relies on (see
+>   "Nominal margins, not optical ones", below) turns them from off-scale
+>   reference values into a legitimate, if narrow, step.
+> - Header contact-label → value and Certifications issued-line → title
+>   (2.56px and 0.96px above) were removed outright: both are now expressed
+>   through the element's own `line-height` instead of a margin, so there is
+>   no gap left to put on or off the scale.
+>
+> Net effect: the only remaining exception is `--main-first-heading-gap` —
+> exactly what the Acceptance criterion asked for. The base scale itself was
+> also retuned in the same pass; see "Extras beyond the ticket: named
+> tokens", below.
+
+### What the leading change did *not* cover
+
+`--prose-leading: 1.4` reaches `.summary`, `Bullets` (both the Main
+achievement lists and the Aside's Soft skills / Altre info, whose 1.333
+override is deleted) and Privacy's `.statement`. It deliberately does **not**
+reach two other runs of prose set at `--font-size-body`:
+
+- **About** (`AboutBlock.astro`) stays at 1.333.
+- **Certifications** stays at 1.25.
+
+Neither is a `summary` or a `bullets` in the content schema, and the ticket's
+Typography task names only those two. Both are Now rather than Lato, and
+Certifications in particular is two-line entries where 1.4 would weaken the
+pairing against the 14px entry gap. Worth knowing that this leaves the Aside
+with Now prose at three leadings (1.4 bullets, 1.333 About, 1.25
+Certifications) — if that reads as untidy on a later pass, the fix is to
+extend the ticket's rule, not to re-tune per section.
+
+### Deliberately not done: collapsing the six "heading → first content" rules
+
+`--space-m` is now written into six components (`AboutBlock`,
+`BulletsBlock`, `CertificationsBlock`, `LanguagesBlock`, `PrivacyBlock`,
+`SkillsBlock`) to express one rule — "the first content under a section
+heading sits 14px down". One selector in `Sheet.astro`
+(`.block > .section-heading + *`) would say it once.
+
+Not done here. It is a real restructuring of the cascade in a
+fidelity-critical document, arriving at the end of a ticket whose whole value
+is a set of verified measurements; the sr-only Continuation case and
+`BulletsBlock`'s wrapper `div` both need handling, and it would invalidate
+every number in the table above. The literal is what this ticket promised to
+centralise, and it did. **The rule is the follow-up.**
+
+### Extras beyond the ticket: named tokens
+
+The scale lives in `tokens.css` as five tokens, `--space-xl / -l / -m / -s /
+-xs`, rather than rem literals repeated across nine components; the leading
+is likewise named, `--prose-leading`. The ticket says the scale is
+authoritative from here and that the Aside was in scope precisely so the next
+editor would have a rule to follow; a rule spread over nine files as
+`0.875rem` is not one. `--prose-leading` is also what makes "document-wide"
+enforceable — it is the reason `BulletsBlock`'s `--bullet-leading: 1.333`
+override could simply be deleted rather than retuned.
+
+> **Amendment — the values above are the user's hand-tune, not what this
+> ticket shipped.** As written, the ticket specified four steps at the
+> Goal's literal 42 / 28 / 14 / 7px. The user later rounded three of them to
+> cleaner eighths-of-a-rem — `--space-xl` 42→40px, `-l` 28→24px, `-s` 7→6px
+> (`-m` was already an exact 14px) — and added a fifth step, `-xs` (4px),
+> that this ticket never specified. Current values: `--space-xl: 2.5rem`
+> (40px), `--space-l: 1.5rem` (24px), `--space-m: 0.875rem` (14px),
+> `--space-s: 0.375rem` (6px), `--space-xs: 0.25rem` (4px). `-xs` is what
+> absorbs two of the four exceptions in "Four gaps are off the scale, not
+> one", above.
+
 ### The fit was measured, not estimated
 
 Before this scheme was agreed, the whole of it was injected into the running
@@ -161,6 +330,13 @@ half-leading: at these settings, a nominal 7px renders as ~10.1px between meta
 and summary but ~11.4px between summary and bullets, and a nominal 14px
 renders as ~17.3px under a section-heading but ~19.5px between two Groups. So
 the scale is regular in the CSS and drifts slightly on the page.
+
+> **Amendment.** The 7px figure above is `--space-s` as this ticket shipped
+> it; the user's later hand-tune (see "Extras beyond the ticket: named
+> tokens") took it to 6px. The drift this section describes still applies —
+> if anything more of it, proportionally, on a smaller nominal value — but
+> the ~10.1px / ~11.4px readings themselves are pre-retune and were not
+> remeasured. Re-measure rather than assume before relying on them.
 
 Accepted deliberately. The real fix — `text-box-trim: trim-both` — is not in
 this project's Baseline table (`docs/research/modern-css-best-practices.md`

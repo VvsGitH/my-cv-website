@@ -41,14 +41,14 @@ const { block } = Astro.props;
 <style>
   @layer components {
     .certifications {
-      margin-block-start: 1.1rem;
+      margin-block-start: var(--space-m);
       font-family: var(--font-display);
       font-weight: var(--font-weight-display);
       line-height: 1.25;
     }
 
     li + li {
-      margin-block-start: 0.86rem;
+      margin-block-start: var(--space-m);
     }
 
     .issued {
@@ -56,7 +56,6 @@ const { block } = Astro.props;
     }
 
     .title {
-      margin-block-start: 0.06rem;
       color: var(--color-heading);
     }
 

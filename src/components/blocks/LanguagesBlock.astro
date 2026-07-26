@@ -28,7 +28,7 @@ const { block } = Astro.props;
 <style>
   @layer components {
     .languages {
-      margin-block-start: 0.9rem;
+      margin-block-start: var(--space-m);
       color: var(--color-heading);
     }
 
@@ -40,7 +40,7 @@ const { block } = Astro.props;
     }
 
     .language + .language {
-      margin-block-start: 0.71rem;
+      margin-block-start: var(--space-m);
     }
 
     dd {
@@ -55,7 +55,7 @@ const { block } = Astro.props;
       /* The reference draws a ~5px rule: the filled run in --color-muted
          over a pale-blue track. */
       height: 0.3125rem;
-      margin-block-start: 0.22rem;
+      margin-block-start: var(--space-xs);
       background-image: linear-gradient(
         to right,
         var(--color-muted) var(--fill),

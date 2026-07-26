@@ -17,11 +17,8 @@ const { block } = Astro.props;
 
 <style>
   @layer components {
-    /* Soft Skills and Other Info: the display face, set looser than the
-       achievement bullets under an Experience or Project entry. */
     .plain-list {
-      --bullet-gap: 0.97rem;
-      --bullet-leading: 1.333;
+      --bullet-gap: var(--space-m);
 
       font-family: var(--font-display);
       font-weight: var(--font-weight-display);

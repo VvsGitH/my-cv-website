@@ -52,7 +52,7 @@ const { block } = Astro.props;
     }
 
     .title {
-      margin-block-start: 0.2225rem;
+      margin-block-start: var(--space-xs);
       font-family: var(--font-subtitle);
       font-weight: var(--font-weight-subtitle);
       font-size: var(--font-size-subtitle);
@@ -60,11 +60,10 @@ const { block } = Astro.props;
       color: var(--color-heading);
     }
 
-    /* Three 145px columns; LinkedIn wraps onto the second row. */
     .contacts {
       display: grid;
       grid-template-columns: repeat(3, 9.0625rem);
-      margin-block-start: 1.8625rem;
+      margin-block-start: var(--space-l);
     }
 
     .contact {
@@ -81,9 +80,7 @@ const { block } = Astro.props;
 
     dd {
       margin-inline-start: 0;
-      /* 16px between the label and value baselines. */
-      margin-block-start: 0.16rem;
-      line-height: 1.2;
+      line-height: 1.5;
       color: var(--color-heading);
     }
 

@@ -68,10 +68,16 @@ const blocksIn = (column: Column) =>
       display: flex;
       flex-direction: column;
       /* The panel stops short of the page bottom, and its heading rules run
-         past the text column to the panel's own edge. */
+         past the text column to the panel's own edge.
+
+         A fixed height, not `fit-content`: the panel is Sheet geometry and
+         must be identical on both Sheets. Sheet 2's content ends well above
+         it — the empty cream below the signature is intended, and a panel
+         that shrank to fit would read as a rendering bug in the PDF. */
       height: var(--aside-height);
       break-inside: avoid;
-      padding-block-start: 2.3625rem;
+      /* One of the four inputs to --main-first-heading-gap; see tokens.css. */
+      padding-block-start: var(--aside-pad-block-start);
       padding-inline: var(--aside-pad-inline-start) var(--aside-pad-inline-end);
       background-color: var(--color-aside-bg);
     }
@@ -81,17 +87,15 @@ const blocksIn = (column: Column) =>
       padding-block-start: var(--main-inset-block-start);
     }
 
-    /* Gap above a new section. The reference hand-places these, so one value
-       can't hit every one exactly — see the ticket notes. */
-    .aside :global(.block > .section-heading) {
-      margin-block-start: 2.5rem;
-    }
-
+    /* Gap above a new section — one value for both columns. The reference
+       hand-places these (40px in the Aside, 85.6px in Main); ticket 17
+       replaced both with the scale's top step. */
+    .aside :global(.block > .section-heading),
     .main :global(.block > .section-heading) {
-      margin-block-start: 5.35rem;
+      margin-block-start: var(--space-xl);
     }
 
-    /* Needs the column prefix: the two rules above are scoped (Astro adds an
+    /* Needs the column prefix: the rule above is scoped (Astro adds an
        attribute to `.aside`/`.main`), so an unprefixed override would lose on
        specificity and the first section would gain a gap. */
     .aside :global(.block:first-child > .section-heading),
@@ -99,23 +103,15 @@ const blocksIn = (column: Column) =>
       margin-block-start: 0;
     }
 
-    /* Experience sits close under the header, unlike a section following
-       another section's entries. */
+    /* Main's first heading is aligned to the Aside's rather than spaced from
+       the header — the one gap off the scale, derived in tokens.css. */
     .main :global(.block--header + .block > .section-heading) {
-      margin-block-start: 1.545rem;
+      margin-block-start: var(--main-first-heading-gap);
     }
 
-    .main :global(.block + .block) {
-      margin-block-start: 0.9rem;
-    }
-
-    /* Privacy is anchored to the foot of the Aside. */
-    .aside :global(.block--privacy) {
-      margin-block-start: auto;
-    }
-
+    /* Aside only: the rules reach the panel edge, though the text column
+       stops short of it. */
     .aside :global(.block > .section-heading) {
-      /* Rules reach the panel edge; the text column stops short of it. */
       margin-inline-end: calc(-1 * var(--aside-pad-inline-end));
     }
   }

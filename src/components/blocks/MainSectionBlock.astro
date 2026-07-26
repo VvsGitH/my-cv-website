@@ -44,27 +44,23 @@ const { block } = Astro.props;
 <style>
   @layer components {
     .summary {
-      margin-block-start: 0.52rem;
-      line-height: 1.417;
+      margin-block-start: var(--space-s);
+      line-height: var(--prose-leading);
       color: var(--color-text);
     }
 
-    /* Carries the gap `.main .block + .block` used to give between entries,
-       at the same value, now that the entries are Groups rather than sibling
-       Blocks. That rule still sits in `Sheet.astro` and is now dead —
-       measured, not assumed: neutralising it leaves Main's slack unchanged
-       on both Sheets. Ticket 17 deletes it and retunes this to the 14px step;
-       until then the same number lives in two files. */
     .group + .group {
-      margin-block-start: 0.9rem;
+      margin-block-start: var(--space-m);
     }
 
-    /* `.section-heading` comes from the SectionHeading component, so it
-       carries a different scope hash and has to be matched globally.
-       `:not(.is-sr-only)` because a Continuation's heading is out of flow —
-       a heading nobody sees must not push the resumed content down. */
+    /* Same value, but it cannot merge into a single `.group` rule the way
+       `SkillsBlock` does: a Continuation's heading is `.is-sr-only` and so
+       out of flow, and the Group resuming under it must sit flush at the top
+       of the column.
+       `:global` because `.section-heading` comes from its own component and
+       carries a different scope hash. */
     :global(.section-heading:not(.is-sr-only)) + .group {
-      margin-block-start: 1.19rem;
+      margin-block-start: var(--space-m);
     }
   }
 </style>

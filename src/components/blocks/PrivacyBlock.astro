@@ -20,14 +20,14 @@ const { block } = Astro.props;
 <style>
   @layer components {
     .statement {
-      margin-block-start: 0.94rem;
-      line-height: 1.417;
+      margin-block-start: var(--space-m);
+      line-height: var(--prose-leading);
       text-align: justify;
       color: var(--color-text);
     }
 
     .place-date {
-      margin-block-start: 0.84rem;
+      margin-block-start: var(--space-m);
       font-family: var(--font-display);
       font-weight: var(--font-weight-display);
       text-align: end;
@@ -37,10 +37,11 @@ const { block } = Astro.props;
     /* Spec US29: an approximation in a script face, never a scan of the
        real signature. Self-hosted Primera Signature — see ticket 13. */
     .signature {
-      margin-block-start: 0.1rem;
+      margin-block-start: var(--space-s);
       font-family: var(--font-signature);
       font-weight: var(--font-weight-signature);
-      font-size: 1.6rem;
+      font-size: 2rem;
+      text-align: right;
       line-height: 1.6;
       color: var(--color-signature);
     }

@@ -39,8 +39,10 @@ const { block } = Astro.props;
 
 <style>
   @layer components {
+    /* Both the gap under the section heading and the gap between two Skills
+       groups — the scale gives them the same value, so one rule covers both. */
     .group {
-      margin-block-start: 0.875rem;
+      margin-block-start: var(--space-m);
     }
 
     .group-name {
@@ -53,7 +55,7 @@ const { block } = Astro.props;
 
     .run,
     .list {
-      margin-block-start: 0.28rem;
+      margin-block-start: var(--space-s);
       /* Tech Skills items are set a step smaller than the rest of the
          Aside prose in the reference. */
       font-size: var(--font-size-skill);
@@ -62,10 +64,6 @@ const { block } = Astro.props;
 
     .run {
       line-height: 2;
-      /* Generous leading matches the reference’s 18.96px pitch, but it
-         also pads the block; trim the trailing half-leading so the next
-         group starts where the reference puts it. */
-      margin-block-end: -0.3rem;
     }
 
     .list {

@@ -1,0 +1,19 @@
+# Astro (static) with a single Preact island
+
+The site is built with **Astro in static-output mode**, with exactly one **Preact island** for the interactive Toolbar (language, download, share, theme) and the mobile Drawer toggle. Astro prerenders everything to plain HTML with zero client JS by default — ideal for a content-light, fidelity-critical CV that must host cheaply on GitHub Pages — while the island keeps JSX only where interactivity actually earns it. Preact gives that same JSX authoring model on a runtime an order of magnitude smaller than React's, which is the right trade for one cluster of four controls.
+
+## Considered Options
+
+- **React 19** — this ADR's original decision, reversed by ticket 18 before a single line of island code existed. Nothing in the project reaches for the React ecosystem, and `@astrojs/preact` offers an identical authoring model at a fraction of the payload; `compat` is therefore left off, so the island is plain Preact rather than React-on-Preact.
+- **No UI framework at all** — an `.astro` `<script>` would ship 0 KB of runtime for what is ultimately two links and three toggles, and would be the strictest reading of the KISS principle. Rejected: the theme, Drawer and toast state reads better declared than toggled by hand, and the island's runtime is dwarfed by this page's self-hosted fonts, so the payload argument buys little.
+- **Vite + React (SPA)** — matches the repo name and gives a single plain-React source, but ships a full client-side app for what is fundamentally two static Sheets, and leaves the prerender-to-HTML wiring to us. Acceptable runner-up.
+- **Next.js `output: 'export'`** — works, but a lot of framework for a two-page CV; many features go unused.
+- **SolidJS / Angular** — no advantage here; Angular is the heaviest option.
+
+## Consequences
+
+- One component tree is the single source of truth rendered both to the live page and to the PDF-captured page.
+- Interactivity is confined to the island; the Sheets themselves ship no JS.
+- Astro's built-in i18n routing handles the two Locales.
+- `@preact/signals` arrives as a dependency of `@astrojs/preact`, but is pinned as a direct dependency rather than relied on transitively. The rule for when to reach for a signal instead of `useState` lives in `coding-standards.md`.
+- JSX is typed by `jsxImportSource: "preact"` and the project carries no `@types/react`, so React-shaped annotations (`React.ReactNode`, `React.MouseEvent`) will not compile.

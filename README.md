@@ -5,7 +5,7 @@ A single-purpose website that presents Vito Paparella Santorsola's CV as two A4 
 ## Tech stack
 
 - [Astro](https://astro.build/) — static site generation
-- [React](https://react.dev/) — interactive islands (e.g. the Toolbar)
+- [Preact](https://preactjs.com/) — the single interactive island (the Toolbar)
 - TypeScript
 
 ## Useful commands

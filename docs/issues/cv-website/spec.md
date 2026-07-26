@@ -48,7 +48,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 ## Implementation Decisions
 
 ### Stack
-- **Astro** (static output) + exactly one **React island** for the Toolbar and Drawer — see ADR-0003. One component tree is the single source of truth for both the live page and the PDF-captured page.
+- **Astro** (static output) + exactly one **Preact island** for the Toolbar and Drawer — see ADR-0003. One component tree is the single source of truth for both the live page and the PDF-captured page.
 - **Playwright** headless Chromium for the build-time PDF — see ADR-0001.
 - Deployed static to **GitHub Pages** via **GitHub Actions**, at the default `github.io` URL under base `/my-cv-website/`.
 
@@ -148,7 +148,7 @@ Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel
 4. `04-content-model.md` — shared schema + TypeScript content modules (IT + EN) with `sheet`/`column` tags.
 5. `05-cv-layout.md` — Sheet layout components (Aside/Main, header, all sections) in Paper Mode.
 6. `06-responsive.md` — three-tier responsive + Reading Mode + Drawer.
-7. `07-toolbar.md` — React island Toolbar (language, download, share, theme + persistence).
+7. `07-toolbar.md` — Preact island Toolbar (language, download, share, theme + persistence).
 8. `08-pdf-render.md` — Playwright build-time PDF script, per-Locale.
 9. `09-ci-deploy.md` — GitHub Actions build + PDF + Pages deploy.
 10. `10-seo-meta.md` — per-Locale meta, favicon, OG image.

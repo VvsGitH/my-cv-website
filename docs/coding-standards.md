@@ -1,9 +1,9 @@
 # Coding standards
 
 Prescriptive rules for this project. Each section links to the primary-source research it distills:
-[Astro](research/astro-coding-standards.md) · [React 19](research/react-19-best-practices.md) · [Modern CSS](research/modern-css-best-practices.md).
+[Astro](research/astro-coding-standards.md) · [Preact](research/preact-best-practices.md) · [Modern CSS](research/modern-css-best-practices.md).
 
-Versions in use: Astro 7.1.3, React 19.2.8, TypeScript, Node ≥22.12.
+Versions in use: Astro 7.1.3, Preact 10.29.7 (+ `@preact/signals` 2.10), TypeScript, Node ≥22.12.
 
 ## Foundational principles
 
@@ -24,7 +24,7 @@ Versions in use: Astro 7.1.3, React 19.2.8, TypeScript, Node ≥22.12.
 
 ## Astro
 
-- **Author in `.astro` by default.** `.astro` components ship zero client JS. Use React only where interactivity is genuinely required.
+- **Author in `.astro` by default.** `.astro` components ship zero client JS. Use Preact only where interactivity is genuinely required.
 - **Keep `output: 'static'`** (the default). No adapter. Never set `output: 'server'` for this project.
 - `src/pages/` is the only reserved directory — routes live there. Group the rest under `src/components/`, `src/layouts/`, `src/styles/` by convention. Local fonts and images go under `src/assets/`, matching Astro's own docs.
 - **Component tiers** (ADR-0004): `components/primitives/` — reusable, never autonomous; `components/blocks/` — the Blocks of `CONTEXT.md`, autonomous units of CV content, keeping the `Block` suffix; `components/structure/` — the Document → Sheet → Block spine; `components/chrome/` — everything that is not paper (Toolbar, Drawer). The cut is *autonomy on a Sheet*, not composition depth; deliberately not `atoms`/`molecules`/`organisms`.
@@ -34,36 +34,43 @@ Versions in use: Astro 7.1.3, React 19.2.8, TypeScript, Node ≥22.12.
 - **Content:** a single-page CV is one record, not a set — use a plain typed `.ts`/`.json` data file. Adopt content collections (Zod schema in `src/content.config.ts`) only if repeated, schema-validated lists appear.
 - Write well-formed, explicitly-closed markup — the Astro 7 Rust compiler errors on unclosed tags.
 
-## React islands
+## Preact islands
 
-React is a hydrated client island (Toolbar, Drawer), not the framework. See [decision table](research/react-19-best-practices.md#2-which-react-19-features-apply-to-this-projects-islands--decision-table).
+Preact is a hydrated client island (Toolbar, Drawer), not the framework — ADR-0003. See the [decision table](research/preact-best-practices.md#2-which-preact-10-apis-apply-to-this-projects-island--decision-table). `compat` is off, so import hooks from `preact/hooks` and treat the `preact/compat` surface as non-existent.
 
-**Do not use** (server/framework-only or no payoff here):
-- Server Components, Server Actions (`"use server"`), `prerender*` — no server exists.
-- Actions / `useActionState` / `useFormStatus` / `useOptimistic` — no async mutations to manage.
-- `use(Promise)` for data — no runtime fetching.
-- `useMemo` / `useCallback` by default — add only for a proven hot path or a `memo`'d child.
-
-**Do adopt** (React 19, client-safe):
-- `ref` as a plain prop — no `forwardRef`.
-- `<Context value=…>` as its own provider (not `.Provider`); prefer plain props over Context for two small islands.
-- Return cleanup functions from ref callbacks (block body, no implicit return).
+**Do not use** (compat-only, or no payoff here):
+- `forwardRef`, `createPortal`, `memo`, `PureComponent`, `Suspense`, `lazy`, `startTransition`, `useDeferredValue`, `useSyncExternalStore` — all `preact/compat`, unavailable here. `useId` and `toChildArray` **are** in core; use them freely.
+- `StrictMode` — in compat it is `Fragment` under another name. Preact has no double-invocation safety net in either mode, so effect idempotence is your job, not a dev-mode check's.
+- `useMemo` / `useCallback` by default — add only for a proven hot path or to stabilise a ref callback.
 
 **Rules (non-negotiable):**
-- Follow the Rules of Hooks: top level only, React functions only.
-- Derive during render; put action logic in event handlers. Use `useEffect` **only** to sync with an external system (`matchMedia`, `localStorage`, theme class) and always return the matching cleanup.
-- Reset state with `key`, not an Effect.
-- Keep the island's first render deterministic (no `Date.now()`/`Math.random()`/`window` in initial render) so hydration matches. Write Effects/ref callbacks safe to run twice (StrictMode).
-- List keys: stable and unique; never array index when order changes; never `Math.random()`.
-- Inputs: `value` requires `onChange`; never switch controlled ↔ uncontrolled.
-- Use `useId` for a11y attribute IDs, never for keys.
+- **Never accept `ref` as a component prop.** Preact 10 strips `ref` out of `props` in both `createElement` and the JSX runtime, so `function Drawer({ ref })` silently receives `undefined` — and `forwardRef` is compat-only. Put the `ref` on the DOM element inside the component that owns it, or pass a differently-named prop (`innerRef`).
+- **Keep the island's first render deterministic** — no `window`, `localStorage`, `matchMedia`, `Date.now()` or `Math.random()`, **including inside a module-level `signal()` initializer**, which also runs during prerender. A mismatch does not warn: Preact stops hydrating and re-renders silently unless `preact/debug` is loaded, which is why the integration runs with `devtools: true`.
+- Follow the Rules of Hooks: top level only, component functions only. **House rule** — preactjs.com has no Rules-of-Hooks page, but Preact's hook state is index-based, so the discipline applies for the same reason it does in React.
+- Derive during render; put action logic in event handlers. Use `useEffect`/`useSignalEffect` **only** to sync with an external system (`matchMedia`, `localStorage`, theme class) and always return the matching cleanup.
+- An inline ref callback that returns no cleanup is called **twice** per re-render (once with `null`). Return a cleanup, or make the callback stable.
+- `onChange` here is the **native** `change` event, not React's input-time synthetic one — use `onInput` for text-ish inputs.
+- Reset state with `key`, not an Effect. List keys: stable and unique; never array index when order changes.
+- `useId` for any id that crosses the SSR/hydration boundary (the Drawer's `aria-controls`), never for keys.
+- `class` and `className` both work — pick one and be consistent. Astro's `class:list` is `.astro`-only; inside a `.tsx` build the string in JS.
+
+**State** — signals are the island's one state API ([why](research/preact-best-practices.md#45-verdict-on-the-prescriptive-rule-signals-for-shared-usestate-for-local)):
+- `signal()` at module scope for state that more than one component reads (theme, Drawer open); `useSignal()`/`useComputed()` inside a component for state that lives and dies there. A module-level signal is shared by every instance of a component — the point for the former, a bug for the latter.
+- Assign a **new** value: a signal does not update when assigned a value equal to its current one, so mutating an object in place and re-assigning the same reference is a no-op.
+- A module-level `effect()` is created once at module scope, with its cleanup — never inside a component body. Signals are lazy outside the component tree: a `computed` nobody reads never recomputes.
+- Rendering a signal directly in JSX updates the text node without re-rendering the component; prefer it where it reads naturally.
+- This departs from Astro's documented answer for state shared *between* islands (Nano Stores). With a single island the question is moot, and signals ship with the integration anyway.
+
+**Hydration directive:** `client:idle` for the Toolbar, with the theme applied pre-paint by an `is:inline` script outside the island (Astro's own tutorial pattern). **Not** `client:media` — only the Drawer toggle is breakpoint-dependent, and the other four controls would never hydrate on desktop. **Not** `client:only` — the Toolbar would be absent from the static HTML and pop in.
 
 ## TypeScript
 
 - Extend `astro/tsconfigs/strict` (or `strictest`).
 - Gate the build: `"build": "astro check && astro build"`.
-- `@types/react`/`@types/react-dom` on the v19 line. `useRef(null)` requires an argument.
-- Type props with `interface`; children as `React.ReactNode`; events as `React.*Event<HTMLElement>`.
+- `jsx: "react-jsx"` + `jsxImportSource: "preact"` is a **mandatory override** — `astro/tsconfigs/base` sets `jsx: "preserve"` and no import source. Preact ships its own types; the project carries no `@types/react`.
+- `verbatimModuleSyntax` is on: type-only imports must be `import type`, or `astro check` fails.
+- Type props with `interface`; children as `ComponentChildren`; events as `TargetedMouseEvent<HTMLButtonElement>` & co., imported from `preact` (inline handlers infer their target).
+- `useRef<HTMLDialogElement>(null)` — unlike React 19 the argument is optional, but pass `null` for the null-check ergonomics.
 
 ## CSS
 

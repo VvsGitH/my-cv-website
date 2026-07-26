@@ -2,7 +2,7 @@
 import { resolve } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { defineConfig } from 'astro/config';
-import react from '@astrojs/react';
+import preact from '@astrojs/preact';
 import { FontaineTransform } from 'fontaine';
 
 const stylesDir = fileURLToPath(new URL('./src/styles/', import.meta.url));
@@ -12,7 +12,9 @@ export default defineConfig({
   // GitHub Pages serves the site under the repository name.
   base: '/my-cv-website/',
   output: 'static',
-  integrations: [react()],
+  // `devtools` injects `preact/debug` in dev only. Without it, a hydration
+  // mismatch stops hydrating and re-renders in silence — Preact logs nothing.
+  integrations: [preact({ devtools: true })],
   i18n: {
     locales: ['it', 'en'],
     defaultLocale: 'it',

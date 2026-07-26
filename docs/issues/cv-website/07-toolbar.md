@@ -1,10 +1,10 @@
-# 07 — Floating Toolbar (React island)
+# 07 — Floating Toolbar (Preact island)
 
 Status: ready-for-agent
 
 ## Goal
 
-The single React island: a bottom-right floating Toolbar with four actions, plus the Drawer toggle on mobile.
+The single Preact island: a bottom-right floating Toolbar with four actions, plus the Drawer toggle on mobile.
 
 ## Tasks
 

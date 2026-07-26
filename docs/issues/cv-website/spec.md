@@ -82,7 +82,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 
 ### Responsive — three tiers
 - **Wide (≥1280px): Paper Mode** — two Sheets side by side, with page padding/gap (the "grid of pages").
-- **Medium (768–1280px): Paper Mode** — Sheets stacked one per row, each scaled to available width, rigid A4.
+- **Medium (768–1280px): Paper Mode** — Sheets stacked one per row, each scaled to the available width, rigid A4. **Scaled down only**: A4 at 1:1 is the reference rendering and the Sheet is never enlarged past it, so above ~890px it simply sits centred at its true size. The owner confirmed this reading during ticket 06; enlarging is the browser's zoom to offer.
 - **Narrow (<768px): Reading Mode** — the same component reflows to single-column, normal-size reading view; Aside content moves into a left slide-in Drawer (hamburger toggle); Main is the primary scroll; a compact header sits at the top. A4 is dropped here.
 - Paper styles must be identical under `screen` and `print` media (or capture with `emulateMedia({ media: 'screen' })`) so the PDF equals the desktop rendering. Reading Mode styles must not affect Paper Mode/print output.
 

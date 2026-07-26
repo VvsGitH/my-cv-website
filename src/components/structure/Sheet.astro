@@ -21,13 +21,19 @@ interface Props {
 const { content, sheet } = Astro.props;
 const blocksIn = (column: Column) =>
   content.blocks.filter((block) => block.sheet === sheet && block.column === column);
+
+const asideBlocks = blocksIn('aside');
+// Reading Mode reads the Aside in the Drawer and keeps only the portrait in
+// the flow, so an Aside without one has nothing left to show and the styles
+// below drop it — an empty `complementary` is noise in the landmark outline.
+const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
 ---
 
 <div class="sheet-wrapper">
   <div class="sheet">
     <div class="columns">
-      <aside class="aside">
-        {blocksIn('aside').map((block) => <Block block={block} />)}
+      <aside class="aside" data-carries-portrait={carriesPortrait ? '' : undefined}>
+        {asideBlocks.map((block) => <Block block={block} />)}
       </aside>
       <div class="main">{blocksIn('main').map((block) => <Block block={block} />)}</div>
     </div>
@@ -40,17 +46,31 @@ const blocksIn = (column: Column) =>
      fight; unlayered styles would always win otherwise. */
   @layer components {
     .sheet-wrapper {
+      /* Paper is 1:1, and print never leaves this branch. A literal 1 on
+         purpose, not the computed one below — ticket 06, "Print parity was
+         measured". */
+      --sheet-scale: 1;
+
       /* Reserves the visually scaled footprint in normal layout flow, since
          `transform: scale()` on .sheet doesn't affect its layout box. */
-      width: calc(210mm * var(--sheet-scale, 1));
-      height: calc(297mm * var(--sheet-scale, 1));
+      width: calc(210mm * var(--sheet-scale));
+      height: calc(297mm * var(--sheet-scale));
+    }
+
+    /* Screen only: shrink the Sheet to the width Document.astro offers it.
+       `tan(atan2(a, b))` is how CSS divides one length by another — calc()
+       only divides by a number. On the `min(1, …)` cap, see ticket 06. */
+    @media screen and (width >= 48rem) {
+      .sheet-wrapper {
+        --sheet-scale: min(1, tan(atan2(var(--sheet-fit-width, 210mm), 210mm)));
+      }
     }
 
     .sheet {
       width: 210mm;
       height: 297mm;
       background: var(--color-main-bg);
-      transform: scale(var(--sheet-scale, 1));
+      transform: scale(var(--sheet-scale));
       transform-origin: top left;
     }
 
@@ -113,6 +133,59 @@ const blocksIn = (column: Column) =>
        stops short of it. */
     .aside :global(.block > .section-heading) {
       margin-inline-end: calc(-1 * var(--aside-pad-inline-end));
+    }
+
+    /* -----------------------------------------------------------------------
+       Reading Mode (CONTEXT.md), below 48rem: A4 is abandoned. Every box
+       between the reading column and the Blocks steps out of the flow, so the
+       Blocks of both Sheets become the items of Document.astro's single grid
+       — which is how "the same components reflow" rather than a second
+       rendering of the CV (ADR-0004 anticipated the A4 box being dismantled
+       here). `display: contents` also drops the panel, its inset, the column
+       gap and the A4 footprint in one move, with nothing left to unset.
+       ----------------------------------------------------------------------- */
+    @media screen and (width < 48rem) {
+      .sheet-wrapper,
+      .sheet,
+      .columns,
+      .aside {
+        display: contents;
+      }
+
+      /* The Aside's Blocks are read in the Drawer down here (chrome/Drawer).
+         The portrait is the exception: it stays in the flow and opens the
+         compact header, ahead of every other Block. */
+      .aside > :global(.block:not(.block--photo)) {
+        display: none;
+      }
+
+      .aside > :global(.block--photo) {
+        order: -1;
+        justify-self: center;
+      }
+
+      /* `display: contents` keeps the landmark even with every child hidden,
+         so the Aside carrying no portrait goes altogether. On the attribute
+         rather than `:has(> .block--photo)`: ticket 06. */
+      .aside:not([data-carries-portrait]) {
+        display: none;
+      }
+
+      .main {
+        /* `grid-area: main` names a line of the Sheet's own two-column grid,
+           which has just stepped out of the flow: left standing, it places
+           Main in an implicit column of the *reading* grid and drags the
+           column off-centre. */
+        grid-area: auto;
+        padding-block-start: 0;
+      }
+
+      /* --main-first-heading-gap exists to align Main's first heading with the
+         Aside's; with no Aside beside it the derived value means nothing (and
+         with Reading Mode's smaller portrait it goes negative). */
+      .main :global(.block--header + .block > .section-heading) {
+        margin-block-start: var(--space-xl);
+      }
     }
   }
 </style>

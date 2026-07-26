@@ -1,0 +1,129 @@
+/* Reading Mode's Drawer: the panel carrying the Aside's Blocks below 48rem,
+   and the control that opens it. Chrome, never paper (CONTEXT.md) — both are
+   gone above the breakpoint and gone in print.
+
+   A plain stylesheet rather than the scoped `<style>` the coding standards ask
+   for: what it dresses is a `.tsx` island, which Astro's scoping does not
+   reach. It joins the `components` layer so it sits in the same cascade as the
+   paper's own styles (layer order: src/styles/global.css). */
+
+@layer components {
+  .drawer-toggle {
+    position: fixed;
+    inset-block-start: var(--space-m);
+    inset-inline-start: var(--space-m);
+    z-index: 1;
+    display: grid;
+    place-items: center;
+    width: 2.75rem;
+    height: 2.75rem;
+    padding: 0;
+    border: 1px solid var(--color-photo-circle);
+    border-radius: 50%;
+    background-color: var(--color-aside-bg);
+    color: var(--color-heading);
+    cursor: pointer;
+  }
+
+  .drawer-toggle svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  .drawer {
+    /* A dialog is centred by its own `margin: auto` and capped by its default
+       max-width/max-height; a Drawer is pinned to the inline start, full
+       height, and as wide as a phone can spare. */
+    width: min(20rem, 85vw);
+    max-width: none;
+    height: 100%;
+    max-height: none;
+    margin: 0 auto 0 0;
+    padding: 0;
+    border: 0;
+    background-color: var(--color-aside-bg);
+    color: var(--color-text);
+    overflow-y: auto;
+    translate: -100% 0;
+    /* `allow-discrete` on display and overlay is what animates the *closing*
+       half: without it the dialog leaves the top layer on the first frame and
+       the panel disappears instead of sliding out. The reset collapses all of
+       this under `prefers-reduced-motion`. */
+    transition:
+      translate 250ms ease,
+      display 250ms allow-discrete,
+      overlay 250ms allow-discrete;
+  }
+
+  .drawer[open] {
+    translate: 0 0;
+  }
+
+  /* The opening frame. Without it the panel is already in place when the top
+     layer first paints it, and only the closing half animates. */
+  @starting-style {
+    .drawer[open] {
+      translate: -100% 0;
+    }
+  }
+
+  .drawer::backdrop {
+    background-color: color-mix(in oklab, var(--color-ink) 45%, transparent);
+  }
+
+  .drawer-body {
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-m) var(--space-l) var(--space-xl);
+  }
+
+  /* The Blocks arrive wrapped in `<astro-slot>` (Astro's own hydration
+     bookkeeping) and are flex items of this panel regardless, because Astro
+     ships `astro-slot { display: contents }` with the island.
+
+     The gap above a section heading is Sheet.astro's, scoped to the Aside
+     column these Blocks no longer sit in. Same scale step, one column. */
+  .drawer-body .block + .block > .section-heading {
+    margin-block-start: var(--space-xl);
+  }
+
+  .drawer-close {
+    align-self: flex-end;
+    display: grid;
+    place-items: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    margin-block-end: var(--space-s);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-heading);
+    cursor: pointer;
+  }
+
+  .drawer-close svg {
+    width: 1.25rem;
+    height: 1.25rem;
+  }
+
+  /* Paper Mode has no Drawer. Hiding the dialog is not enough on its own — a
+     modal one left open would keep the paper behind it inert, which is why
+     DrawerPanel.tsx closes it at this same boundary. */
+  @media screen and (width >= 48rem) {
+    .drawer-toggle,
+    .drawer {
+      display: none;
+    }
+  }
+}
+
+@layer print {
+  /* Chrome is never captured (CONTEXT.md). Fixed-position chrome would
+     otherwise print on the first page. */
+  @media print {
+    .drawer-toggle,
+    .drawer {
+      display: none;
+    }
+  }
+}

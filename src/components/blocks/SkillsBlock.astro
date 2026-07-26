@@ -80,5 +80,13 @@ const { block } = Astro.props;
       content: '•';
       padding-inline-end: 0.34rem;
     }
+
+    /* The reference's leading of 2 is set on 9.48px items; on Reading Mode's
+       1rem it reads as a gap rather than a run. */
+    @media screen and (width < 48rem) {
+      .run {
+        line-height: var(--prose-leading);
+      }
+    }
   }
 </style>

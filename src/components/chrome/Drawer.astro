@@ -1,0 +1,32 @@
+---
+import type { CvContent } from '../../content/types';
+import { ui } from '../../i18n/ui';
+import Block from '../structure/Block.astro';
+import DrawerPanel from './DrawerPanel';
+
+/**
+ * Reading Mode's Drawer (CONTEXT.md: "Drawer") — the Aside's Blocks behind a
+ * toggle, below 48rem.
+ *
+ * The same Blocks are rendered here a *second* time rather than moved: the two
+ * Sheets' Asides have to arrive in one panel and CSS cannot reparent. Ticket 06
+ * ("Reading Mode reflows the same components…") records why the alternatives
+ * are worse. Nobody meets both copies — Paper Mode hides this panel, Reading
+ * Mode hides the Asides on the paper.
+ *
+ * The portrait is excluded: it is the one Aside Block that stays on the paper
+ * in Reading Mode, where it opens the compact header.
+ */
+interface Props {
+  content: CvContent;
+}
+
+const { content } = Astro.props;
+const asideBlocks = content.blocks.filter(
+  (block) => block.column === 'aside' && block.kind !== 'photo',
+);
+---
+
+<DrawerPanel client:idle strings={ui[content.locale].drawer}>
+  {asideBlocks.map((block) => <Block block={block} />)}
+</DrawerPanel>

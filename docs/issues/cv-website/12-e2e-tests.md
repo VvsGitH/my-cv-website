@@ -119,3 +119,18 @@ derived from all four. Any of them drifting breaks the alignment silently.
 ```js
 expect(Math.abs(asideFirstHeadingY - mainFirstHeadingY)).toBeLessThanOrEqual(1);
 ```
+
+### From ticket 06 — the responsive tiers, and one trap for every test here
+
+The three-tier assertions and the Drawer's behaviour are written out in
+`06-responsive.md`'s handover, with the reference numbers measured when it
+landed (1280 → two 604px Sheets on one row; 1024 → one 793.7px Sheet, never
+enlarged; 375 → a 327px reading column with the portrait first).
+
+**The trap applies to every measurement in this file:** below 48rem the page is
+in Reading Mode, where the Asides are `display: none` on the paper. Any test
+that measures paper — the slack table above, the two columns' first headings —
+must set a viewport ≥ 48rem first, or it will measure a column that isn't
+there. Playwright's default 1280×720 is fine; an explicit
+`test.use({ viewport: … })` is better, since the number is load-bearing rather
+than incidental.

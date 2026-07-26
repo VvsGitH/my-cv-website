@@ -43,3 +43,22 @@ Two things ticket 05 left on this ticket's doorstep:
   ticket's "visually identical to the desktop Sheets" acceptance.
   **Resolved in ticket 13** — Primera Signature is now self-hosted, so this
   is no longer a blocker.
+
+### From ticket 06 — set the viewport before you load the page
+
+**Capture at a viewport ≥ 48rem (e.g. 1280×1600).** Below that the page lays
+out in Reading Mode, where the Aside's Blocks are `display: none` on the paper
+and the Drawer is closed. Chrome requests a font only when rendering needs one,
+so **Lato-Italic** (Languages proficiency labels) and **Primera Signature**
+(the signature) are never fetched; the print pass then needs them, and
+`font-display: block` paints nothing while a face loads. The PDF comes out
+missing that text and missing those two embedded fonts, with no error anywhere.
+A default 800×600 headless window reproduces it every time.
+
+`await document.fonts.ready` does **not** protect you here — it resolves
+happily for a face that was never requested. Order: set viewport → `goto` →
+`fonts.ready` → `page.pdf()`.
+
+Ticket 06 verified print parity this way (both Locales, all 8112 drawing
+operators identical to ticket 17's output), so this is a known-good recipe, not
+a precaution.

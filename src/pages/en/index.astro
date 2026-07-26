@@ -1,9 +1,11 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import Document from '../../components/structure/Document.astro';
+import Drawer from '../../components/chrome/Drawer.astro';
 import { cv } from '../../content';
 ---
 
 <BaseLayout lang="en">
   <Document content={cv.en} />
+  <Drawer slot="chrome" content={cv.en} />
 </BaseLayout>

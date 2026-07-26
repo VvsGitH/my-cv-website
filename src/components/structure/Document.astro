@@ -17,14 +17,70 @@ const { content } = Astro.props;
 
 <style>
   @layer components {
-    /* Paper Mode only for now — ticket 06 adds the responsive tiers and
-       Reading Mode. */
     .sheets {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 1.5rem;
-      padding: 1.5rem;
+      /* Screen gutters, not reference geometry — and also the arithmetic
+         behind --sheet-fit-width below, which is why they are named rather
+         than repeated. Zeroed for print in the layer below. */
+      --sheets-gap: 1.5rem;
+      --sheets-pad: 1.5rem;
+
+      gap: var(--sheets-gap);
+      padding: var(--sheets-pad);
+    }
+
+    /* Arranging the Sheets is a screen concern: on paper each one is a block
+       that takes its own page, and this container has no say in it. Every
+       alignment declaration stays inside `screen` for a measured reason —
+       ticket 06, "Print parity was measured".
+
+       Grid rather than a wrapping flex line: the wide tier scales the pair to
+       span the viewport exactly, and a flex line that rounded up by a fraction
+       of a pixel would drop one Sheet onto a row of its own. A grid's track
+       count cannot move under it. */
+    @media screen {
+      .sheets {
+        display: grid;
+        grid-template-columns: max-content;
+        justify-content: center;
+      }
+    }
+
+    /* The width one Sheet may occupy; Sheet.astro turns it into a scale.
+       Declared per tier and only under `screen`, so print never sets it and
+       the Sheet stays at a scale of 1. `100vw` over a container query, and the
+       scrollbar it ignores: ticket 06, "Scaling". */
+    @media screen and (width >= 48rem) {
+      .sheets {
+        --sheet-fit-width: calc(100vw - 2 * var(--sheets-pad));
+      }
+    }
+
+    /* Wide: two Sheets side by side, sharing the row with the gap between
+       them — the grid of pages. */
+    @media screen and (width >= 80rem) {
+      .sheets {
+        --sheet-fit-width: calc((100vw - 2 * var(--sheets-pad) - var(--sheets-gap)) / 2);
+
+        grid-template-columns: repeat(2, max-content);
+      }
+    }
+
+    /* Reading Mode: one column of Blocks on a white surface, at a comfortable
+       measure. The Sheets' own boxes are dismantled in Sheet.astro, so the
+       items in this grid are the Blocks themselves.
+
+       The surface stays white in both themes for the same reason the paper
+       does (spec US17): the CV is a document, and --color-text is set to be
+       read off white. */
+    @media screen and (width < 48rem) {
+      .sheets {
+        grid-template-columns: minmax(0, 1fr);
+        gap: var(--space-xl);
+        max-width: 34rem;
+        margin-inline: auto;
+        padding: var(--space-xl) var(--space-l);
+        background-color: var(--color-main-bg);
+      }
     }
   }
 

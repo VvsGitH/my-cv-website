@@ -52,6 +52,11 @@
      assembled, not a distinction worth keeping. */
   --prose-leading: 1.4;
 
+  /* The reference justifies its two runs of continuous prose — About Me and
+     the Privacy statement. A token because Reading Mode has to take it back:
+     justification needs a wider measure than the Drawer gives it. */
+  --prose-align: justify;
+
   /* =========================================================================
    Sheet geometry, measured off the reference PDF in CSS px at 96dpi
    (A4 = 794 x 1123px), expressed in rem. The Aside is a panel inset from
@@ -102,4 +107,38 @@
     var(--aside-pad-block-start) + var(--photo-size) + var(--space-xl) -
       var(--main-inset-block-start) - var(--header-height)
   );
+}
+
+/* =============================================================================
+   Reading Mode (CONTEXT.md), below 48rem. The CV stops being paper here, so
+   the type stops being paper type: prose goes to a normal 1rem reading size,
+   and the display sizes set against it come down to sit with it. Section
+   headings keep the reference's 22.66px — the one display size that already
+   reads at phone width. Everything above is a transcription of an A4
+   document; everything here is chosen for a phone.
+
+   The three tiers are keyed off two boundaries, and these are them: Reading
+   Mode below 48rem, two Sheets side by side from 80rem (ticket 06). Both are
+   in rem so they follow the reader's own font size.
+
+   `screen and` is load-bearing on every Reading Mode query in this codebase:
+   print media must never see these values, or the PDF stops being the desktop
+   rendering (ticket 06's acceptance).
+   ============================================================================= */
+
+@media screen and (width < 48rem) {
+  :root {
+    --font-size-name: 1.75rem;
+    --font-size-subtitle: 0.9375rem;
+    --font-size-subheading: 1.0625rem;
+    --font-size-meta: 0.875rem;
+    --font-size-body: 1rem;
+    --font-size-skill: 1rem;
+    --font-size-level: 0.875rem;
+    --prose-leading: 1.55;
+    --prose-align: start;
+
+    /* The portrait leads the compact header rather than filling a panel. */
+    --photo-size: 6.5rem;
+  }
 }

@@ -20,5 +20,8 @@ const { lang, title = 'CV — Vito Paparella Santorsola' } = Astro.props;
     <main>
       <slot />
     </main>
+    <!-- Chrome sits outside <main>: it is not the paper (CONTEXT.md). The
+      Drawer lands here from ticket 06, the Toolbar will from ticket 07. -->
+    <slot name="chrome" />
   </body>
 </html>

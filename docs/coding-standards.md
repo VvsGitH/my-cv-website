@@ -76,12 +76,16 @@ Preact is a hydrated client island (Toolbar, Drawer), not the framework — ADR-
 
 Authored as Astro scoped `<style>`, no framework. See [Baseline table](research/modern-css-best-practices.md#9-baseline-availability-summary) before using newer features.
 
+**One exception, and only this one:** an island's own markup lives in a `.tsx`, which Astro's scoping does not reach. Dress it from a plain stylesheet colocated with the island (`components/chrome/drawer.css`), wrapped in `@layer components` so it lands in the same cascade as the paper. Nothing else earns a global stylesheet.
+
 - **Units by role:** `mm` only for the A4 sheet / `@page`; `rem`/`em`/`ch` for all type and reflow. Never size `font-size` in absolute units.
 - **Paged media:** `@page { size: A4; margin: 0 }`. The two Sheet components own all layout.
 - **Fragmentation:** use modern `break-*`, not `page-break-*`. `break-inside: avoid` on every Block and the Aside; `break-before: page` at the deliberate 2-Sheet seam.
 - **Print fidelity:** `print-color-adjust: exact` **plus** `-webkit-print-color-adjust: exact` on colored surfaces; keep screen/print rendering identical.
 - **Layout:** Grid with `grid-template-areas` for the Aside/Main sheet (redefine areas at the breakpoint for Reading Mode); Flexbox for 1-D runs; `gap` over child margins.
 - **Responsive trigger:** viewport/print → media query; element's own space → `@container`; presence/state of descendants → `:has()`.
+  - **Not `@container` above a page break.** `container-type: inline-size` brings layout containment, and a layout-contained box is monolithic for fragmentation — over the two Sheets it would swallow the `break-before: page` that makes the CV two pages. Size from the viewport there instead (ticket 06).
+  - **`:has()` cannot cross an Astro scope.** The compiler leaves `:global()` untouched inside it, and the browser then drops the whole rule as an unknown pseudo-class, silently. Test the built CSS, or key off an attribute the component sets itself.
 - **Theming:** `color-scheme: light dark` on `:root`, tokens as custom properties in `oklch()`, `light-dark()` for per-property pairs (keep a `prefers-color-scheme` fallback since it's only newly available). `@property` only if you animate a custom property.
 - **Architecture:** cascade layers (`@layer reset, base, components, print`) instead of specificity fights; native nesting (`&` mandatory for compound selectors); logical properties (`margin-inline`, `padding-block`) for the bilingual content; `:where()` for zero-specificity resets.
 

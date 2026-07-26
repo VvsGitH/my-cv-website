@@ -9,12 +9,18 @@ Versions in use: Astro 7.1.3, React 19.2.8, TypeScript, Node ≥22.12.
 
 1. **KISS.** Prefer the simplest thing that works. This is a static, content-light, two-page CV — reach for the plain solution before the powerful one. Do not add machinery (state, Effects, Context, content collections, memoization) until a concrete need exists.
 2. **Readability first.** Code is read far more than written. Optimize for the next reader: clear names, obvious data flow, small units, no cleverness that needs a comment to defend. When a rule below trades brevity for clarity, clarity wins.
+3. **Avoid comments.** Only add a new comment in the code if it's not clear why a portion of its logic does what it does or why it's written in a certain way. If the reason is already explained in an issue or an ADR, simply refer to that section of the document, do not repeat yourself. If you don't know where to put an explanation, always prefer the documentation.
 
 ## General
 
 - Static output only. No server, no runtime data fetching — everything is prerendered for GitHub Pages.
 - Keep content separate from layout. Content lives in typed data files; components only present it.
 - ESM everywhere. Use `import type` for type-only imports.
+
+## GIT
+
+- Do not add a Co-Author in git commits.
+- Produce small message commits that fully describe the work: do not enter in the implementation details.
 
 ## Astro
 

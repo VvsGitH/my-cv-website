@@ -1,0 +1,107 @@
+---
+import type { Locale } from '../../content/types';
+import { cv } from '../../content';
+import { ogCard } from '../../lib/og-card';
+import Sheet from '../../components/structure/Sheet.astro';
+import '../../styles/global.css';
+
+/**
+ * The source of the link-preview image — ticket 10, "The preview image is a
+ * route, not a composed screenshot". `scripts/render-captures.mjs` screenshots
+ * the `[data-og-card]` element below.
+ */
+export const getStaticPaths = () =>
+  (Object.keys(cv) as Locale[]).map((locale) => ({ params: { locale }, props: { locale } }));
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+const content = cv[locale];
+
+const header = content.blocks.find((block) => block.kind === 'header');
+if (!header) {
+  throw new Error(`[og] the ${locale} content has no header Block to name the card with.`);
+}
+---
+
+<!doctype html>
+<html lang={locale} data-theme="dark">
+  <head>
+    <meta charset="utf-8" />
+    <title>{header.name} — link preview ({locale})</title>
+    <meta name="robots" content="noindex" />
+  </head>
+  <body>
+    <div
+      class="card"
+      data-og-card
+      style={`--card-width: ${ogCard.width}; --card-height: ${ogCard.height}`}
+    >
+      <div class="intro">
+        <p class="name">{header.name}</p>
+        <p class="role">{header.title}</p>
+      </div>
+      <div class="paper">
+        <Sheet content={content} sheet={1} />
+      </div>
+    </div>
+  </body>
+</html>
+
+<style>
+  @layer components {
+    .card {
+      /* --card-width / --card-height arrive unitless from lib/og-card.ts: the
+         Sheet's scale below is a ratio of two of these, and CSS cannot divide
+         one length by another. */
+      --card-pad-block: 48;
+      --card-ink: var(--color-main-bg);
+
+      display: flex;
+      align-items: center;
+      gap: 4rem;
+      width: calc(var(--card-width) * 1px);
+      height: calc(var(--card-height) * 1px);
+      padding-block: calc(var(--card-pad-block) * 1px);
+      padding-inline: 4rem;
+      background-color: var(--color-dark-bg);
+    }
+
+    .intro {
+      flex: 1;
+    }
+
+    /* The name as the Sheet sets it, at the size a feed thumbnail needs. */
+    .name {
+      font-family: var(--font-name);
+      font-weight: var(--font-weight-name);
+      font-size: 3.25rem;
+      line-height: 1.05;
+      letter-spacing: 0.038em;
+      text-transform: uppercase;
+      color: var(--card-ink);
+    }
+
+    .role {
+      margin-block-start: var(--space-m);
+      font-family: var(--font-subtitle);
+      font-weight: var(--font-weight-subtitle);
+      font-size: 1.5rem;
+      letter-spacing: 0.055em;
+      color: var(--color-photo-circle);
+    }
+
+    .paper {
+      box-shadow: 0 1.25rem 3rem oklch(0% 0 0 / 0.45);
+    }
+
+    /* --sheet-scale is the Sheet's own seam for exactly this (Sheet.astro), so
+       the A4 box stays real and only its rendering shrinks. 1123 is A4's height
+       in CSS px at 96dpi — the figure tokens.css measures the geometry in. */
+    .paper :global(.sheet-wrapper) {
+      --sheet-scale: calc((var(--card-height) - 2 * var(--card-pad-block)) / 1123);
+    }
+  }
+</style>

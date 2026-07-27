@@ -13,7 +13,7 @@
     "preview": "astro preview",
     "astro": "astro",
     "fonts:subset": "node scripts/subset-fonts.mjs",
-    "pdf:render": "node scripts/render-pdf.mjs"
+    "captures:render": "node scripts/render-captures.mjs"
   },
   "dependencies": {
     "@astrojs/preact": "^6.0.1",

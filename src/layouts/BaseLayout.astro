@@ -1,20 +1,61 @@
 ---
+import { getAbsoluteLocaleUrl } from 'astro:i18n';
+import type { Locale } from '../content/types';
+import { meta } from '../i18n/meta';
+import { ogCard } from '../lib/og-card';
 import '../styles/global.css';
 
 interface Props {
-  lang: string;
-  title?: string;
+  locale: Locale;
 }
 
-const { lang, title = 'CV — Vito Paparella Santorsola' } = Astro.props;
+const { locale } = Astro.props;
+const strings = meta[locale];
+
+const canonical = getAbsoluteLocaleUrl(locale);
+const alternates = Object.keys(meta) as Locale[];
+
+// scripts/render-captures.mjs writes this beside the page after the build.
+const ogImage = new URL(`${import.meta.env.BASE_URL}og-${locale}.png`, Astro.site).href;
 ---
 
 <!doctype html>
-<html lang={lang}>
+<html lang={locale}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>{title}</title>
+    <title>{strings.title}</title>
+    <meta name="description" content={strings.description} />
+    <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
+
+    <link rel="canonical" href={canonical} />
+    {
+      alternates.map((alternate) => (
+        <link rel="alternate" hreflang={alternate} href={getAbsoluteLocaleUrl(alternate)} />
+      ))
+    }
+    <!-- Italian is the site's default Locale, so it is also what a reader
+      whose language matches neither should land on. -->
+    <link rel="alternate" hreflang="x-default" href={getAbsoluteLocaleUrl('it')} />
+
+    <meta property="og:type" content="profile" />
+    <meta property="og:title" content={strings.title} />
+    <meta property="og:description" content={strings.description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:locale" content={strings.ogLocale} />
+    {
+      alternates
+        .filter((alternate) => alternate !== locale)
+        .map((alternate) => (
+          <meta property="og:locale:alternate" content={meta[alternate].ogLocale} />
+        ))
+    }
+    <meta property="og:image" content={ogImage} />
+    <meta property="og:image:width" content={String(ogCard.width)} />
+    <meta property="og:image:height" content={String(ogCard.height)} />
+    <meta property="og:image:alt" content={strings.ogImageAlt} />
+    <meta name="twitter:card" content="summary_large_image" />
+
     <!-- Inline and blocking, so the chosen theme is on <html> before the first
       paint and the dark background never flashes (ticket 07). The key and the
       attribute are the other half of src/components/chrome/state.ts — change

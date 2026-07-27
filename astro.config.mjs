@@ -9,6 +9,9 @@ const stylesDir = fileURLToPath(new URL('./src/styles/', import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
+  // Every absolute URL BaseLayout publishes is built from this — ticket 10,
+  // "The site origin was the one owner input".
+  site: 'https://vvsgith.github.io',
   // GitHub Pages serves the site under the repository name.
   base: '/my-cv-website/',
   output: 'static',

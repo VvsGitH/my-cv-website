@@ -65,8 +65,10 @@ a precaution.
 
 ### Implementation notes
 
-`scripts/render-pdf.mjs`, run as `npm run pdf:render` after `npm run build`. It
-starts Astro's own preview server through the JS API (`preview()` from `astro`)
+`scripts/render-pdf.mjs`, run as `npm run pdf:render` after `npm run build`
+(**ticket 10 renamed both** to `scripts/render-captures.mjs` and
+`npm run captures:render`, when the link-preview image joined the PDF as a
+second thing captured off the same page). It starts Astro's own preview server through the JS API (`preview()` from `astro`)
 rather than shelling out, and takes the base, the out dir and the Locale list
 from `astro.config.mjs`. Two new devDependencies: `playwright` (the capture)
 and `pdf-lib` (the guard below).
@@ -111,5 +113,5 @@ fonts (Chromium redraws CFF outlines as glyph procedures), which a naive
 
 Note for **ticket 09**: the CI order is `npm ci` →
 `npx playwright install --with-deps chromium` → `npm run build` →
-`npm run pdf:render`. Deliberately *not* an npm `postbuild` hook: that would
-break `npm run build` on any machine without the browser binary.
+`npm run captures:render`. Deliberately *not* an npm `postbuild` hook: that
+would break `npm run build` on any machine without the browser binary.

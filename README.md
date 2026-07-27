@@ -15,17 +15,22 @@ A single-purpose website that presents Vito Paparella Santorsola's CV as two A4 
 | `npm install`      | Install dependencies                          |
 | `npm run dev`       | Start the local dev server                    |
 | `npm run build`     | Build the production site                     |
-| `npm run pdf:render` | Render one A4 PDF per Locale into `dist/`    |
+| `npm run captures:render` | Render the PDFs and link-preview images into `dist/` |
 | `npm run preview`   | Preview the production build locally          |
 | `npm run astro ...` | Run Astro CLI commands (e.g. `astro check`)   |
 
-## The downloadable PDFs
+## The captured files
 
-`npm run pdf:render` runs after `npm run build`: it previews `dist/`, captures
-each Locale's page with headless Chromium and writes
-`Vito_Paparella_Santorsola_CV_IT.pdf` / `_EN.pdf` into `dist/`. They are never
-committed (ADR-0001), so the Toolbar's download link 404s on a build that
-skipped this step.
+`npm run captures:render` runs after `npm run build`. It previews `dist/`,
+opens each Locale's page with headless Chromium and writes, per Locale:
+
+- `Vito_Paparella_Santorsola_CV_<IT|EN>.pdf` — the downloadable CV, two A4
+  pages, which the Toolbar's download control links to.
+- `og-<it|en>.png` — the 1200×630 link-preview image the page's `og:image`
+  points at, screenshotted from the `/og/<locale>/` route.
+
+Neither is committed (ADR-0001), so a build that skipped this step serves a
+broken download link and an unfurl with no image.
 
 It needs the browser binary once per machine:
 

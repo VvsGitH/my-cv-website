@@ -28,8 +28,8 @@ const asideBlocks = content.blocks.filter(
   (block) => block.column === 'aside' && block.kind !== 'photo',
 );
 
-// scripts/render-pdf.mjs writes one PDF per Locale after the build; this is
-// the name and the place it has to put them. Change one end, change the other.
+// scripts/render-captures.mjs writes one PDF per Locale after the build; this
+// is the name and the place it has to put them. Change one end, change the other.
 const pdfHref = `${import.meta.env.BASE_URL}Vito_Paparella_Santorsola_CV_${content.locale.toUpperCase()}.pdf`;
 ---
 

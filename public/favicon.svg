@@ -1,0 +1,16 @@
+<!-- The site's one mark: a Sheet with its cream Aside, which is what the site
+  shows. Colours are the design tokens as literal hex — a file in `public/`
+  is served untouched and never sees the stylesheet. -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="CV">
+  <rect width="32" height="32" rx="6" fill="#1b2432" />
+  <rect x="6.5" y="4.5" width="19" height="23" rx="1.5" fill="#ffffff" />
+  <rect x="8.5" y="6.5" width="6" height="19" fill="#fef9e0" />
+  <circle cx="11.5" cy="10.5" r="2.1" fill="#efdf9e" />
+  <g fill="#303642">
+    <rect x="16.5" y="7.5" width="7" height="2.4" rx="0.5" />
+    <rect x="16.5" y="12.4" width="7" height="1.5" />
+    <rect x="16.5" y="15.9" width="7" height="1.5" />
+    <rect x="16.5" y="19.4" width="7" height="1.5" />
+    <rect x="16.5" y="22.9" width="4.5" height="1.5" />
+  </g>
+</svg>

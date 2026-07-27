@@ -122,7 +122,6 @@ export const it: CvContent = {
       title: 'Senior Software Developer',
       contacts: [
         { label: 'Località', value: 'Bari, Italia' },
-        { label: 'Telefono', value: '+39 346 403 9932' },
         {
           label: 'Email',
           value: 'vs.paparella@gmail.com',

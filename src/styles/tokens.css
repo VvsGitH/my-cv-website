@@ -102,7 +102,7 @@
      The header is the the block article.block.block--header: it includes the main title, 
      the subtitle and the contacts; it's content, not geometry.
      Re-derive it when something changes. Measure it, dont't assume it. Ticket 17 */
-  --header-height: 185.97px;
+  --header-height: 165.97px;
   --main-first-heading-gap: calc(
     var(--aside-pad-block-start) + var(--photo-size) + var(--space-xl) -
       var(--main-inset-block-start) - var(--header-height)

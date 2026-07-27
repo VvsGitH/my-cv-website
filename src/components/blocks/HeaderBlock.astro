@@ -23,7 +23,7 @@ const { block } = Astro.props;
                 // rather than an address, but leaves the mailto plain.
                 <a
                   href={contact.url}
-                  class:list={{ underlined: contact.url.startsWith('http') }}
+                  class:list={{ underlined: !!contact.url }}
                 >
                   {contact.value}
                 </a>
@@ -62,8 +62,8 @@ const { block } = Astro.props;
 
     .contacts {
       display: grid;
-      grid-template-columns: repeat(3, 9.0625rem);
-      margin-block-start: var(--space-l);
+      grid-template-columns: 0.8fr 1.1fr 1.1fr;
+      margin-block-start: var(--space-xl);
     }
 
     .contact {
@@ -105,10 +105,14 @@ const { block } = Astro.props;
       .contacts {
         grid-template-columns: minmax(0, 1fr);
         gap: var(--space-s);
+        width: fit-content;
+        margin-inline: auto;
       }
 
       .contact {
         height: auto;
+        display: flex;
+        gap: var(--space-m);
       }
     }
   }

@@ -42,7 +42,9 @@ jobs:
 
       # After the capture, so the suite can read the PDFs it asserts about, and
       # before the upload, so a regression publishes nothing either (ticket 12).
-      - run: npm test
+      # The runner, not `npm test`: the `pretest` hook exists to spare a local
+      # run a stale `dist`, and the two steps above have already done that work.
+      - run: npx playwright test
 
       - uses: actions/upload-pages-artifact@v5
         with:

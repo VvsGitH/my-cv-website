@@ -144,6 +144,13 @@ the Drawer, accessible names, keyboard), `responsive.spec.ts` (the three tiers),
 `pdf.spec.ts` (the generated files). Wired into `deploy.yml` between
 `captures:render` and the artifact upload, so a regression publishes nothing.
 
+`npm test` builds and captures first, through a `pretest` hook. The suite reads
+the built pages *and* the rendered PDFs off disk, so without it a local run
+could pass against a `dist` that no longer matched the source — the one failure
+mode a suite like this must not have. CI calls `npx playwright test` instead,
+since its own steps have already done that work and keeping them separate is
+what makes a build failure read as a build failure.
+
 **The overflow assertion was rehearsed against a real regression, not just
 written.** Adding one sentence to the Italian About Block spilled Sheet 1's
 Aside by 8.1px; `astro check` passed and the PDF still reported two A4 pages,

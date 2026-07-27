@@ -45,7 +45,7 @@ The left slide-in panel, in Reading Mode only, that holds the Aside content behi
 _Avoid_: sidebar, menu
 
 **Toolbar**:
-The floating control cluster (bottom-right) carrying the four actions: language, download, share, theme. The site's only chrome.
+The floating control cluster carrying the four actions — language, download, share, theme — plus the Drawer's toggle in Reading Mode. A vertical strip against the left edge, centred on the viewport; in Reading Mode it rides the Drawer's outer edge while the panel is open (ticket 07). The site's only chrome besides the Drawer.
 _Avoid_: header, navbar, controls
 
 **Chrome**:

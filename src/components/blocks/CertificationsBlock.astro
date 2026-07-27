@@ -12,27 +12,19 @@ const { block } = Astro.props;
 <SectionHeading text={block.heading} />
 <ul class="certifications">
   {
-    block.entries.map((entry) => (
+    block.entries.map(entry => (
       <li>
         <p class="issued">
           {entry.date} | {entry.issuer}
         </p>
-        <p class="title">
-          {entry.title}
-          {entry.url && (
-            <a href={entry.url} aria-label={`${entry.title} — certificate`}>
-              <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
-                <path
-                  d="M10 13a5 5 0 0 0 7.1 0l3-3a5 5 0 0 0-7.1-7.1L11.5 4.4M14 11a5 5 0 0 0-7.1 0l-3 3a5 5 0 0 0 7.1 7.1l1.4-1.4"
-                  fill="none"
-                  stroke="currentColor"
-                  stroke-width="2.4"
-                  stroke-linecap="round"
-                />
-              </svg>
-            </a>
-          )}
-        </p>
+        {entry.url ? (
+          <a class="title" href={entry.url} target="_blank">
+            {entry.title}
+            <span class="icon icon-link" aria-hidden="true" />
+          </a>
+        ) : (
+          <p class="title">{entry.title}</p>
+        )}
       </li>
     ))
   }
@@ -59,16 +51,10 @@ const { block } = Astro.props;
       color: var(--color-heading);
     }
 
-    a {
+    .icon {
       display: inline-block;
       vertical-align: -0.1em;
       margin-inline-start: 0.25em;
-    }
-
-    svg {
-      display: inline-block;
-      width: 0.85em;
-      height: 0.85em;
     }
   }
 </style>

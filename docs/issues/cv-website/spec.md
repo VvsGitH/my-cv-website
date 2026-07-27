@@ -87,7 +87,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 - Paper styles must be identical under `screen` and `print` media (or capture with `emulateMedia({ media: 'screen' })`) so the PDF equals the desktop rendering. Reading Mode styles must not affect Paper Mode/print output.
 
 ### Toolbar (the only chrome)
-Floating cluster, bottom-right, four actions:
+Floating cluster, four actions. Ticket 07 placed it as a vertical strip against the **left edge, centred on the viewport** — the owner asked for that placement in the ticket, over this line's original "bottom-right" — and gave it a fifth control, the Drawer's toggle, in Reading Mode only. In Reading Mode the strip rides the Drawer's outer edge while the panel is open. The four actions:
 1. **Language** — toggle EN/IT (navigates to the equivalent route in the other Locale).
 2. **Download** — serves the current Locale's pre-rendered PDF.
 3. **Share** — copies the current page URL to the clipboard, with a brief confirmation.

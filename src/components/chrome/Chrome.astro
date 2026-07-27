@@ -1,0 +1,46 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import type { CvContent, Locale } from '../../content/types';
+import { ui } from '../../i18n/ui';
+import Block from '../structure/Block.astro';
+import ChromeIsland from './ChromeIsland';
+
+/**
+ * Everything the site shows that is not the paper (CONTEXT.md: "Chrome") — the
+ * Toolbar, and the Drawer that carries the Aside's Blocks below 48rem.
+ *
+ * The Drawer renders the same Blocks a *second* time rather than moving them:
+ * the two Sheets' Asides have to arrive in one panel and CSS cannot reparent.
+ * Ticket 06 ("Reading Mode reflows the same components…") records why the
+ * alternatives are worse. Nobody meets both copies — Paper Mode hides this
+ * panel, Reading Mode hides the Asides on the paper.
+ *
+ * The portrait is excluded: it is the one Aside Block that stays on the paper
+ * in Reading Mode, where it opens the compact header.
+ */
+interface Props {
+  content: CvContent;
+}
+
+const { content } = Astro.props;
+const otherLocale: Locale = content.locale === 'it' ? 'en' : 'it';
+const asideBlocks = content.blocks.filter(
+  (block) => block.column === 'aside' && block.kind !== 'photo',
+);
+
+// Ticket 08 renders one PDF per Locale after the build; this is the name and
+// the place it has to put them.
+const pdfHref = `${import.meta.env.BASE_URL}Vito_Paparella_Santorsola_CV_${content.locale.toUpperCase()}.pdf`;
+---
+
+<ChromeIsland
+  client:idle
+  strings={ui[content.locale]}
+  links={{
+    languageHref: getRelativeLocaleUrl(otherLocale),
+    languageLocale: otherLocale,
+    pdfHref,
+  }}
+>
+  {asideBlocks.map((block) => <Block block={block} />)}
+</ChromeIsland>

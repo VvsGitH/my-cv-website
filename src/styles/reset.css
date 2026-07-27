@@ -38,6 +38,19 @@
   }
 }
 
+/* The theme's whole surface area: the background behind the Sheets, and
+   nothing else (spec US16/US17). The two rules above are what a visitor
+   without JS gets — the OS preference; `data-theme` is the Toolbar's explicit
+   choice, written on <html> before first paint by BaseLayout's inline script
+   and therefore never a flash (ticket 07). */
+:where(html[data-theme='light']) body {
+  background-color: var(--color-main-bg);
+}
+
+:where(html[data-theme='dark']) body {
+  background-color: var(--color-dark-bg);
+}
+
 :where(h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd) {
   margin-block: 0;
 }

@@ -15,6 +15,25 @@ const { lang, title = 'CV — Vito Paparella Santorsola' } = Astro.props;
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>{title}</title>
+    <!-- Inline and blocking, so the chosen theme is on <html> before the first
+      paint and the dark background never flashes (ticket 07). The key and the
+      attribute are the other half of src/components/chrome/state.ts — change
+      them in both. localStorage throws outright in some privacy modes, hence
+      the catch; the OS preference is the fallback either way. -->
+    <script is:inline>
+      let stored = null;
+      try {
+        stored = localStorage.getItem('cv-theme');
+      } catch {}
+      const theme =
+        stored === 'light' || stored === 'dark'
+          ? stored
+          : matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light';
+      document.documentElement.dataset.theme = theme;
+      document.documentElement.style.colorScheme = theme;
+    </script>
   </head>
   <body>
     <main>

@@ -125,6 +125,8 @@ width: max(20rem, 85vw);
 
 **Impact on spec**: Ticket 06 did not specify exact Drawer dimensions, only that it should be "as wide as a phone can spare". This change aligns better with that intent.
 
+**Superseded by ticket 07**: the width is now `min(19rem, 76vw)`. The Toolbar rides the panel's outer edge from that ticket on, so "what a phone can spare" has to spare room for it too — at 320px the panel is 243px and the Toolbar clears the viewport edge by 9px. See `docs/issues/cv-website/07-toolbar.md`.
+
 ---
 
 ### 5. Reading Mode spacing normalized

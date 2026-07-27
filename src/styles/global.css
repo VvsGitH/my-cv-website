@@ -8,6 +8,7 @@
 
 @import './reset.css' layer(reset);
 @import './fonts.css' layer(base);
+@import './icons.css' layer(base);
 @import './tokens.css' layer(base);
 @import './utils.css' layer(base);
 
@@ -17,4 +18,16 @@
 @page {
   size: A4;
   margin: 0;
+}
+
+@layer print {
+  /* Dark mode is a screen affordance: the paper and the PDF are unaffected by
+     it (ticket 07's acceptance). Stated here rather than in reset.css because
+     that file is imported into the `reset` layer, and a `@layer print` block
+     inside it would nest as `reset.print` and lose to `components`. */
+  @media print {
+    body {
+      background-color: var(--color-main-bg);
+    }
+  }
 }

@@ -1,6 +1,7 @@
-/* Reading Mode's Drawer: the panel carrying the Aside's Blocks below 48rem,
-   and the control that opens it. Chrome, never paper (CONTEXT.md) — both are
-   gone above the breakpoint and gone in print.
+/* Reading Mode's Drawer: the panel carrying the Aside's Blocks below 48rem.
+   Chrome, never paper (CONTEXT.md) — gone above the breakpoint and gone in
+   print. The control that opens it belongs to the Toolbar (ticket 07); this
+   file dresses the panel only.
 
    A plain stylesheet rather than the scoped `<style>` the coding standards ask
    for: what it dresses is a `.tsx` island, which Astro's scoping does not
@@ -8,37 +9,18 @@
    paper's own styles (layer order: src/styles/global.css). */
 
 @layer components {
-  .drawer-toggle {
-    position: fixed;
-    inset-block-start: var(--space-m);
-    inset-inline-start: var(--space-m);
-    z-index: 1;
-    display: grid;
-    place-items: center;
-    width: 2.75rem;
-    height: 2.75rem;
-    padding: 0;
-    border: 1px solid var(--color-photo-circle);
-    border-radius: 50%;
-    background-color: var(--color-aside-bg);
-    color: var(--color-heading);
-    cursor: pointer;
-  }
-
-  .drawer-toggle svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-
   .drawer {
     /* A dialog is centred by its own `margin: auto` and capped by its default
        max-width/max-height; a Drawer is pinned to the inline start, full
        height, and as wide as a phone can spare.
 
-       Changed from min(20rem, 85vw) to max() post-ticket 06 to ensure the
-       Drawer takes up 85vw on wider phones while maintaining 20rem minimum on
-       very narrow ones. See ADR-0006. */
-    width: max(20rem, 85vw);
+       What a phone can spare changed in ticket 07: the Toolbar now rides the
+       panel's outer edge, so the panel has to leave room for it. 76vw keeps
+       ~54px of Toolbar plus its gap on screen at 320px, the narrowest width
+       this site targets; the 19rem cap keeps the measure readable on a
+       tablet-sized phone. Ticket 06 asked for "as wide as a phone can spare",
+       and this is the same reading of it with one more thing to spare for. */
+    width: min(19rem, 76vw);
     max-width: none;
     height: 100%;
     max-height: none;
@@ -47,7 +29,10 @@
     border: 0;
     background-color: var(--color-aside-bg);
     color: var(--color-text);
-    overflow-y: auto;
+    /* The scroll belongs to .drawer-body, not here: a scroll container clips
+       both axes, and the Toolbar copy this dialog carries sits *outside* the
+       panel's inline end (toolbar.css). */
+    overflow: visible;
     translate: -100% 0;
     /* `allow-discrete` on display and overlay is what animates the *closing*
        half: without it the dialog leaves the top layer on the first frame and
@@ -78,6 +63,8 @@
   .drawer-body {
     display: flex;
     flex-direction: column;
+    height: 100%;
+    overflow-y: auto;
     padding: var(--space-m) var(--space-l) var(--space-xl);
   }
 
@@ -91,30 +78,10 @@
     margin-block-start: var(--space-xl);
   }
 
-  .drawer-close {
-    align-self: flex-end;
-    display: grid;
-    place-items: center;
-    width: 2.25rem;
-    height: 2.25rem;
-    margin-block-end: var(--space-s);
-    padding: 0;
-    border: 0;
-    background: none;
-    color: var(--color-heading);
-    cursor: pointer;
-  }
-
-  .drawer-close svg {
-    width: 1.25rem;
-    height: 1.25rem;
-  }
-
   /* Paper Mode has no Drawer. Hiding the dialog is not enough on its own — a
      modal one left open would keep the paper behind it inert, which is why
-     DrawerPanel.tsx closes it at this same boundary. */
+     ChromeIsland.tsx closes it at this same boundary. */
   @media screen and (width >= 48rem) {
-    .drawer-toggle,
     .drawer {
       display: none;
     }
@@ -122,10 +89,8 @@
 }
 
 @layer print {
-  /* Chrome is never captured (CONTEXT.md). Fixed-position chrome would
-     otherwise print on the first page. */
+  /* Chrome is never captured (CONTEXT.md). */
   @media print {
-    .drawer-toggle,
     .drawer {
       display: none;
     }

@@ -8,6 +8,10 @@ node_modules/
 # generated types
 .astro/
 
+# Playwright run output
+test-results/
+playwright-report/
+
 # generated PDFs (rendered fresh in CI, never committed — see spec)
 *.pdf
 docs/assets/

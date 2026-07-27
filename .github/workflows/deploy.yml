@@ -40,6 +40,10 @@ jobs:
       # Before the upload, so a failed capture publishes nothing.
       - run: npm run captures:render
 
+      # After the capture, so the suite can read the PDFs it asserts about, and
+      # before the upload, so a regression publishes nothing either (ticket 12).
+      - run: npm test
+
       - uses: actions/upload-pages-artifact@v5
         with:
           path: dist

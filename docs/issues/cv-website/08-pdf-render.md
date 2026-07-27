@@ -1,6 +1,6 @@
 # 08 — Build-time PDF render (Playwright)
 
-Status: ready-for-agent
+Status: done
 
 ## Goal
 
@@ -62,3 +62,54 @@ happily for a face that was never requested. Order: set viewport → `goto` →
 Ticket 06 verified print parity this way (both Locales, all 8112 drawing
 operators identical to ticket 17's output), so this is a known-good recipe, not
 a precaution.
+
+### Implementation notes
+
+`scripts/render-pdf.mjs`, run as `npm run pdf:render` after `npm run build`. It
+starts Astro's own preview server through the JS API (`preview()` from `astro`)
+rather than shelling out, and takes the base, the out dir and the Locale list
+from `astro.config.mjs`. Two new devDependencies: `playwright` (the capture)
+and `pdf-lib` (the guard below).
+
+The **file name** is the one thing that is written down twice — here and in
+`Chrome.astro`, which points the download control at it. Sharing it would mean
+a module the `.astro` side and a plain Node script can both import, which is
+more machinery than the risk deserves; both ends carry a pointer to the other,
+and ticket 12 is already chartered to assert that "download links to the
+correct per-Locale PDF filename".
+
+**The portrait was missing from the first PDF of every run.** Astro's `<Image>`
+is `loading="lazy"` by default, and the print pass reached the photo before the
+network did — the IT capture came out with no image XObject at all while EN,
+rendering second off a warm HTTP cache, had it. `document.fonts.ready` says
+nothing about images, and nothing errors: the disc just prints empty. The fix
+is one line next to the font wait —
+`Promise.all(Array.from(document.images, (image) => image.decode()))` — which
+forces the load and rejects if it fails. Left `PhotoBlock.astro` alone; making
+the portrait eager would also be right (it is the LCP element), but that is a
+page decision, not a capture one.
+
+**The 2-page split is asserted, not assumed.** `assertTwoA4Pages` re-opens each
+written PDF with `pdf-lib` and fails the build unless it is exactly two pages
+of A4. Verified that the guard bites by capturing the forbidden branch on
+purpose: with `emulateMedia({ media: 'screen' })` the IT page comes out as
+**4** A4 pages, confirming ticket 05's measurement above.
+
+**Acceptance, as measured on the output.** Both PDFs: 2 pages, MediaBox
+594.96×841.92pt (A4 within Chromium's mm→px→pt rounding); 9 embedded faces —
+Garet-Heavy, Garet-Book, Now-Bold, Now-Regular, Lato-Regular/Bold/Italic,
+icomoon, Primera Signature; the Aside cream (`.9959 .9765 .8784 rg`) filling a
+full-height rect on both Sheets, so `printBackground` is doing its job; one
+image XObject (the portrait); and no Toolbar or Drawer — the only icomoon glyph
+painted is the link mark in the Certifications Block, which is CV content.
+
+Note for **ticket 12**: `pdf-lib` reads structure but not text. Asserting "key
+strings per Locale" needs a text-extracting reader (`pdfjs-dist`) or an
+inflate-and-scan of the content streams; Garet and Now come out as **Type3**
+fonts (Chromium redraws CFF outlines as glyph procedures), which a naive
+`/BaseFont` scan will not list.
+
+Note for **ticket 09**: the CI order is `npm ci` →
+`npx playwright install --with-deps chromium` → `npm run build` →
+`npm run pdf:render`. Deliberately *not* an npm `postbuild` hook: that would
+break `npm run build` on any machine without the browser binary.

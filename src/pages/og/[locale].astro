@@ -32,6 +32,12 @@ if (!header) {
     <meta charset="utf-8" />
     <title>{header.name} — link preview ({locale})</title>
     <meta name="robots" content="noindex" />
+    <style is:inline>
+      /* Cascade layer order (lowest to highest precedence): 
+        reset < base < components < print. 
+        This bare statement must come first */
+      @layer reset,base,components,print;
+    </style>
   </head>
   <body>
     <div

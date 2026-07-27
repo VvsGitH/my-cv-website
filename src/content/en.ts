@@ -99,7 +99,6 @@ export const en: CvContent = {
       title: 'Senior Software Developer',
       contacts: [
         { label: 'Location', value: 'Bari, Italy' },
-        { label: 'Phone', value: '+39 346 403 9932' },
         {
           label: 'Email',
           value: 'vs.paparella@gmail.com',

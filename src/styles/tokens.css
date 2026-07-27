@@ -89,6 +89,29 @@
   --space-s: 0.375rem; /* within a unit: title -> meta -> summary -> bullets */
   --space-xs: 0.25rem; /* within a unit: small gap between related text */
 
+  /* =========================================================================
+   The Toolbar's geometry, and the reading column's. Both are shared rather
+   than local to the component that draws them, because the Colophon has to
+   line up with the column and keep clear of the strip (ticket 19) — a
+   remembered measurement drifts out of sync in silence.
+
+   A pointer can hit 36px; a thumb wants 44, so Reading Mode — the touch tier
+   — grows the control below.
+   ========================================================================= */
+
+  --toolbar-button-size: 2.25rem;
+  --toolbar-border-size: 1px;
+  /* The strip's full height: five controls, four inner gaps and two of
+     padding, and the borders. */
+  --toolbar-block-size: calc(
+    5 * var(--toolbar-button-size) + 6 * var(--space-xs) + 2 * var(--toolbar-border-size)
+  );
+
+  /* Reading Mode's measure — as wide as the text should run, and no narrower
+     than the narrowest screen this site targets. */
+  --reading-column-min: 23rem;
+  --reading-column-max: 34rem;
+
   /* The only gap outside the --space-* scale. Its job is to align Main's
      first section-heading with the Aside's, and its value is whatever does
      that — four other measurements, none of them free to move:
@@ -102,7 +125,7 @@
      The header is the the block article.block.block--header: it includes the main title, 
      the subtitle and the contacts; it's content, not geometry.
      Re-derive it when something changes. Measure it, dont't assume it. Ticket 17 */
-  --header-height: 185.97px;
+  --header-height: 165.97px;
   --main-first-heading-gap: calc(
     var(--aside-pad-block-start) + var(--photo-size) + var(--space-xl) -
       var(--main-inset-block-start) - var(--header-height)
@@ -141,5 +164,8 @@
 
     /* The portrait leads the compact header rather than filling a panel. */
     --photo-size: 6.5rem;
+
+    /* The touch tier: --toolbar-block-size follows on its own. */
+    --toolbar-button-size: 2.75rem;
   }
 }

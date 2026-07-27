@@ -1,0 +1,155 @@
+---
+import { getRelativeLocaleUrl } from 'astro:i18n';
+import type { CvContent } from '../../content/types';
+import { otherLocale } from '../../i18n/locale';
+import { ui } from '../../i18n/ui';
+
+/**
+ * The Colophon (CONTEXT.md: "Colophon") — the five statements the site makes
+ * about *itself*, which is what keeps them off the paper and out of the PDF.
+ *
+ * Nothing here is a second copy of anything: the owner's name and the two
+ * channels are read off the header Block, the same way Chrome.astro fills the
+ * Drawer from the Aside's. Ticket 19 records the cost — drop LinkedIn's `url`
+ * and this quietly loses a link, which is the right direction to break in.
+ *
+ * A plain `.astro` component, not part of the island (ADR-0003): five
+ * statements and three links have nothing to hydrate.
+ */
+interface Props {
+  content: CvContent;
+}
+
+const { content } = Astro.props;
+const other = otherLocale(content.locale);
+const strings = ui[content.locale].colophon;
+
+const header = content.blocks.find((block) => block.kind === 'header');
+if (!header) {
+  throw new Error(`[colophon] the ${content.locale} content has no header Block to sign off.`);
+}
+
+// Località has no `url` because it is not an action, and drops out here.
+const channels = header.contacts.filter((contact) => contact.url);
+
+// From the build, not the page load — a copyright notice dates publication,
+// and ticket 09 rebuilds on every push.
+const year = new Date().getFullYear();
+---
+
+<footer class="colophon" aria-label={strings.name}>
+  <p class="imprint">© {year} {header.name}</p>
+
+  <ul class="channels">
+    <li>
+      <a href={getRelativeLocaleUrl(other)} lang={other} hreflang={other}>
+        {ui[other].colophon.localeName}
+      </a>
+    </li>
+    {
+      channels.map((contact) => (
+        <li>
+          <a href={contact.url}>{contact.label}</a>
+        </li>
+      ))
+    }
+  </ul>
+
+  <p>{strings.dataNotice}</p>
+
+
+  <p>{strings.accessibility}</p>
+</footer>
+
+<style>
+  @layer components {
+    .colophon {
+      /* The Colophon is printed on the page background, so its ink is the one
+         the *other* theme's surface carries. */
+      --colophon-ink: var(--color-ink);
+      --colophon-ink-dark: var(--color-main-bg);
+
+      max-width: 200ch;
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 0 var(--space-m);
+
+      margin-inline: auto;
+      padding: var(--space-l) var(--space-l) var(--space-xl) var(--space-l);
+      font-size: var(--font-size-meta);
+      text-align: center;
+      line-height: 1.6;
+      /* The same three steps reset.css takes for the background this has to
+         stay legible against: a plain value for a browser without
+         light-dark(), the pair for a visitor without JS, and the `data-theme`
+         overrides for the Toolbar's explicit choice. */
+      color: var(--colophon-ink);
+      color: light-dark(var(--colophon-ink), var(--colophon-ink-dark));
+    }
+
+    @media (prefers-color-scheme: dark) {
+      .colophon {
+        color: var(--colophon-ink-dark);
+      }
+    }
+
+    :global(html[data-theme='light']) .colophon {
+      color: var(--colophon-ink);
+    }
+
+    :global(html[data-theme='dark']) .colophon {
+      color: var(--colophon-ink-dark);
+    }
+
+    .colophon > * {
+      width: max-content;
+    }
+
+    /* The whole hierarchy of the block: with one size and one ink to spend,
+       what marks the imprint is the tracking (ticket 19). */
+    .imprint {
+      font-family: var(--font-display);
+      font-weight: var(--font-weight-display);
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+    }
+
+    .channels {
+      display: flex;
+      flex-wrap: wrap;
+      gap: var(--space-s);
+    }
+
+    .channels a {
+      text-decoration: underline;
+      text-underline-offset: 0.15em;
+    }
+
+    @media screen and (width < 48rem) {
+      .colophon {
+        /* The reading column's own measure: the Colophon runs in the column
+           rather than under it. */
+        min-width: var(--reading-column-min);
+        max-width: var(--reading-column-max);
+        /* Reading Mode drops the Toolbar to the foot of the viewport
+           (toolbar.css), where its own justification fails — below the
+           Colophon there are no already-read lines for it to cover. So the
+           Colophon reserves the rectangle the strip floats in, rather than
+           indenting itself out of the column to dodge it (ticket 19). */
+        padding-block-end: calc(
+          var(--toolbar-block-size) + var(--space-m) + var(--space-xl)
+        );
+      }
+    }
+  }
+
+  @layer print {
+    /* Chrome is never captured (CONTEXT.md). */
+    @media print {
+      .colophon {
+        display: none;
+      }
+    }
+  }
+</style>

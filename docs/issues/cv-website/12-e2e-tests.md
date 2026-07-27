@@ -1,6 +1,6 @@
 # 12 — Playwright E2E tests
 
-Status: ready-for-agent
+Status: done
 
 ## Goal
 
@@ -134,3 +134,85 @@ must set a viewport ≥ 48rem first, or it will measure a column that isn't
 there. Playwright's default 1280×720 is fine; an explicit
 `test.use({ viewport: … })` is better, since the number is load-bearing rather
 than incidental.
+
+### Closing notes — what shipped
+
+40 tests in `tests/`, run by `npm test` against `astro preview` on a pinned
+port (4322). Four files, one per area the ticket names: `paper.spec.ts`
+(structure, overflow, heading alignment), `toolbar.spec.ts` (the four actions,
+the Drawer, accessible names, keyboard), `responsive.spec.ts` (the three tiers),
+`pdf.spec.ts` (the generated files). Wired into `deploy.yml` between
+`captures:render` and the artifact upload, so a regression publishes nothing.
+
+`npm test` builds and captures first, through a `pretest` hook. The suite reads
+the built pages *and* the rendered PDFs off disk, so without it a local run
+could pass against a `dist` that no longer matched the source — the one failure
+mode a suite like this must not have. CI calls `npx playwright test` instead,
+since its own steps have already done that work and keeping them separate is
+what makes a build failure read as a build failure.
+
+**The overflow assertion was rehearsed against a real regression, not just
+written.** Adding one sentence to the Italian About Block spilled Sheet 1's
+Aside by 8.1px; `astro check` passed and the PDF still reported two A4 pages,
+and the suite failed with `Sheet 1 aside runs 8.1px past its panel`. That is the
+exact failure mode ticket 11 handed over.
+
+**Two things in the handovers above were stale, and one measurement moved.**
+
+- The wide tier is **101rem (1616px)**, not the 1280px in the task list —
+  ADR-0006 moved it and removed `--sheet-scale` with it. A Sheet is a literal
+  210×297mm box at every width above 48rem, so the suite asserts two-up at
+  exactly 1616 and stacked at 1615.
+- The slack table predated the `--space-xl` 42→40px hand-tune. Remeasured with
+  all faces loaded, Aside to the panel's bottom edge and Main to the Sheet's:
+
+| | aside → panel | main → sheet |
+|---|---|---|
+| IT Sheet 1 | +65.2 | +57.7 |
+| IT Sheet 2 | +207.6 | +50.0 |
+| EN Sheet 1 | +51.8 | +73.1 |
+| EN Sheet 2 | +223.0 | +85.4 |
+
+  The canary is now **IT Sheet 2 Main (+50.0)**, with EN Sheet 1 Aside (+51.8)
+  just behind it. The test asserts `> 0` rather than a floor — the invariant is
+  "it fits", and a floor would be a second number to keep in sync.
+- The two first headings of Sheet 1 now align **exactly** (both at y=278.19, not
+  the y≈280 / 0.11px in the handover). `--main-first-heading-gap` self-corrected
+  through its `calc()` when the scale step changed, as ticket 17 predicted.
+
+**On the PDF text assertion.** Ticket 08 handed over that `pdf-lib` reads
+structure but not text, and that `pdfjs-dist` or content-stream inflation would
+be needed. Inflation turned out to be enough: Chromium writes a `ToUnicode` CMap
+for every font it embeds, including the Type3 ones, so `tests/support/pdf.ts`
+walks the content stream directly rather than taking a 15MB dependency for one
+assertion. Two things to know if it ever needs touching: Type0 fonts address
+glyphs with **two-byte** codes and Type3 with **one** — getting that wrong is
+what makes half the characters come out blank — and Chromium positions one glyph
+at a time, so the extracted run has no usable word spacing and both sides of a
+comparison have their whitespace stripped.
+
+The expected strings are derived from `src/content/`, not listed here: each
+Locale's PDF must contain every visible section heading of its own Locale and
+none of the headings unique to the other. Continuation headings are excluded —
+they are screen-reader-only copies (ADR-0005) and prove nothing about which file
+you are holding.
+
+**"Fonts embedded" is asserted as embedding, not by name.** Garet and Now come
+out of Chromium as **Type3** fonts — glyph procedures with no `BaseFont` — so
+they cannot be checked by name. What the suite asserts instead is that no font
+in either PDF relies on a face the reader has to supply, and that every font
+that *is* named is one of the CV's (Lato ×3, icomoon, Primera_Signature). A face
+that failed to load would surface there as whatever system fallback Chromium
+reached for.
+
+That leaves one hole, which the count closes: since the display faces are the
+unnamed Type3 ones, a CV reset entirely in Lato would satisfy everything above.
+So the suite also requires at least one Type3 font per file. It is the only
+handle those two faces offer.
+
+**One trap found while writing it.** The Drawer's toggle has no accessible name
+in Paper Mode, because it is `display: none` above 48rem and so is not in the
+accessibility tree at all. That is correct — the Toolbar carries four actions on
+paper and five in Reading Mode (CONTEXT.md) — but an accessible-name assertion
+written at the default viewport fails against it. The name assertions live in
+the Reading Mode block; the Paper Mode block asserts the toggle is *absent*.

@@ -16,8 +16,10 @@ export interface ToolbarLinks {
  * the Drawer's toggle below 48rem. Every control is icon-only and carries its
  * name in `aria-label`, except the theme control, whose name has to be right
  * before hydration and is therefore a pair of visually-hidden labels the CSS
- * chooses between (toolbar.css). The icons are private-use codepoints, hidden
- * from the accessibility tree (src/styles/icons.css).
+ * chooses between (toolbar.css). The matching `title` rides alongside because
+ * it is what draws the tooltip, not because it names anything. The icons are
+ * private-use codepoints, hidden from the accessibility tree
+ * (src/styles/icons.css).
  *
  * No `role="toolbar"`: that role obliges arrow-key navigation with a roving
  * tabindex, and five controls in the tab order need no such thing.
@@ -45,6 +47,7 @@ export default function Toolbar({ strings, links, placement }: Props) {
         type="button"
         class="toolbar-button toolbar-drawer"
         title={drawerOpen.value ? drawer.close : drawer.open}
+        aria-label={drawerOpen.value ? drawer.close : drawer.open}
         aria-haspopup="dialog"
         onClick={() => (drawerOpen.value = !drawerOpen.value)}
       >
@@ -56,11 +59,18 @@ export default function Toolbar({ strings, links, placement }: Props) {
         href={links.languageHref}
         hreflang={links.languageLocale}
         title={toolbar.language}
+        aria-label={toolbar.language}
       >
         <span class="icon-earth" aria-hidden="true"></span>
       </a>
 
-      <a class="toolbar-button" href={links.pdfHref} download title={toolbar.download}>
+      <a
+        class="toolbar-button"
+        href={links.pdfHref}
+        download
+        title={toolbar.download}
+        aria-label={toolbar.download}
+      >
         <span class="icon-download" aria-hidden="true"></span>
       </a>
 
@@ -68,6 +78,7 @@ export default function Toolbar({ strings, links, placement }: Props) {
         type="button"
         class="toolbar-button"
         title={linkCopied.value ? toolbar.shared : toolbar.share}
+        aria-label={linkCopied.value ? toolbar.shared : toolbar.share}
         onClick={copyLink}
       >
         <span class={linkCopied.value ? 'icon-checkmark' : 'icon-link'} aria-hidden="true"></span>

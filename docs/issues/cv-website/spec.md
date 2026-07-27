@@ -10,7 +10,7 @@ Vito's CV exists only as a static PDF made in Canva. He can't share it as a live
 
 ## Solution
 
-A minimal website whose only job is to present the CV as sheets of paper and to download it as a PDF. It shows the CV as two A4 **Sheets** — two side by side on wide screens, stacked on medium screens, and reflowed into a comfortable single-column **Reading Mode** with a slide-in **Drawer** on phones. A floating **Toolbar** offers four actions: switch language (Italian default / English), download the PDF, share (copy URL), and toggle a light/dark background. The downloadable PDF is pre-rendered at build time from the exact same page, one file per **Locale**, so it is byte-stable and pixel-identical to the desktop rendering. Nothing else frames the paper.
+A minimal website whose only job is to present the CV as sheets of paper and to download it as a PDF. It shows the CV as two A4 **Sheets** — two side by side on wide screens, stacked on medium screens, and reflowed into a comfortable single-column **Reading Mode** with a slide-in **Drawer** on phones. A floating **Toolbar** offers four actions: switch language (Italian default / English), download the PDF, share (copy URL), and toggle a light/dark background. The downloadable PDF is pre-rendered at build time from the exact same page, one file per **Locale**, so it is byte-stable and pixel-identical to the desktop rendering. Below the paper sits the **Colophon**, the one piece of Chrome in normal flow: five small statements the *site* makes about itself — copyright, the data regime the page falls under, the other Locale, the owner's channels, and the accessibility standard it is composed to. Nothing else frames the paper, and nothing the Colophon says reaches the PDF (ticket 19).
 
 ## User Stories
 
@@ -44,6 +44,10 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 28. As the owner, I want the PDFs generated in CI and not committed, so that the repository stays clean of binaries.
 29. As the owner, I want the signature approximated with a script font rather than a real signature image, so that my actual signature isn't published on a public site.
 30. As the owner, I want the profile photo swappable via a file drop, so that I can update it without code changes.
+31. As the owner, I want the site to state that the personal data on the page is mine, why it is published, and that nothing is collected about visitors, so that the page carries its own data notice without a separate privacy page.
+32. As a visitor who has read to the end, I want the language switch written out in the language it leads to, so that I can change language without decoding an icon in a language I may not read.
+33. As a recruiter who has read to the end, I want the owner's email and LinkedIn there too, so that I can act without scrolling back to the header.
+34. As a visitor using assistive technology, I want the site to state the accessibility standard it aims at and how to report a barrier, so that I know what to expect and whom to tell.
 
 ## Implementation Decisions
 
@@ -86,7 +90,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 - **Narrow (<768px): Reading Mode** — the same component reflows to single-column, normal-size reading view; Aside content moves into a left slide-in Drawer (hamburger toggle); Main is the primary scroll; a compact header sits at the top. A4 is dropped here.
 - Paper styles must be identical under `screen` and `print` media (or capture with `emulateMedia({ media: 'screen' })`) so the PDF equals the desktop rendering. Reading Mode styles must not affect Paper Mode/print output.
 
-### Toolbar (the only chrome)
+### Toolbar
 Floating cluster, four actions. Ticket 07 placed it as a vertical strip against the **left edge, centred on the viewport** — the owner asked for that placement in the ticket, over this line's original "bottom-right" — and gave it a fifth control, the Drawer's toggle, in Reading Mode only. In Reading Mode the strip rides the Drawer's outer edge while the panel is open. The four actions:
 1. **Language** — toggle EN/IT (navigates to the equivalent route in the other Locale).
 2. **Download** — serves the current Locale's pre-rendered PDF.
@@ -157,3 +161,7 @@ Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel
 13. `13-signature-font.md` — self-host the owner's script font, wire it into the Privacy block's signature.
 14. `14-profile-photo.md` — self-host and render the owner's real profile photo, replacing the placeholder disc.
 15. `15-folder-structure.md` — `src/assets/` for fonts and images; component tiers `primitives`/`blocks`/`structure` (+ `chrome`), per ADR-0004.
+16. `16-main-section-blocks.md` — one `MainSectionBlock` for Experience/Projects/Education, with explicit Continuations (ADR-0005).
+17. `17-spacing-scale.md` — the 42/28/14/7px spacing scale, unified body size and leading.
+18. `18-preact-island.md` — Preact instead of React for the island (ADR-0003).
+19. `19-colophon.md` — the Colophon, plus the Toolbar's accessible names and WCAG 2.2 · 2.4.11.

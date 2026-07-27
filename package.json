@@ -1,7 +1,7 @@
 {
   "name": "my-cv-website",
   "type": "module",
-  "version": "0.0.1",
+  "version": "1.0.0",
   "private": false,
   "author": {
     "name": "Vito Paparella Santorsola",
@@ -13,7 +13,9 @@
     "preview": "astro preview",
     "astro": "astro",
     "fonts:subset": "node scripts/subset-fonts.mjs",
-    "captures:render": "node scripts/render-captures.mjs"
+    "captures:render": "node scripts/render-captures.mjs",
+    "pretest": "npm run build && npm run captures:render",
+    "test": "playwright test"
   },
   "dependencies": {
     "@astrojs/preact": "^6.0.1",
@@ -23,6 +25,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.9",
+    "@playwright/test": "^1.62.0",
     "@types/node": "^26.1.1",
     "fontaine": "^0.8.0",
     "pdf-lib": "^1.17.1",

@@ -1,6 +1,8 @@
 import astroConfig from '../../astro.config.mjs';
 import type { Locale } from '../../src/content/types';
 
+export { otherLocale } from '../../src/i18n/locale';
+
 /**
  * What the built site publishes, derived from the one place it is configured.
  * `scripts/render-captures.mjs` builds its routes the same way — the two must
@@ -30,5 +32,3 @@ export const routeFor = (locale: Locale): string =>
  */
 export const distPathForHref = (href: string): string =>
   `${OUT_DIR}/${href.slice(BASE.length)}`;
-
-export const otherLocale = (locale: Locale): Locale => (locale === 'it' ? 'en' : 'it');

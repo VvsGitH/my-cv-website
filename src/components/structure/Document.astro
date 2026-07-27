@@ -68,8 +68,8 @@ const { content } = Astro.props;
       .sheets {
         grid-template-columns: minmax(0, 1fr);
         gap: 0;
-        max-width: 34rem;
-        min-width: 23rem;
+        max-width: var(--reading-column-max);
+        min-width: var(--reading-column-min);
         margin-inline: auto;
         padding: var(--space-xl) var(--space-l);
         background-color: var(--color-main-bg);

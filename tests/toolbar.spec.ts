@@ -52,6 +52,23 @@ for (const locale of LOCALES) {
       await expect(action.drawer).toBeHidden();
     });
 
+    test('names them in aria-label, not in title alone', async ({ page }) => {
+      const { drawer: drawerStrings, toolbar } = ui[locale];
+      const action = actions(page);
+
+      // `title` does produce an accessible name, but it is the last resort in
+      // the accname chain and never surfaces on touch (ticket 19).
+      await expect(action.drawer).toHaveAttribute('aria-label', drawerStrings.open);
+      await expect(action.language).toHaveAttribute('aria-label', toolbar.language);
+      await expect(action.download).toHaveAttribute('aria-label', toolbar.download);
+      await expect(action.share).toHaveAttribute('aria-label', toolbar.share);
+
+      // The theme control is the documented exception: its name has to be
+      // right before hydration, so it comes from the pair of visually-hidden
+      // labels CSS chooses between, and an aria-label would silence them.
+      await expect(action.theme).not.toHaveAttribute('aria-label', /./);
+    });
+
     test('gives every action to the keyboard', async ({ page }) => {
       const action = actions(page);
 
@@ -150,6 +167,42 @@ test('offers a different PDF in each Locale', async ({ page }) => {
   // Which file holds which Locale's words is pdf.spec's job; this is only that
   // the two links do not point at one file.
   expect(italian).not.toBe(english);
+});
+
+test.describe('Focus Not Obscured', () => {
+  // WCAG 2.2 · 2.4.11 (Minimum), against the one tier where the Toolbar floats
+  // over the reading column rather than over a margin (ticket 19).
+  test.use({ viewport: { width: 368, height: VIEWPORTS.reading.height } });
+
+  test('never parks a focused control entirely behind the Toolbar', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+
+    const targets = await page.locator(':is(a[href], button):visible').all();
+    expect(targets.length, 'the page should have something to tab through').toBeGreaterThan(3);
+
+    const obscured: string[] = [];
+    for (const target of targets) {
+      await target.focus();
+      const verdict = await target.evaluate((element) => {
+        // The Toolbar's own controls live inside the strip by definition.
+        if (element.closest('.toolbar')) return null;
+
+        const strip = document.querySelector('.toolbar--page')!.getBoundingClientRect();
+        const box = element.getBoundingClientRect();
+        const hidden =
+          box.left >= strip.left &&
+          box.right <= strip.right &&
+          box.top >= strip.top &&
+          box.bottom <= strip.bottom;
+
+        return hidden ? (element.textContent?.trim().slice(0, 40) ?? '(unnamed)') : null;
+      });
+
+      if (verdict) obscured.push(verdict);
+    }
+
+    expect(obscured, 'focusing these scrolled them under the Toolbar').toEqual([]);
+  });
 });
 
 test.describe('Drawer', () => {

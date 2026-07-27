@@ -45,11 +45,15 @@ The left slide-in panel, in Reading Mode only, that holds the Aside content behi
 _Avoid_: sidebar, menu
 
 **Toolbar**:
-The floating control cluster carrying the four actions — language, download, share, theme — plus the Drawer's toggle in Reading Mode. A vertical strip against the left edge, centred on the viewport; in Reading Mode it rides the Drawer's outer edge while the panel is open (ticket 07). The site's only chrome besides the Drawer.
+The floating control cluster carrying the four actions — language, download, share, theme — plus the Drawer's toggle in Reading Mode. A vertical strip against the left edge, centred on the viewport; in Reading Mode it rides the Drawer's outer edge while the panel is open (ticket 07). The site's only fixed chrome.
 _Avoid_: header, navbar, controls
 
+**Colophon**:
+The block at the foot of the page, below the paper, carrying the five statements the site makes about itself — who owns the work, what regime the personal data on the page falls under, where the other Locale lives, how to reach the owner, and what accessibility standard the site is composed to. It speaks about the site, never about the person, which is what keeps it out of the PDF. It emits a `<footer>` because that is the correct landmark, and is the only Chrome in normal flow.
+_Avoid_: footer (the running foot repeated at the bottom of every printed page — this appears once, is not on the Sheets, and is excluded from the PDF), credits
+
 **Chrome**:
-Everything the site shows that is not the paper — the Toolbar and the Drawer. Never captured into the PDF.
+Everything the site shows that is not the paper — the Toolbar, the Drawer and the Colophon. Never captured into the PDF.
 _Avoid_: UI, shell, frame
 
 **Locale**:

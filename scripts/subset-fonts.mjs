@@ -4,15 +4,15 @@ import subsetFont from 'subset-font';
 
 // Basic Latin (space through tilde) + Latin-1 accented letters + Latin
 // Extended-A + typographic punctuation actually used in CV copy (en/em
-// dash, curly quotes, ellipsis, bullet). Covers Italian and English CV
-// content without pulling in unrelated scripts.
+// dash, curly quotes, ellipsis, bullet, and the Colophon's ©). Covers
+// Italian and English CV content without pulling in unrelated scripts.
 const BASIC_LATIN =
   ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
 const LATIN1_ACCENTS =
   'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ';
 const LATIN_EXTENDED_A =
   'ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĴĵĶķĹĺĻļĽľŁłŃńŅņŇňŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽž';
-const PUNCTUATION = '–—‘’‚“”„†‡•…‰′″‹›€™';
+const PUNCTUATION = '©–—‘’‚“”„†‡•…‰′″‹›€™';
 
 const TEXT = BASIC_LATIN + LATIN1_ACCENTS + LATIN_EXTENDED_A + PUNCTUATION;
 

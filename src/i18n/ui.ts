@@ -38,9 +38,25 @@ export interface ToolbarStrings {
   themeToLight: string;
 }
 
+/**
+ * The Colophon's own words (CONTEXT.md: "Colophon"). The © line needs none and
+ * the channels are derived from the CV's own header — ticket 19 has why.
+ */
+export interface ColophonStrings {
+  /** The landmark's accessible name — it carries no visible title. */
+  name: string;
+  /** Whose the personal data is, and that the site takes none of the reader's. */
+  dataNotice: string;
+  /** An aim and a channel. Never "conforms to": that is asserted after an audit. */
+  accessibility: string;
+  /** This Locale's endonym, so a language link can be labelled in the language it leads to. */
+  localeName: string;
+}
+
 export interface UiStrings {
   drawer: DrawerStrings;
   toolbar: ToolbarStrings;
+  colophon: ColophonStrings;
 }
 
 export const ui: Record<Locale, UiStrings> = {
@@ -59,6 +75,15 @@ export const ui: Record<Locale, UiStrings> = {
       themeToDark: 'Attiva il tema scuro',
       themeToLight: 'Attiva il tema chiaro',
     },
+    colophon: {
+      name: 'Informazioni sul sito',
+      // The last clause becomes false the day analytics are added.
+      dataNotice:
+        'I dati personali in questa pagina sono di Vito Paparella Santorsola, pubblicati per finalità di ricerca e selezione del personale e tutelati dal GDPR (Regolamento UE 2016/679). Questo sito non raccoglie dati sui visitatori.',
+      accessibility:
+        'Questo sito è progettato per essere conforme alle WCAG 2.2 livello AA. Se incontri una barriera, scrivimi.',
+      localeName: 'Italiano',
+    },
   },
   en: {
     drawer: {
@@ -74,6 +99,15 @@ export const ui: Record<Locale, UiStrings> = {
       themeChange: 'Switch theme',
       themeToDark: 'Switch to the dark theme',
       themeToLight: 'Switch to the light theme',
+    },
+    colophon: {
+      name: 'About this site',
+      // The last clause becomes false the day analytics are added.
+      dataNotice:
+        'The personal data on this page belongs to Vito Paparella Santorsola, published for recruitment purposes and protected under the GDPR (EU 2016/679). This site collects no visitor data.',
+      accessibility:
+        'This site is designed to meet WCAG 2.2 level AA. If you hit a barrier, email me.',
+      localeName: 'English',
     },
   },
 };

@@ -37,3 +37,19 @@ It needs the browser binary once per machine:
 ```sh
 npx playwright install chromium
 ```
+
+## Deployment
+
+Every push to `master` runs `.github/workflows/deploy.yml`, which is the whole
+publishing action: `npm ci` → `npx playwright install --with-deps chromium` →
+`npm run build` → `npm run captures:render` → upload `dist/` → GitHub Pages.
+The captures step gates the deploy, so the site never ships without its PDFs
+and preview images. Nothing generated is committed back.
+
+Live at <https://vvsgith.github.io/my-cv-website/>. That URL is spelled out in
+`astro.config.mjs` as `site` (the origin) + `base` (the repository name); if
+the repository is ever renamed, both have to follow.
+
+One manual setting, once, before the first run: **Settings → Pages → Build and
+deployment → Source: GitHub Actions**. Without it the deploy job fails, because
+no workflow can turn Pages on with the default `GITHUB_TOKEN`.

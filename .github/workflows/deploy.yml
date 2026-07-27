@@ -1,0 +1,55 @@
+name: Deploy to GitHub Pages
+
+# A push to the default branch is the whole publishing action: build, capture
+# the PDFs and preview images, deploy. The whys — step order, the one-off repo
+# setting it assumes — are in docs/issues/cv-website/09-ci-deploy.md.
+
+on:
+  push:
+    branches: [master]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+
+      # Chromium only — the capture step is the sole browser consumer. Its own
+      # step and not an npm hook, per ticket 08's closing note.
+      - run: npx playwright install --with-deps chromium
+
+      - run: npm run build
+
+      # Before the upload, so a failed capture publishes nothing.
+      - run: npm run captures:render
+
+      - uses: actions/upload-pages-artifact@v5
+        with:
+          path: dist
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v5

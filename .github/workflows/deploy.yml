@@ -29,7 +29,7 @@ jobs:
           node-version: 24
           cache: npm
 
-      - run: npm ci
+      - run: npm i
 
       # Chromium only — the capture step is the sole browser consumer. Its own
       # step and not an npm hook, per ticket 08's closing note.

@@ -90,10 +90,11 @@
   --space-xs: 0.25rem; /* within a unit: small gap between related text */
 
   /* =========================================================================
-   The Toolbar's geometry, and the reading column's. Both are shared rather
-   than local to the component that draws them, because the Colophon has to
-   line up with the column and keep clear of the strip (ticket 19) — a
-   remembered measurement drifts out of sync in silence.
+   The Toolbar's geometry, the Drawer's, and the reading column's. All shared
+   rather than local to the component that draws them, because the Colophon
+   has to line up with the column and keep clear of the strip (ticket 19), and
+   the Toolbar has to travel exactly the panel's width when it opens (ticket
+   20) — a remembered measurement drifts out of sync in silence.
 
    A pointer can hit 36px; a thumb wants 44, so Reading Mode — the touch tier
    — grows the control below.
@@ -106,6 +107,14 @@
   --toolbar-block-size: calc(
     5 * var(--toolbar-button-size) + 6 * var(--space-xs) + 2 * var(--toolbar-border-size)
   );
+
+  /* As wide as a phone can spare, with the Toolbar's berth left over: 76vw
+     keeps ~54px of strip plus its gap on screen at 320px, the narrowest width
+     this site targets, and the 19rem cap keeps the measure readable on a
+     tablet-sized phone (ticket 07). Both the panel and the strip's travel are
+     drawn from it. */
+  --drawer-width: min(19rem, 76vw);
+  --drawer-slide: 250ms;
 
   /* Reading Mode's measure — as wide as the text should run, and no narrower
      than the narrowest screen this site targets. */

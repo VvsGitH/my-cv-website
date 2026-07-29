@@ -5,8 +5,8 @@ import type { Column, SheetNumber } from '../../src/content/types';
  * Leaves the page fully painted and interactive. Images and `document.fonts.ready`
  * are the pair `scripts/render-captures.mjs` waits on for the same reason — line
  * wrapping moves with the real faces. The third wait is this suite's own: the
- * Toolbar is `client:idle`, and a click sent before Astro clears `ssr` off the
- * island is silently lost.
+ * Chrome's two islands are `client:idle`, and a click sent before Astro clears
+ * `ssr` off them is silently lost.
  */
 export async function openPainted(page: Page, route: string): Promise<void> {
   const response = await page.goto(route);
@@ -35,10 +35,12 @@ export const VIEWPORTS = {
 export const sheet = (page: Page, number: SheetNumber): Locator =>
   page.locator('.sheet').nth(number - 1);
 
-/** The page's own Toolbar. The Drawer carries a second copy of it. */
-export const pageToolbar = (page: Page): Locator => page.locator('.toolbar--page');
+export const toolbar = (page: Page): Locator => page.locator('.toolbar');
 
-export const drawer = (page: Page): Locator => page.locator('dialog.drawer');
+/** The custom modal's panel — the element carrying `role="dialog"`. */
+export const drawer = (page: Page): Locator => page.locator('.drawer');
+
+export const drawerBackdrop = (page: Page): Locator => page.locator('.drawer-backdrop');
 
 /** The kind of every Block rendered into one column, in document order. */
 export async function renderedKinds(

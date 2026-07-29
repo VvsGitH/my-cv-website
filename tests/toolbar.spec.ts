@@ -1,7 +1,7 @@
 import { existsSync } from 'node:fs';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { ui } from '../src/i18n/ui';
-import { drawer, openPainted, pageToolbar, sheet, VIEWPORTS } from './support/page';
+import { drawer, drawerBackdrop, openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
 import { distPathForHref, LOCALES, otherLocale, routeFor } from './support/site';
 
 // Share copies through the async Clipboard API, which silently no-ops on a
@@ -9,21 +9,17 @@ import { distPathForHref, LOCALES, otherLocale, routeFor } from './support/site'
 // broken button rather than a missing grant.
 test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
 
-/**
- * The Toolbar ships twice — once on the page, once inside the Drawer's dialog
- * (ChromeIsland) — so each action has to be reached through one copy or the
- * other. These are the page's.
- */
+/** There is one Toolbar, and these are its five controls. */
 const actions = (page: Page) => {
-  const toolbar = pageToolbar(page);
+  const strip = toolbar(page);
   return {
-    drawer: toolbar.locator('.toolbar-drawer'),
-    language: toolbar.locator('a[hreflang]'),
-    download: toolbar.locator('a[download]'),
+    drawer: strip.locator('.toolbar-drawer'),
+    language: strip.locator('a[hreflang]'),
+    download: strip.locator('a[download]'),
     // The only Toolbar button with no modifier class of its own.
-    share: toolbar.locator('button.toolbar-button:not(.toolbar-drawer):not(.toolbar-theme)'),
-    theme: toolbar.locator('.toolbar-theme'),
-    toast: toolbar.locator('.toolbar-toast'),
+    share: strip.locator('button.toolbar-button:not(.toolbar-drawer):not(.toolbar-theme)'),
+    theme: strip.locator('.toolbar-theme'),
+    toast: strip.locator('.toolbar-toast'),
   };
 };
 
@@ -187,7 +183,7 @@ test.describe('Focus Not Obscured', () => {
         // The Toolbar's own controls live inside the strip by definition.
         if (element.closest('.toolbar')) return null;
 
-        const strip = document.querySelector('.toolbar--page')!.getBoundingClientRect();
+        const strip = document.querySelector('.toolbar')!.getBoundingClientRect();
         const box = element.getBoundingClientRect();
         const hidden =
           box.left >= strip.left &&
@@ -205,9 +201,16 @@ test.describe('Focus Not Obscured', () => {
   });
 });
 
+/**
+ * The Drawer is a custom modal (ADR-0007), so everything a `<dialog>` used to
+ * grant — Escape, the focus return, holding the page inert, locking the scroll
+ * — is this project's code now. These tests are what stands behind it.
+ */
 test.describe('Drawer', () => {
   // The Drawer is Reading Mode only; its toggle is display:none above 48rem.
   test.use({ viewport: VIEWPORTS.reading });
+
+  const toggle = (page: Page): Locator => toolbar(page).locator('.toolbar-drawer');
 
   for (const locale of LOCALES) {
     test(`opens and closes from the keyboard in ${locale}, and hands focus back`, async ({
@@ -216,28 +219,110 @@ test.describe('Drawer', () => {
       await openPainted(page, routeFor(locale));
 
       const strings = ui[locale].drawer;
-      const toggle = pageToolbar(page).locator('.toolbar-drawer');
+      const control = toggle(page);
       const panel = drawer(page);
 
       await expect(panel).toBeHidden();
-      await expect(toggle).toHaveAttribute('aria-haspopup', 'dialog');
-      await expect(toggle).toHaveAccessibleName(strings.open);
+      await expect(control).toHaveAttribute('aria-haspopup', 'dialog');
+      await expect(control).toHaveAccessibleName(strings.open);
 
-      await toggle.focus();
+      await control.focus();
       await page.keyboard.press('Enter');
 
       await expect(panel).toBeVisible();
       await expect(panel).toHaveAccessibleName(strings.name);
-      await expect(toggle).toHaveAccessibleName(strings.close);
+      await expect(panel).toBeFocused();
+      await expect(control).toHaveAccessibleName(strings.close);
       // The Aside's Blocks are read here once the paper stops showing them.
       await expect(panel.locator('.block--about')).toBeVisible();
 
-      // Escape, the focus trap and the focus return are the platform's, because
-      // the panel is a native dialog opened with showModal() (ChromeIsland).
       await page.keyboard.press('Escape');
 
       await expect(panel).toBeHidden();
-      await expect(toggle).toBeFocused();
+      await expect(control).toBeFocused();
     });
   }
+
+  test('holds the paper and the Colophon inert while it is open, and releases them', async ({
+    page,
+  }) => {
+    await openPainted(page, routeFor('it'));
+
+    const paper = page.locator('body > main');
+    const colophon = page.locator('body > footer');
+    const inerted = page.locator('body > [inert]');
+    // Named rather than counted: Astro's own `<style>` and bootstrap
+    // `<script>` are top-level siblings too and are swept up with the rest,
+    // which renders nothing and is not what this test is about.
+    const inertToolbar = page.locator('body > [inert] .toolbar');
+
+    await expect(inerted).toHaveCount(0);
+
+    await toggle(page).click();
+    await expect(drawer(page)).toBeVisible();
+
+    // What showModal() used to do to the whole document — minus the Toolbar,
+    // which has to stay live because it carries the way out.
+    await expect(paper).toHaveAttribute('inert', '');
+    await expect(colophon).toHaveAttribute('inert', '');
+    await expect(inertToolbar).toHaveCount(0);
+    await expect(page.locator('html')).toHaveAttribute('data-drawer-open', '');
+
+    await page.keyboard.press('Escape');
+
+    await expect(inerted).toHaveCount(0);
+    await expect(page.locator('html')).not.toHaveAttribute('data-drawer-open', /.*/);
+  });
+
+  test('does not widen the reading column when it locks the scroll', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+
+    // The property, because a headless browser may overlay its scrollbars and
+    // have no gutter to reclaim — which would let the geometry below pass
+    // without the rule being there at all.
+    await expect(page.locator('html')).toHaveCSS('scrollbar-gutter', 'stable');
+
+    const columnWidth = () =>
+      page.locator('.sheets').evaluate((element) => element.getBoundingClientRect().width);
+    const before = await columnWidth();
+
+    await toggle(page).click();
+    await expect(drawer(page)).toBeVisible();
+
+    // `overflow: hidden` takes the scrollbar away; without the reserved gutter
+    // its width falls to the column, re-wrapping every line behind the panel.
+    expect(await columnWidth(), 'the column behind the open panel').toBe(before);
+
+    await page.keyboard.press('Escape');
+    await expect(drawer(page)).toBeHidden();
+    expect(await columnWidth(), 'the column once the panel has gone').toBe(before);
+  });
+
+  test('leaves the Toolbar operable beside the open panel', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+
+    await toggle(page).click();
+    await expect(drawer(page)).toBeVisible();
+
+    // The whole reason the panel is not a modal `<dialog>`: under one, every
+    // control here would be inert behind the backdrop (ADR-0007).
+    await actions(page).theme.click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    // And Escape still closes with the focus outside the panel.
+    await page.keyboard.press('Escape');
+    await expect(drawer(page)).toBeHidden();
+  });
+
+  test('closes on a click beside the panel', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+
+    await toggle(page).click();
+    await expect(drawer(page)).toBeVisible();
+
+    await drawerBackdrop(page).click({ position: { x: 350, y: 400 } });
+
+    await expect(drawer(page)).toBeHidden();
+    await expect(toggle(page)).toBeFocused();
+  });
 });

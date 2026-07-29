@@ -12,7 +12,22 @@
   .toolbar {
     /* --toolbar-button-size and the strip height derived from it live in
        tokens.css: the Colophon reserves this strip's berth in Reading Mode
-       (ticket 19) and cannot be left to remember the number. */
+       (ticket 19) and cannot be left to remember the number.
+
+       Left edge, vertically centred (ticket 07) — over the page's margin on
+       the Paper tiers, except at the bottom of the Medium tier, where an
+       unscaled A4 Sheet already fills the viewport (ADR-0006) and there is no
+       margin left to float over. Reading Mode moves it to the bottom; see
+       below.
+
+       z-index 4 puts it above the Drawer's panel and backdrop (drawer.css).
+       That is the whole point of the custom modal (ADR-0007): the strip stays
+       lit and operable beside an open panel, where a `<dialog>`'s inert
+       document left it dead. */
+    position: fixed;
+    inset-block-start: 50%;
+    inset-inline-start: var(--space-m);
+    z-index: 4;
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
@@ -21,47 +36,16 @@
     border-radius: 2px;
     background-color: var(--color-aside-bg);
     box-shadow: 0 1px 6px color-mix(in oklab, var(--color-ink) 18%, transparent);
-  }
-
-  /* Left edge, vertically centred (ticket 07) — over the page's margin on the
-     Paper tiers, except at the bottom of the Medium tier, where an unscaled A4
-     Sheet already fills the viewport (ADR-0006) and there is no margin left to
-     float over. Reading Mode moves it to the bottom; see below. */
-  .toolbar--page {
-    position: fixed;
-    inset-block-start: 50%;
-    inset-inline-start: var(--space-m);
-    z-index: 1;
     transform: translateY(-50%);
-    /* The delay is the Drawer's slide-out (drawer.css): coming back, this
-       copy waits for the other one to leave, so the two never overlap. */
-    transition: opacity 150ms ease 250ms;
+    transition: translate var(--drawer-slide) ease;
   }
 
-  .toolbar--page[data-drawer-open] {
-    opacity: 0;
-    transition: opacity 100ms ease;
-  }
-
-  /* reset.css collapses transition *durations* under reduced motion, which
-     leaves the delay above standing — the Toolbar would sit invisible for a
-     quarter second after the Drawer closed. */
-  @media (prefers-reduced-motion: reduce) {
-    .toolbar--page {
-      transition-delay: 0ms;
-    }
-  }
-
-  /* The copy that rides the Drawer — pinned just outside the panel's inline
-     end, so the panel's own transition carries it. ChromeIsland explains why
-     it exists. The dialog is `display: none` in Paper Mode, which is all that
-     keeps this copy off a desktop screen. */
-  .toolbar--drawer {
-    position: absolute;
-    inset-block-start: 50%;
-    inset-inline-start: 100%;
-    margin-inline-start: var(--space-m);
-    transform: translateY(-50%);
+  /* Ticket 07 asked for a strip that travels with the panel, and this is it:
+     exactly the panel's width, over exactly the panel's slide. `translate`
+     composes with the centring `transform` above, and in Reading Mode — the
+     one tier where the Drawer exists at all — that transform is already none. */
+  .toolbar[data-drawer-open] {
+    translate: var(--drawer-width) 0;
   }
 
   .toolbar-button {
@@ -131,9 +115,9 @@
     opacity: 1;
   }
 
-  /* The Drawer's copy has no room on that side — it is already the rightmost
-     thing on a phone screen — so its toast opens back across the panel. */
-  .toolbar--drawer .toolbar-toast {
+  /* Riding the panel's edge, the strip is already the rightmost thing on a
+     phone screen, so its toast opens back across the panel instead. */
+  .toolbar[data-drawer-open] .toolbar-toast {
     inset-inline: auto 100%;
     margin-inline: 0 var(--space-s);
   }
@@ -148,11 +132,9 @@
   /* Reading Mode is the one tier where the column reaches the Toolbar's edge,
      so the strip drops to the bottom rather than pushing the text aside: it
      covers the lines a reader has already passed instead of the ones under
-     their eye, and the measure stays full width. Both copies move together —
-     the Drawer's still rides the panel's outer edge. */
+     their eye, and the measure stays full width. */
   @media screen and (width < 48rem) {
-    .toolbar--page,
-    .toolbar--drawer {
+    .toolbar {
       inset-block: auto var(--space-m);
       transform: none;
     }

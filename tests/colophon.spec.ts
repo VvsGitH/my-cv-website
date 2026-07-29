@@ -2,7 +2,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { cv } from '../src/content';
 import type { Locale } from '../src/content/types';
 import { ui } from '../src/i18n/ui';
-import { openPainted, pageToolbar, sheet, VIEWPORTS } from './support/page';
+import { openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
 import { readPdf, withoutWhitespace } from './support/pdf';
 import { distPathForHref, LOCALES, otherLocale, routeFor } from './support/site';
 
@@ -130,7 +130,7 @@ for (const locale of LOCALES) {
       expect(light.fontSize, 'the Colophon should not be set below 12px').toBeGreaterThanOrEqual(12);
       expect(light.ratio, 'the Colophon against the light page').toBeGreaterThanOrEqual(4.5);
 
-      await pageToolbar(page).locator('.toolbar-theme').click();
+      await toolbar(page).locator('.toolbar-theme').click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
       const dark = await readability(page);
@@ -138,7 +138,7 @@ for (const locale of LOCALES) {
     });
 
     test('keeps its words out of the PDF', async ({ page }) => {
-      const href = await pageToolbar(page).locator('a[download]').getAttribute('href');
+      const href = await toolbar(page).locator('a[download]').getAttribute('href');
       const report = await readPdf(distPathForHref(href!));
 
       const words = [
@@ -183,10 +183,10 @@ test.describe('Reading Mode', () => {
   });
 
   test('leaves the Toolbar its berth at the foot of the scroll', async ({ page }) => {
-    await expect(pageToolbar(page)).toBeVisible();
+    await expect(toolbar(page)).toBeVisible();
 
     const covered = await page.evaluate(() => {
-      const strip = document.querySelector('.toolbar--page')!.getBoundingClientRect();
+      const strip = document.querySelector('.toolbar')!.getBoundingClientRect();
       return [...document.querySelectorAll('footer :is(p, li)')]
         .filter((element) => {
           const box = element.getBoundingClientRect();

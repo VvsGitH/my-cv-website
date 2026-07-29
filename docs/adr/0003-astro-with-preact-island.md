@@ -1,6 +1,6 @@
-# Astro (static) with a single Preact island
+# Astro (static) with Preact islands
 
-The site is built with **Astro in static-output mode**, with exactly one **Preact island** for the interactive Toolbar (language, download, share, theme) and the mobile Drawer toggle. Astro prerenders everything to plain HTML with zero client JS by default — ideal for a content-light, fidelity-critical CV that must host cheaply on GitHub Pages — while the island keeps JSX only where interactivity actually earns it. Preact gives that same JSX authoring model on a runtime an order of magnitude smaller than React's, which is the right trade for one cluster of four controls.
+The site is built with **Astro in static-output mode**, with **Preact islands** for the interactive Chrome — the Toolbar (language, download, share, theme, and the Drawer's toggle) and the Drawer itself. Astro prerenders everything to plain HTML with zero client JS by default — ideal for a content-light, fidelity-critical CV that must host cheaply on GitHub Pages — while the island keeps JSX only where interactivity actually earns it. Preact gives that same JSX authoring model on a runtime an order of magnitude smaller than React's, which is the right trade for one cluster of four controls.
 
 ## Considered Options
 
@@ -13,7 +13,8 @@ The site is built with **Astro in static-output mode**, with exactly one **Preac
 ## Consequences
 
 - One component tree is the single source of truth rendered both to the live page and to the PDF-captured page.
-- Interactivity is confined to the island; the Sheets themselves ship no JS.
+- Interactivity is confined to the islands; the Sheets themselves ship no JS.
+- **Amended by ADR-0007.** This ADR originally said "exactly one Preact island", and ticket 07 shipped it that way: the Toolbar had to be able to render *inside* the Drawer's `<dialog>`, and two islands cannot share a subtree. Dropping the `<dialog>` for a custom modal removed that constraint, and the Chrome is now two islands sharing one signal. The reasoning for one runtime and one authoring model is untouched.
 - Astro's built-in i18n routing handles the two Locales.
 - `@preact/signals` arrives as a dependency of `@astrojs/preact`, but is pinned as a direct dependency rather than relied on transitively. The rule for when to reach for a signal instead of `useState` lives in `coding-standards.md`.
 - JSX is typed by `jsxImportSource: "preact"` and the project carries no `@types/react`, so React-shaped annotations (`React.ReactNode`, `React.MouseEvent`) will not compile.

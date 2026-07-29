@@ -1,63 +1,77 @@
 /* Reading Mode's Drawer: the panel carrying the Aside's Blocks below 48rem.
    Chrome, never paper (CONTEXT.md) — gone above the breakpoint and gone in
    print. The control that opens it belongs to the Toolbar (ticket 07); this
-   file dresses the panel only.
+   file dresses the panel and its backdrop only.
 
    A plain stylesheet rather than the scoped `<style>` the coding standards ask
    for: what it dresses is a `.tsx` island, which Astro's scoping does not
    reach. It joins the `components` layer so it sits in the same cascade as the
-   paper's own styles (layer order: src/styles/global.css). */
+   paper's own styles (layer order: src/styles/global.css).
+
+   The panel is a custom modal, not a `<dialog>` (ADR-0007), so its stacking is
+   this file's job rather than the top layer's. Three levels, and the Toolbar
+   sits above all of them at 4 (toolbar.css): it is the only thing that stays
+   live beside an open panel. */
 
 @layer components {
+  .drawer-backdrop,
   .drawer {
-    /* A dialog is centred by its own `margin: auto` and capped by its default
-       max-width/max-height; a Drawer is pinned to the inline start, full
-       height, and as wide as a phone can spare.
-
-       What a phone can spare changed in ticket 07: the Toolbar now rides the
-       panel's outer edge, so the panel has to leave room for it. 76vw keeps
-       ~54px of Toolbar plus its gap on screen at 320px, the narrowest width
-       this site targets; the 19rem cap keeps the measure readable on a
-       tablet-sized phone. Ticket 06 asked for "as wide as a phone can spare",
-       and this is the same reading of it with one more thing to spare for. */
-    width: min(19rem, 76vw);
-    max-width: none;
-    height: 100%;
-    max-height: none;
-    margin: 0 auto 0 0;
-    padding: 0;
-    border: 0;
-    background-color: var(--color-aside-bg);
-    color: var(--color-text);
-    /* The scroll belongs to .drawer-body, not here: a scroll container clips
-       both axes, and the Toolbar copy this dialog carries sits *outside* the
-       panel's inline end (toolbar.css). */
-    overflow: visible;
-    translate: -100% 0;
-    /* `allow-discrete` on display and overlay is what animates the *closing*
-       half: without it the dialog leaves the top layer on the first frame and
-       the panel disappears instead of sliding out. The reset collapses all of
-       this under `prefers-reduced-motion`. */
+    position: fixed;
+    visibility: hidden;
+    /* Closing: `visibility` waits out the slide, so the panel is still painted
+       while it leaves — that is what animates the *closing* half at all. */
     transition:
-      translate 250ms ease,
-      display 250ms allow-discrete,
-      overlay 250ms allow-discrete;
+      translate var(--drawer-slide) ease,
+      opacity var(--drawer-slide) ease,
+      visibility 0s linear var(--drawer-slide);
   }
 
-  .drawer[open] {
-    translate: 0 0;
+  .drawer-backdrop[data-open],
+  .drawer[data-open] {
+    visibility: visible;
+    /* Opening: no delay, and deliberately not a transitioned `visibility`
+       either. A transition would leave the computed value `hidden` for the
+       first frame, and Drawer.tsx moves focus into the panel on that frame —
+       a panel that is not yet `visible` swallows focus() in silence. */
+    transition:
+      translate var(--drawer-slide) ease,
+      opacity var(--drawer-slide) ease,
+      visibility 0s;
   }
 
-  /* The opening frame. Without it the panel is already in place when the top
-     layer first paints it, and only the closing half animates. */
-  @starting-style {
-    .drawer[open] {
-      translate: -100% 0;
+  /* reset.css collapses transition *durations* under reduced motion, which
+     leaves the closing delay above standing — the panel would linger in the
+     accessibility tree for a quarter second after it had gone. */
+  @media (prefers-reduced-motion: reduce) {
+    .drawer-backdrop,
+    .drawer {
+      transition-delay: 0s;
     }
   }
 
-  .drawer::backdrop {
+  .drawer-backdrop {
+    inset: 0;
+    z-index: 2;
     background-color: color-mix(in oklab, var(--color-ink) 45%, transparent);
+    opacity: 0;
+  }
+
+  .drawer-backdrop[data-open] {
+    opacity: 1;
+  }
+
+  .drawer {
+    inset-block: 0;
+    inset-inline-start: 0;
+    z-index: 3;
+    width: var(--drawer-width);
+    background-color: var(--color-aside-bg);
+    color: var(--color-text);
+    translate: -100% 0;
+  }
+
+  .drawer[data-open] {
+    translate: 0 0;
   }
 
   .drawer-body {
@@ -78,10 +92,33 @@
     margin-block-start: var(--space-xl);
   }
 
-  /* Paper Mode has no Drawer. Hiding the dialog is not enough on its own — a
-     modal one left open would keep the paper behind it inert, which is why
-     ChromeIsland.tsx closes it at this same boundary. */
+  /* The scroll lock, which `showModal()` used to apply on its own. Drawer.tsx
+     sets the attribute for the same reason it sets `inert` on the page: what
+     the platform gave a modal dialog, a custom modal has to ask for. */
+  html[data-drawer-open] {
+    overflow: hidden;
+  }
+
+  /* And the gutter the lock would otherwise reclaim. Taking the scrollbar away
+     hands its width back to the reading column, which re-wraps every line
+     behind the panel — a layout shift the reader meets on the way *back* out.
+     Reserved in Reading Mode only: it is the one tier with a Drawer, and the
+     Paper tiers would pay for a gutter nothing ever takes.
+
+     It costs the phones it is aimed at nothing, because they overlay their
+     scrollbars and reserve no gutter to begin with. Where the shift is real —
+     a desktop window narrowed past the breakpoint — the property is supported. */
+  @media screen and (width < 48rem) {
+    html {
+      scrollbar-gutter: stable;
+    }
+  }
+
+  /* Paper Mode has no Drawer. Hiding it is enough now that it is not a modal
+     dialog, but Drawer.tsx still closes it at this same boundary — CSS cannot
+     release the page's `inert` or the scroll lock. */
   @media screen and (width >= 48rem) {
+    .drawer-backdrop,
     .drawer {
       display: none;
     }
@@ -91,6 +128,7 @@
 @layer print {
   /* Chrome is never captured (CONTEXT.md). */
   @media print {
+    .drawer-backdrop,
     .drawer {
       display: none;
     }

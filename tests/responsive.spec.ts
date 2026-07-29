@@ -1,5 +1,5 @@
 import { expect, test, type Page } from '@playwright/test';
-import { drawer, openPainted, pageToolbar, sheet, VIEWPORTS } from './support/page';
+import { drawer, openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
 import { routeFor } from './support/site';
 
 /**
@@ -132,6 +132,6 @@ test.describe('Reading Mode', () => {
     const header = await paper.locator('.main > .block--header').boundingBox();
     expect(photo!.y, 'the portrait opens the compact header').toBeLessThan(header!.y);
 
-    await expect(pageToolbar(page).locator('.toolbar-drawer')).toBeVisible();
+    await expect(toolbar(page).locator('.toolbar-drawer')).toBeVisible();
   });
 });

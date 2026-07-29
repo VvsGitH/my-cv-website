@@ -29,7 +29,7 @@ for (const locale of LOCALES) {
     test.beforeAll(async ({ browser }) => {
       const page = await browser.newPage({ baseURL: ORIGIN });
       await openPainted(page, routeFor(locale));
-      const href = await page.locator('.toolbar--page a[download]').getAttribute('href');
+      const href = await page.locator('.toolbar a[download]').getAttribute('href');
       await page.close();
 
       path = distPathForHref(href!);

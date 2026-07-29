@@ -165,3 +165,4 @@ Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel
 17. `17-spacing-scale.md` — the 42/28/14/7px spacing scale, unified body size and leading.
 18. `18-preact-island.md` — Preact instead of React for the island (ADR-0003).
 19. `19-colophon.md` — the Colophon, plus the Toolbar's accessible names and WCAG 2.2 · 2.4.11.
+20. `20-chrome-two-islands.md` — Toolbar and Drawer as two islands, the Drawer a custom modal rather than a `<dialog>` (ADR-0007).

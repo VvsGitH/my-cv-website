@@ -1,5 +1,5 @@
 import type { Locale } from '../../content/types';
-import type { UiStrings } from '../../i18n/ui';
+import type { DrawerStrings, ToolbarStrings } from '../../i18n/ui';
 import { copyLink, drawerOpen, linkCopied, toggleTheme } from './state';
 import './toolbar.css';
 
@@ -21,28 +21,24 @@ export interface ToolbarLinks {
  * private-use codepoints, hidden from the accessibility tree
  * (src/styles/icons.css).
  *
+ * One of the Chrome's two islands (ADR-0007), and the only writer of
+ * `drawerOpen`: it names and toggles the Drawer without importing it. The
+ * `data-drawer-open` attribute is what carries the strip along the panel's
+ * edge, in toolbar.css.
+ *
  * No `role="toolbar"`: that role obliges arrow-key navigation with a roving
  * tabindex, and five controls in the tab order need no such thing.
  */
 interface Props {
-  strings: UiStrings;
+  toolbar: ToolbarStrings;
+  /** Only the two that name the toggle — the panel's own name is the Drawer's. */
+  drawer: DrawerStrings;
   links: ToolbarLinks;
-  /**
-   * `page` is the Toolbar against the page; `drawer` is the copy inside the
-   * Drawer's dialog, which the panel's slide carries. ChromeIsland explains
-   * why there are two.
-   */
-  placement: 'page' | 'drawer';
 }
 
-export default function Toolbar({ strings, links, placement }: Props) {
-  const { drawer, toolbar } = strings;
-
+export default function Toolbar({ toolbar, drawer, links }: Props) {
   return (
-    <div
-      class={`toolbar toolbar--${placement}`}
-      data-drawer-open={drawerOpen.value ? '' : undefined}
-    >
+    <div class="toolbar" data-drawer-open={drawerOpen.value ? '' : undefined}>
       <button
         type="button"
         class="toolbar-button toolbar-drawer"

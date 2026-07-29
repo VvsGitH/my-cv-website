@@ -36,7 +36,7 @@ Versions in use: Astro 7.1.3, Preact 10.29.7 (+ `@preact/signals` 2.10), TypeScr
 
 ## Preact islands
 
-Preact is a hydrated client island (Toolbar, Drawer), not the framework — ADR-0003. See the [decision table](research/preact-best-practices.md#2-which-preact-10-apis-apply-to-this-projects-island--decision-table). `compat` is off, so import hooks from `preact/hooks` and treat the `preact/compat` surface as non-existent.
+Preact is two hydrated client islands — the Toolbar and the Drawer (ADR-0003, amended by ADR-0007) — not the framework. See the [decision table](research/preact-best-practices.md#2-which-preact-10-apis-apply-to-this-projects-island--decision-table). `compat` is off, so import hooks from `preact/hooks` and treat the `preact/compat` surface as non-existent.
 
 **Do not use** (compat-only, or no payoff here):
 - `forwardRef`, `createPortal`, `memo`, `PureComponent`, `Suspense`, `lazy`, `startTransition`, `useDeferredValue`, `useSyncExternalStore` — all `preact/compat`, unavailable here. `useId` and `toChildArray` **are** in core; use them freely.
@@ -51,17 +51,17 @@ Preact is a hydrated client island (Toolbar, Drawer), not the framework — ADR-
 - An inline ref callback that returns no cleanup is called **twice** per re-render (once with `null`). Return a cleanup, or make the callback stable.
 - `onChange` here is the **native** `change` event, not React's input-time synthetic one — use `onInput` for text-ish inputs.
 - Reset state with `key`, not an Effect. List keys: stable and unique; never array index when order changes.
-- `useId` for any id that crosses the SSR/hydration boundary (the Drawer's `aria-controls`), never for keys.
+- `useId` for any id that crosses the SSR/hydration boundary, never for keys. Nothing needs one yet: the Drawer's toggle names itself rather than pointing at the panel (ticket 20).
 - `class` and `className` both work — pick one and be consistent. Astro's `class:list` is `.astro`-only; inside a `.tsx` build the string in JS.
 
 **State** — signals are the island's one state API ([why](research/preact-best-practices.md#45-verdict-on-the-prescriptive-rule-signals-for-shared-usestate-for-local)):
-- `signal()` at module scope for state that more than one component reads (theme, Drawer open); `useSignal()`/`useComputed()` inside a component for state that lives and dies there. A module-level signal is shared by every instance of a component — the point for the former, a bug for the latter.
+- `signal()` at module scope for state that more than one component reads (the Drawer's open state, which the Toolbar writes and the Drawer reads); `useSignal()`/`useComputed()` inside a component for state that lives and dies there. A module-level signal is shared by every instance of a component — the point for the former, a bug for the latter.
 - Assign a **new** value: a signal does not update when assigned a value equal to its current one, so mutating an object in place and re-assigning the same reference is a no-op.
 - A module-level `effect()` is created once at module scope, with its cleanup — never inside a component body. Signals are lazy outside the component tree: a `computed` nobody reads never recomputes.
 - Rendering a signal directly in JSX updates the text node without re-rendering the component; prefer it where it reads naturally.
-- This departs from Astro's documented answer for state shared *between* islands (Nano Stores). With a single island the question is moot, and signals ship with the integration anyway.
+- This departs from Astro's documented answer for state shared *between* islands (Nano Stores), and does so deliberately (ADR-0007): both islands import `components/chrome/state.ts`, so Vite emits it once as a chunk they share and the signal is one object at runtime. That is a build-output fact, not a language guarantee — **check it against `dist/_astro/` when the island count or the bundler config changes**, and keep an E2E test that drives one island from the other.
 
-**Hydration directive:** `client:idle` for the Toolbar, with the theme applied pre-paint by an `is:inline` script outside the island (Astro's own tutorial pattern). **Not** `client:media` — only the Drawer toggle is breakpoint-dependent, and the other four controls would never hydrate on desktop. **Not** `client:only` — the Toolbar would be absent from the static HTML and pop in.
+**Hydration directive:** `client:idle` for both, with the theme applied pre-paint by an `is:inline` script outside them (Astro's own tutorial pattern). **Not** `client:media` — only the Drawer toggle is breakpoint-dependent, and the Toolbar's other four controls would never hydrate on desktop. **Not** `client:only` — the Toolbar would be absent from the static HTML and pop in, and the Drawer's Blocks with it.
 
 ## TypeScript
 

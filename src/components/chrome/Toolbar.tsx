@@ -21,33 +21,36 @@ export interface ToolbarLinks {
  * private-use codepoints, hidden from the accessibility tree
  * (src/styles/icons.css).
  *
- * One of the Chrome's two islands (ADR-0007), and the only writer of
- * `drawerOpen`: it names and toggles the Drawer without importing it. The
- * `data-drawer-open` attribute is what carries the strip along the panel's
- * edge, in toolbar.css.
+ * One of the Chrome's two islands (ADR-0007). It *opens* the Drawer without
+ * importing it, and that is all it does to `drawerOpen`: every way back out
+ * runs through the panel's own `close` event (ADR-0008, state.ts). So the
+ * toggle does not morph and carries no `aria-expanded` — behind an open panel
+ * this whole cluster is inert, and a control renamed "close" that nobody can
+ * reach would be a lie in the markup. The island never reads the signal, so it
+ * does not re-render when the panel opens.
  *
  * No `role="toolbar"`: that role obliges arrow-key navigation with a roving
  * tabindex, and five controls in the tab order need no such thing.
  */
 interface Props {
   toolbar: ToolbarStrings;
-  /** Only the two that name the toggle — the panel's own name is the Drawer's. */
+  /** Only `open` is read here: the toggle no longer morphs (ADR-0008). */
   drawer: DrawerStrings;
   links: ToolbarLinks;
 }
 
 export default function Toolbar({ toolbar, drawer, links }: Props) {
   return (
-    <div class="toolbar" data-drawer-open={drawerOpen.value ? '' : undefined}>
+    <div class="toolbar">
       <button
         type="button"
         class="toolbar-button toolbar-drawer"
-        title={drawerOpen.value ? drawer.close : drawer.open}
-        aria-label={drawerOpen.value ? drawer.close : drawer.open}
+        title={drawer.open}
+        aria-label={drawer.open}
         aria-haspopup="dialog"
-        onClick={() => (drawerOpen.value = !drawerOpen.value)}
+        onClick={() => (drawerOpen.value = true)}
       >
-        <span class={drawerOpen.value ? 'icon-cross' : 'icon-menu'} aria-hidden="true"></span>
+        <span class="icon-menu" aria-hidden="true"></span>
       </button>
 
       <a

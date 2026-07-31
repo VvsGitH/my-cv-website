@@ -103,7 +103,9 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  :where(*, *::before, *::after) {
+  /* `::backdrop` is not a descendant of anything, so `*` does not reach it —
+     and the Drawer's is transitioned (drawer.css, ADR-0008). */
+  :where(*, *::before, *::after, *::backdrop) {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;

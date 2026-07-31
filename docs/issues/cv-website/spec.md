@@ -166,3 +166,4 @@ Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel
 18. `18-preact-island.md` — Preact instead of React for the island (ADR-0003).
 19. `19-colophon.md` — the Colophon, plus the Toolbar's accessible names and WCAG 2.2 · 2.4.11.
 20. `20-chrome-two-islands.md` — Toolbar and Drawer as two islands, the Drawer a custom modal rather than a `<dialog>` (ADR-0007).
+21. `21-dialog-drawer-and-horizontal-toolbar.md` — the Drawer back to a native `<dialog>` with its own close control, and a horizontal Toolbar at every tier (ADR-0008).

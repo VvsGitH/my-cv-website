@@ -1,85 +1,126 @@
 /* Reading Mode's Drawer: the panel carrying the Aside's Blocks below 48rem.
-   Chrome, never paper (CONTEXT.md) — gone above the breakpoint and gone in
-   print. The control that opens it belongs to the Toolbar (ticket 07); this
-   file dresses the panel and its backdrop only.
+   Chrome, never paper (CONTEXT.md) — gone in print. The control that *opens*
+   it belongs to the Toolbar (ticket 07); the one that closes it is the panel's
+   own, and that is what makes the panel a modal `<dialog>` again (ADR-0008).
 
    A plain stylesheet rather than the scoped `<style>` the coding standards ask
    for: what it dresses is a `.tsx` island, which Astro's scoping does not
    reach. It joins the `components` layer so it sits in the same cascade as the
    paper's own styles (layer order: src/styles/global.css).
 
-   The panel is a custom modal, not a `<dialog>` (ADR-0007), so its stacking is
-   this file's job rather than the top layer's. Three levels, and the Toolbar
-   sits above all of them at 4 (toolbar.css): it is the only thing that stays
-   live beside an open panel. */
+   Nothing here stacks the panel: `showModal()` promotes it to the top layer,
+   above every stacking context on the page by construction. */
 
 @layer components {
-  .drawer-backdrop,
   .drawer {
     position: fixed;
-    visibility: hidden;
-    /* Closing: `visibility` waits out the slide, so the panel is still painted
-       while it leaves — that is what animates the *closing* half at all. */
-    transition:
-      translate var(--drawer-slide) ease,
-      opacity var(--drawer-slide) ease,
-      visibility 0s linear var(--drawer-slide);
-  }
-
-  .drawer-backdrop[data-open],
-  .drawer[data-open] {
-    visibility: visible;
-    /* Opening: no delay, and deliberately not a transitioned `visibility`
-       either. A transition would leave the computed value `hidden` for the
-       first frame, and Drawer.tsx moves focus into the panel on that frame —
-       a panel that is not yet `visible` swallows focus() in silence. */
-    transition:
-      translate var(--drawer-slide) ease,
-      opacity var(--drawer-slide) ease,
-      visibility 0s;
-  }
-
-  /* reset.css collapses transition *durations* under reduced motion, which
-     leaves the closing delay above standing — the panel would linger in the
-     accessibility tree for a quarter second after it had gone. */
-  @media (prefers-reduced-motion: reduce) {
-    .drawer-backdrop,
-    .drawer {
-      transition-delay: 0s;
-    }
-  }
-
-  .drawer-backdrop {
-    inset: 0;
-    z-index: 2;
-    background-color: color-mix(in oklab, var(--color-ink) 45%, transparent);
-    opacity: 0;
-  }
-
-  .drawer-backdrop[data-open] {
-    opacity: 1;
-  }
-
-  .drawer {
     inset-block: 0;
     inset-inline-start: 0;
-    z-index: 3;
+    /* The UA sheet's `margin: auto` and `max-width`/`max-height` would inset a
+       panel that is meant to reach three edges. */
+    margin: 0;
+    max-width: none;
+    max-height: none;
     width: var(--drawer-width);
+    /* `padding: 0` with a `flex: 1` body below is what keeps the dialog's own
+       box fully covered by its children — a click on bare padding would reach
+       the light dismiss in Drawer.tsx and read as a backdrop click. */
+    padding: 0;
+    border: 0;
+    display: flex;
+    flex-direction: column;
     background-color: var(--color-aside-bg);
     color: var(--color-text);
     translate: -100% 0;
+    transition:
+      translate var(--drawer-slide) ease,
+      display var(--drawer-slide),
+      overlay var(--drawer-slide);
+    /* Its own declaration, not part of the shorthand above: an engine without
+       `allow-discrete` then drops only this line, and keeps the slide. */
+    transition-behavior: allow-discrete;
   }
 
-  .drawer[data-open] {
+  /* Load-bearing, not tidy: the author `display: flex` above beats the UA's
+     `dialog:not([open])` rule. ADR-0008 records what that costs in the PDF. */
+  .drawer:not([open]) {
+    display: none;
+  }
+
+  .drawer[open] {
     translate: 0 0;
   }
 
+  /* Without this the panel is simply *there* on the first frame: a transition
+     needs a start value, and `display: none` gives it none. */
+  @starting-style {
+    .drawer[open] {
+      translate: -100% 0;
+    }
+  }
+
+  /* The custom property reaches here because ::backdrop inherits from its
+     originating element. No literal fallback beside it: one would hold a
+     second copy of --color-ink's value, and it would mask the very failure
+     `'draws the backdrop behind the open panel'` exists to catch. */
+  .drawer::backdrop {
+    background-color: color-mix(in oklab, var(--color-ink) 45%, transparent);
+    opacity: 0;
+    transition:
+      opacity var(--drawer-slide) ease,
+      overlay var(--drawer-slide);
+    transition-behavior: allow-discrete;
+  }
+
+  .drawer[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .drawer[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  /* The panel's own way out (ADR-0008): its name, and the control that
+     dismisses it at the inline end, where a reader expects it. */
+  .drawer-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-m);
+    padding-block: var(--space-s) var(--space-m);
+    padding-inline: var(--space-l) var(--space-s);
+  }
+
+  .drawer-title {
+    font-size: var(--font-size-heading);
+    color: var(--color-heading);
+  }
+
+  .drawer-close {
+    display: grid;
+    place-items: center;
+    flex: none;
+    width: var(--toolbar-button-size);
+    height: var(--toolbar-button-size);
+    padding: 0;
+    border: 0;
+    border-radius: 2px;
+    background: none;
+    color: var(--color-heading);
+    font-size: 1.125rem;
+    cursor: pointer;
+  }
+
+  /* `flex: 1` rather than a height: the body has to cover everything the head
+     leaves, for the light dismiss above. */
   .drawer-body {
+    flex: 1;
     display: flex;
     flex-direction: column;
-    height: 100%;
     overflow-y: auto;
-    padding: var(--space-m) var(--space-l) var(--space-xl);
+    padding: 0 var(--space-l) var(--space-xl);
   }
 
   /* The Blocks arrive wrapped in `<astro-slot>` (Astro's own hydration
@@ -92,10 +133,11 @@
     margin-block-start: var(--space-xl);
   }
 
-  /* The scroll lock, which `showModal()` used to apply on its own. Drawer.tsx
-     sets the attribute for the same reason it sets `inert` on the page: what
-     the platform gave a modal dialog, a custom modal has to ask for. */
-  html[data-drawer-open] {
+  /* The scroll lock, which `showModal()` does *not* apply on its own — ADR-0007
+     claimed it did, and ADR-0008 measures the opposite. Pure CSS, because
+     top-layer promotion does not move the dialog in the DOM tree, so `:has()`
+     still finds it from `html`. */
+  html:has(.drawer[open]) {
     overflow: hidden;
   }
 
@@ -113,22 +155,13 @@
       scrollbar-gutter: stable;
     }
   }
-
-  /* Paper Mode has no Drawer. Hiding it is enough now that it is not a modal
-     dialog, but Drawer.tsx still closes it at this same boundary — CSS cannot
-     release the page's `inert` or the scroll lock. */
-  @media screen and (width >= 48rem) {
-    .drawer-backdrop,
-    .drawer {
-      display: none;
-    }
-  }
 }
 
 @layer print {
-  /* Chrome is never captured (CONTEXT.md). */
+  /* Chrome is never captured (CONTEXT.md) — the second belt behind
+     `.drawer:not([open])` above, which is what actually keeps the panel off
+     Sheet 1 in the PDF. */
   @media print {
-    .drawer-backdrop,
     .drawer {
       display: none;
     }

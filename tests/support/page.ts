@@ -37,10 +37,8 @@ export const sheet = (page: Page, number: SheetNumber): Locator =>
 
 export const toolbar = (page: Page): Locator => page.locator('.toolbar');
 
-/** The custom modal's panel — the element carrying `role="dialog"`. */
+/** The panel — a `<dialog>` opened with `showModal()` (ADR-0008). */
 export const drawer = (page: Page): Locator => page.locator('.drawer');
-
-export const drawerBackdrop = (page: Page): Locator => page.locator('.drawer-backdrop');
 
 /** The kind of every Block rendered into one column, in document order. */
 export async function renderedKinds(

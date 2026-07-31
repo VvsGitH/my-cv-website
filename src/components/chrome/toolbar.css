@@ -10,42 +10,31 @@
 
 @layer components {
   .toolbar {
-    /* --toolbar-button-size and the strip height derived from it live in
-       tokens.css: the Colophon reserves this strip's berth in Reading Mode
-       (ticket 19) and cannot be left to remember the number.
+    /* --toolbar-button-size, --toolbar-inset and the row's block size derived
+       from them live in tokens.css: the Colophon reserves this cluster's berth
+       in Reading Mode (ticket 19) and cannot be left to remember the numbers.
 
-       Left edge, vertically centred (ticket 07) — over the page's margin on
-       the Paper tiers, except at the bottom of the Medium tier, where an
-       unscaled A4 Sheet already fills the viewport (ADR-0006) and there is no
-       margin left to float over. Reading Mode moves it to the bottom; see
-       below.
+       One horizontal row at every tier (ADR-0008). The base is Paper Mode's
+       pill — floating at the top centre, over the page's margin above Sheet 1,
+       with its own padding, border, background and shadow. Reading Mode drops
+       it to the bottom edge and moves that chrome onto the controls; see below.
 
-       z-index 4 puts it above the Drawer's panel and backdrop (drawer.css).
-       That is the whole point of the custom modal (ADR-0007): the strip stays
-       lit and operable beside an open panel, where a `<dialog>`'s inert
-       document left it dead. */
+       z-index 1 is only "above the paper". The Drawer is a modal `<dialog>`
+       now, so it is promoted to the top layer and outranks every stacking
+       context on the page by construction — there is nothing here for a bigger
+       number to win. */
     position: fixed;
-    inset-block-start: 50%;
-    inset-inline-start: var(--space-m);
-    z-index: 4;
+    inset-block-start: var(--toolbar-inset);
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    z-index: 1;
     display: flex;
-    flex-direction: column;
     gap: var(--space-xs);
     padding: var(--space-xs);
     border: var(--toolbar-border-size) solid var(--color-photo-circle);
     border-radius: 2px;
     background-color: var(--color-aside-bg);
     box-shadow: 0 1px 6px color-mix(in oklab, var(--color-ink) 18%, transparent);
-    transform: translateY(-50%);
-    transition: translate var(--drawer-slide) ease;
-  }
-
-  /* Ticket 07 asked for a strip that travels with the panel, and this is it:
-     exactly the panel's width, over exactly the panel's slide. `translate`
-     composes with the centring `transform` above, and in Reading Mode — the
-     one tier where the Drawer exists at all — that transform is already none. */
-  .toolbar[data-drawer-open] {
-    translate: var(--drawer-width) 0;
   }
 
   .toolbar-button {
@@ -91,12 +80,14 @@
     display: block;
   }
 
+  /* Centred on the cluster and clear of it on the side the cluster is not
+     against: below the pill in Paper Mode, above the row in Reading Mode. */
   .toolbar-toast {
     position: absolute;
-    inset-block-start: 50%;
-    inset-inline-start: 100%;
-    translate: 0 -50%;
-    margin-inline-start: var(--space-s);
+    inset-block-start: 100%;
+    inset-inline-start: 50%;
+    translate: -50% 0;
+    margin-block-start: var(--space-s);
     padding: var(--space-xs) var(--space-s);
     border-radius: 2px;
     background-color: var(--color-heading);
@@ -115,28 +106,53 @@
     opacity: 1;
   }
 
-  /* Riding the panel's edge, the strip is already the rightmost thing on a
-     phone screen, so its toast opens back across the panel instead. */
-  .toolbar[data-drawer-open] .toolbar-toast {
-    inset-inline: auto 100%;
-    margin-inline: 0 var(--space-s);
-  }
-
-  /* Paper Mode has no Drawer, so it has no toggle. */
   @media screen and (width >= 48rem) {
+    /* Paper Mode has no Drawer, so it has no toggle. */
     .toolbar-drawer {
       display: none;
+    }
+
+    /* WCAG 2.2 · 2.4.11 (Focus Not Obscured), by the remedy its Understanding
+       document names: the pill can cover a control that scrolling brings to
+       the top edge, so :root scrolls it clear instead. Inside `@media screen`
+       because print has no Toolbar to dodge. */
+    :root {
+      scroll-padding-block-start: calc(var(--toolbar-block-size) + 2 * var(--toolbar-inset));
     }
   }
 
   /* Reading Mode is the one tier where the column reaches the Toolbar's edge,
-     so the strip drops to the bottom rather than pushing the text aside: it
+     so the cluster drops to the bottom rather than pushing the text aside: it
      covers the lines a reader has already passed instead of the ones under
-     their eye, and the measure stays full width. */
+     their eye, and the measure stays full width.
+
+     The container's own chrome goes with it and lands on the controls, so the
+     cluster reads as five floating buttons over the reading column rather than
+     as a bar across it (M3, via docs/research/toolbar-navigation-patterns.md).
+     --color-muted is the edge because it is the one existing token clearing
+     3:1 against every surface the row floats over; --color-photo-circle, which
+     the container uses above, is ~1.25:1 against white. */
   @media screen and (width < 48rem) {
     .toolbar {
-      inset-block: auto var(--space-m);
-      transform: none;
+      inset-block: auto var(--toolbar-inset);
+      padding: 0;
+      border: 0;
+      background: none;
+      box-shadow: none;
+    }
+
+    .toolbar-button {
+      border: var(--toolbar-border-size) solid var(--color-muted);
+      background-color: var(--color-aside-bg);
+    }
+
+    .toolbar-toast {
+      inset-block: auto 100%;
+      margin-block: 0 var(--space-s);
+    }
+
+    :root {
+      scroll-padding-block-end: calc(var(--toolbar-block-size) + 2 * var(--toolbar-inset));
     }
   }
 }

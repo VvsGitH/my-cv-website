@@ -132,13 +132,14 @@ const year = new Date().getFullYear();
            rather than under it. */
         min-width: var(--reading-column-min);
         max-width: var(--reading-column-max);
-        /* Reading Mode drops the Toolbar to the foot of the viewport
+        /* Reading Mode runs the Toolbar along the foot of the viewport
            (toolbar.css), where its own justification fails — below the
            Colophon there are no already-read lines for it to cover. So the
-           Colophon reserves the rectangle the strip floats in, rather than
-           indenting itself out of the column to dodge it (ticket 19). */
+           Colophon reserves the rectangle the cluster floats in, rather than
+           indenting itself out of the column to dodge it (ticket 19). One row
+           now, not five: 98px where it used to be 300 (ADR-0008). */
         padding-block-end: calc(
-          var(--toolbar-block-size) + var(--space-m) + var(--space-xl)
+          var(--toolbar-block-size) + var(--toolbar-inset) + var(--space-xl)
         );
       }
     }

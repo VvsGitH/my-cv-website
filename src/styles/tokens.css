@@ -92,27 +92,30 @@
   /* =========================================================================
    The Toolbar's geometry, the Drawer's, and the reading column's. All shared
    rather than local to the component that draws them, because the Colophon
-   has to line up with the column and keep clear of the strip (ticket 19), and
-   the Toolbar has to travel exactly the panel's width when it opens (ticket
-   20) — a remembered measurement drifts out of sync in silence.
+   has to keep clear of the cluster and line up with the column (ticket 19) —
+   a remembered measurement drifts out of sync in silence.
 
-   A pointer can hit 36px; a thumb wants 44, so Reading Mode — the touch tier
-   — grows the control below.
+   The Toolbar is one horizontal row at every tier (ADR-0008): a pill floating
+   at the top centre in Paper Mode, a bottom row in Reading Mode. A pointer can
+   hit 36px; a thumb wants 44, so Reading Mode — the touch tier — grows the
+   control below.
    ========================================================================= */
 
   --toolbar-button-size: 2.25rem;
   --toolbar-border-size: 1px;
-  /* The strip's full height: five controls, four inner gaps and two of
-     padding, and the borders. */
+  /* The cluster's berth from the viewport edge, in one place: the Toolbar
+     floats at it, the Colophon reserves it, and :root scroll-pads by it. */
+  --toolbar-inset: var(--space-m);
+  /* One row's block size, which does not depend on how many controls stand in
+     it: one button, plus the container's own padding and border. */
   --toolbar-block-size: calc(
-    5 * var(--toolbar-button-size) + 6 * var(--space-xs) + 2 * var(--toolbar-border-size)
+    var(--toolbar-button-size) + 2 * var(--space-xs) + 2 * var(--toolbar-border-size)
   );
 
-  /* As wide as a phone can spare, with the Toolbar's berth left over: 76vw
-     keeps ~54px of strip plus its gap on screen at 320px, the narrowest width
-     this site targets, and the 19rem cap keeps the measure readable on a
-     tablet-sized phone (ticket 07). Both the panel and the strip's travel are
-     drawn from it. */
+  /* As wide as a phone can spare: at 320px, the narrowest width this site
+     targets, 76vw leaves ~77px of backdrop — enough of a target to dismiss the
+     panel by tapping beside it — and the 19rem cap keeps the measure readable
+     on a tablet-sized phone (ticket 07). */
   --drawer-width: min(19rem, 76vw);
   --drawer-slide: 250ms;
 
@@ -174,7 +177,13 @@
     /* The portrait leads the compact header rather than filling a panel. */
     --photo-size: 6.5rem;
 
-    /* The touch tier: --toolbar-block-size follows on its own. */
+    /* The touch tier. The cluster loses its container here — the chrome moves
+       onto the controls (toolbar.css) — so the row is exactly one button tall,
+       with no padding or border of its own to add. */
     --toolbar-button-size: 2.75rem;
+    --toolbar-block-size: var(--toolbar-button-size);
+    /* The one tier where the cluster sits on the bottom edge, which on a
+       notched phone is where the home indicator lives. */
+    --toolbar-inset: calc(var(--space-m) + env(safe-area-inset-bottom, 0px));
   }
 }

@@ -18,10 +18,15 @@ export type Theme = 'light' | 'dark';
 
 /**
  * The one piece of state that crosses the boundary between the Chrome's two
- * islands (ADR-0007): the Toolbar's first control writes it, the Drawer reads
- * it, and neither imports the other. There is one signal object at runtime
- * because both island entries import *this module* and Vite emits it once, as
- * a chunk they share — ticket 20 records how that is verified against a build.
+ * islands (ADR-0007), and neither island imports the other. The Toolbar's
+ * first control *opens* it; every way back out — Escape, the panel's own close
+ * control, a click on the backdrop, the window growing into Paper Mode — runs
+ * through the `<dialog>`'s `close` event, which is where the Drawer writes it
+ * back to false (ADR-0008).
+ *
+ * There is one signal object at runtime because both island entries import
+ * *this module* and Vite emits it once, as a chunk they share — ticket 20
+ * records how that is verified against a build.
  */
 export const drawerOpen = signal(false);
 

@@ -4,7 +4,7 @@ import { drawerOpen } from './state';
 import './drawer.css';
 
 /** Mirrors the Reading Mode boundary in tokens.css — change both. */
-const PAPER_MODE_QUERY = '(width >= 51rem)';
+const PAPER_MODE_QUERY = '(width >= 53.5rem)';
 
 /** A singleton — Chrome.astro renders exactly one (coding-standards: `useId`). */
 const TITLE_ID = 'drawer-title';

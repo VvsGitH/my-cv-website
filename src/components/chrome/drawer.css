@@ -82,7 +82,7 @@
     border: 0;
     background: none;
     color: var(--color-heading);
-    font-size: 1.125rem;
+    font-size: var(--font-size-button);
     cursor: pointer;
   }
 
@@ -126,7 +126,7 @@
 
   /* And the gutter that lock would otherwise reclaim, re-wrapping every line behind
      the panel. Reading Mode only — the one tier with a Drawer. */
-  @media screen and (width < 51rem) {
+  @media screen and (width < 53.5rem) {
     html {
       scrollbar-gutter: stable;
     }

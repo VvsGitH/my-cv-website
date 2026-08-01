@@ -33,18 +33,22 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
   /* Wrapped, or an unlayered scoped style would outrank `print` (coding-standards). */
   @layer components {
     .sheet-wrapper {
-      /* Always 1 here: ADR-0006 removed the responsive scaling. The seam stays
-         because the OG card route overrides it (pages/og/[locale].astro). */
-      --sheet-scale: 1;
-
       /* Reserves the scaled footprint, which `transform: scale()` does not. */
-      width: calc(210mm * var(--sheet-scale));
-      height: calc(297mm * var(--sheet-scale));
+      aspect-ratio: var(--sheet-ar);
+      width: calc(var(--sheet-width) * var(--sheet-scale));
+      height: auto;
+      /* `min-height` zeroes the content-based automatic minimum, which would
+         otherwise let the unscaled .sheet outvote `aspect-ratio`; `overflow`
+         keeps that same unscaled height out of print fragmentation, where it
+         costs a third page. */
+      min-height: 0;
+      overflow: clip;
     }
 
     .sheet {
-      width: 210mm;
-      height: 297mm;
+      aspect-ratio: var(--sheet-ar);
+      width: var(--sheet-width);
+      height: auto;
       background: var(--color-main-bg);
       transform: scale(var(--sheet-scale));
       transform-origin: top left;
@@ -53,10 +57,10 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
     .columns {
       display: grid;
       grid-template-areas: 'aside main';
-      grid-template-columns: var(--aside-width) var(--main-width);
+      grid-template-columns: var(--aside-width) 1fr;
       column-gap: var(--column-gap);
       height: 100%;
-      padding-inline: var(--aside-inset-inline) var(--sheet-pad-inline-end);
+      padding-inline: var(--sheet-pad-inline-start) var(--sheet-pad-inline-end);
     }
 
     .aside {
@@ -66,15 +70,16 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
       /* Fixed, never `fit-content` — the panel is Sheet geometry (ADR-0011). */
       height: var(--aside-height);
       break-inside: avoid;
-      /* An input to --main-first-heading-gap; see tokens.css. */
-      padding-block-start: var(--aside-pad-block-start);
+      /* The same inset as Main's, which is what --main-first-heading-gap no
+         longer has to reconcile; see tokens.css. */
+      padding-block-start: var(--sheet-pad-block-start);
       padding-inline: var(--aside-pad-inline-start) var(--aside-pad-inline-end);
       background-color: var(--color-aside-bg);
     }
 
     .main {
       grid-area: main;
-      padding-block-start: var(--main-inset-block-start);
+      padding-block-start: var(--sheet-pad-block-start);
     }
 
     /* One value for both columns, replacing the reference's two (ADR-0011). */
@@ -102,7 +107,7 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
     /* Reading Mode: A4 is abandoned, so every box between the reading column and
        the Blocks steps out of the flow and the Blocks of both Sheets become items
        of Document.astro's single grid (ADR-0004). */
-    @media screen and (width < 51rem) {
+    @media screen and (width < 53.5rem) {
       .sheet-wrapper,
       .sheet,
       .columns,
@@ -135,6 +140,17 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
       /* With no Aside beside it the derived gap means nothing, and goes negative. */
       .main :global(.block--header + .block > .section-heading) {
         margin-block-start: var(--space-xl);
+      }
+    }
+  }
+
+  @layer print {
+    /* `zoom`, not `transform: scale()`: Chrome rasterizes a transformed subtree
+       into an XObject when printing, and the PDF loses every /Font — `zoom`
+       scales at layout time, so the paper stays selectable text. */
+    @media print {
+      .sheet-wrapper {
+        zoom: calc(210mm / var(--sheet-width));
       }
     }
   }

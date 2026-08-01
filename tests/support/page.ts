@@ -31,7 +31,7 @@ export async function openPainted(page: Page, route: string): Promise<void> {
 export const VIEWPORTS = {
   reading: { width: 375, height: 812 },
   stacked: { width: 1024, height: 1400 },
-  twoUp: { width: 1632, height: 1200 },
+  twoUp: { width: 1720, height: 1200 },
   paper: { width: 1280, height: 1600 },
 } as const;
 

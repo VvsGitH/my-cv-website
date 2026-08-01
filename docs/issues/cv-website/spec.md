@@ -59,10 +59,10 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 - Deployed static to **GitHub Pages** via **GitHub Actions**, at the default `github.io` URL under base `/my-cv-website/`.
 
 ### The CV as paper
-- A **Sheet** is exactly A4 (210×297mm), sized in real `mm`, scaled responsively with `transform: scale()` — never by rewriting the mm box. The CV is **two Sheets**.
+- A **Sheet** is exactly A4 in proportion — an 840px box in the 210/297 ratio, never rewritten by viewport. The CV is **two Sheets**. (As written, this asked for real `mm` scaled by `transform`; ADR-0006 removed the responsive scaling, and the mm moved to the print layer, where `zoom` restores them for the capture — a transform there costs the PDF its fonts, ADR-0009.)
 - Per-Sheet **two columns**: **Aside** (cream panel, left) and **Main** (white, right).
 - **Explicit Paging** (ADR-0002): every Block declares its `sheet` (1|2) and `column` (`aside`|`main`).
-- Geometry: `@page { size: A4; margin: 0 }` + Playwright `preferCSSPageSize: true`; on-screen Sheet is `width: 210mm; height: 297mm`. `break-before: page` at the Sheet boundary; `break-inside: avoid` on Blocks.
+- Geometry: `@page { size: A4; margin: 0 }` + Playwright `preferCSSPageSize: true`; the on-screen Sheet is `--sheet-width` in `--sheet-ar`, zoomed back to 210mm for print. `break-before: page` at the Sheet boundary; `break-inside: avoid` on Blocks.
 
 ### Content map (from the reference CV)
 - **Sheet 1 — Aside:** profile photo (circular), About Me, Tech Skills (Programming Languages, Frontend, Backend, Mobile, Development Tools).
@@ -87,9 +87,9 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 - Colored backgrounds (Aside cream, photo disc, proficiency bars) must survive into the PDF: `printBackground: true` + `-webkit-print-color-adjust: exact` / `print-color-adjust: exact`.
 
 ### Responsive — three tiers
-- **Wide (≥1632px): Paper Mode** — two Sheets side by side, with page padding/gap (the "grid of pages").
-- **Medium (816–1632px): Paper Mode** — Sheets stacked one per row, rigid A4 at 1:1. The Sheet is a literal 210×297mm box at every width in this tier: ADR-0006 dropped the scale-to-width in favour of fidelity, which is also why the tier starts at 816px — a boundary below the paper's own 793.7px puts a horizontal scrollbar on screen. Never enlarged past 1:1 either: A4 at 1:1 is the reference rendering, and enlarging is the browser's zoom to offer. The owner confirmed this reading.
-- **Narrow (<816px): Reading Mode** — the same component reflows to single-column, normal-size reading view; Aside content moves into a left slide-in Drawer (hamburger toggle); Main is the primary scroll; a compact header sits at the top. A4 is dropped here.
+- **Wide (≥1720px): Paper Mode** — two Sheets side by side, with page padding/gap (the "grid of pages").
+- **Medium (856px–1720px): Paper Mode** — Sheets stacked one per row, rigid A4 proportions and never resized to fit. The Sheet is the same 840px box in A4's 210/297 ratio at every width in this tier: ADR-0006 dropped the scale-to-width in favour of fidelity, which is also why the tier starts at 856px — a boundary below the paper's own 840px puts a horizontal scrollbar on screen. Never rescaled by viewport either: one rendering is the reference rendering, and resizing is the browser's zoom to offer. Physical millimetres apply to the PDF, not the screen. The owner confirmed this reading.
+- **Narrow (<856px): Reading Mode** — the same component reflows to single-column, normal-size reading view; Aside content moves into a left slide-in Drawer (hamburger toggle); Main is the primary scroll; a compact header sits at the top. A4 is dropped here.
 - Paper styles must be identical under `screen` and `print` media (or capture with `emulateMedia({ media: 'screen' })`) so the PDF equals the desktop rendering. Reading Mode styles must not affect Paper Mode/print output.
 
 ### Toolbar
@@ -121,7 +121,7 @@ Floating cluster, four actions, plus a fifth control — the Drawer's toggle —
 
 - **Content & structure:** load `/` (IT) and `/en/`; assert the expected Blocks render in the correct Sheet and column, and that Italian vs English text differs where expected.
 - **Toolbar behavior:** language toggle navigates to the equivalent route in the other Locale; theme toggle changes the background behind the Sheets while the Sheet surface stays white; share writes the current URL to the clipboard; download links to the correct per-Locale PDF filename.
-- **Responsive tiers:** with viewport emulation, assert two-Sheets-side-by-side at ≥1632px, stacked at 816–1632px, and Reading Mode + operable Drawer below 816px. Assert too that no supported width scrolls sideways, 375px (the narrowest supported viewport) upward.
+- **Responsive tiers:** with viewport emulation, assert two-Sheets-side-by-side at ≥1720px, stacked at 856px–1720px, and Reading Mode + operable Drawer below 856px. Assert too that no supported width scrolls sideways, 375px (the narrowest supported viewport) upward.
 - **PDF validity:** each generated PDF is exactly 2 A4 pages, has the CV fonts embedded, and contains expected key strings (name, section headings, a sample bullet) for its Locale.
 - **Accessibility smoke:** Toolbar and Drawer are keyboard-operable and labeled.
 

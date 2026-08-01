@@ -11,7 +11,7 @@ Research date: **2026-07-31**. This note answered a since-deleted brief proposin
 
 Anything that could not be pinned — including two arithmetic estimates and one implementation hazard I inferred from this repo's own code rather than from a source — is listed in the final section, "Things I could NOT pin to a primary source".
 
-Scope: the Toolbar of `src/components/chrome/Toolbar.tsx` / `toolbar.css` — a fixed vertical strip of five icon-only controls (drawer toggle below 51rem, language, PDF download, share, theme) that floats on the leading edge in Paper Mode and drops to the bottom-left in Reading Mode. Background: `CONTEXT.md`, [ADR-0006](../adr/0006-post-ticket-06-responsive-adjustments.md), [ADR-0007](../adr/0007-custom-modal-drawer-and-two-chrome-islands.md).
+Scope: the Toolbar of `src/components/chrome/Toolbar.tsx` / `toolbar.css` — a fixed vertical strip of five icon-only controls (drawer toggle below 53.5rem, language, PDF download, share, theme) that floats on the leading edge in Paper Mode and drops to the bottom-left in Reading Mode. Background: `CONTEXT.md`, [ADR-0006](../adr/0006-post-ticket-06-responsive-adjustments.md), [ADR-0007](../adr/0007-custom-modal-drawer-and-two-chrome-islands.md).
 
 ---
 
@@ -36,7 +36,7 @@ Baseline table: §10.
 
 Before judging the redesign, here are the numbers, computed from this repo's own tokens (`src/styles/tokens.css`). They are arithmetic on declared values, not measured in a browser — see the closing section.
 
-**Reading Mode (`width < 51rem`), at a 16 px root:**
+**Reading Mode (`width < 53.5rem`), at a 16 px root:**
 
 | Token | Value | Px |
 |---|---|---|
@@ -290,7 +290,7 @@ If anything is pinned to the bottom edge of a phone viewport:
 
 **Shape.** Two pieces of chrome instead of one strip.
 
-1. **Drawer toggle** — one 44 px control, fixed at the **top of the leading edge**, `--space-m` from both edges. Present only below 51rem, as today. Sources: HIG "show or hide a sidebar appear at the far leading edge"; M3 "The menu icon and FAB should always be top-aligned"; M3 "Expanded navigation rails can open from menu buttons on mobile."
+1. **Drawer toggle** — one 44 px control, fixed at the **top of the leading edge**, `--space-m` from both edges. Present only below 53.5rem, as today. Sources: HIG "show or hide a sidebar appear at the far leading edge"; M3 "The menu icon and FAB should always be top-aligned"; M3 "Expanded navigation rails can open from menu buttons on mobile."
 2. **Tools cluster** — the four actions in a **horizontal** row, fixed at the **bottom**, all four visible, no disclosure. `4 × 44 + 3 × 4` = **188 px wide × 44 px tall**. Sources: M3 "Vertical toolbars aren't recommended for compact windows"; the docked toolbar is M3's compact answer ("Only place docked toolbars at the bottom of the window"); HIG's toolbar is horizontal "along the top or bottom edge of the view" and its reachability guidance favours the bottom.
 3. **Container chrome moves onto the buttons** (Pattern A's own idea, kept), subject to M3's 3:1 rule.
 
@@ -343,7 +343,7 @@ Pattern B is a *floating* toolbar, which M3 distinguishes precisely on this axis
 
 ---
 
-## 9. Desktop (Paper Mode, ≥51rem)
+## 9. Desktop (Paper Mode, ≥53.5rem)
 
 "Leave it as is" is defensible — M3 sanctions the exact thing that already ships: "In larger breakpoints, floating toolbars can be vertical and placed on either side of the screen." But four things are worth doing.
 
@@ -353,7 +353,7 @@ M3's expanded rail is the named pattern: "There are two variants of navigation r
 
 Empirically this is the strongest single improvement available: [NN/g, *Icon Usability*](https://www.nngroup.com/articles/icon-usability/) — "text labels are necessary to communicate the meaning and reduce ambiguity", and labels "should be visible at all times, without any interaction from the user." (*Empirical.* Always-visible labels are the ideal; hover/focus-revealed is the compromise this layout can afford.)
 
-If the reveal is hover-triggered, [WCAG 1.4.13](https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus.html) applies: Dismissible, Hoverable, Persistent. A width-expanding rail whose labels are *inside* the control (not floating over content) sidesteps most of 1.4.13, because nothing is obscured and nothing needs dismissing — that is the cheaper design. **But an expanding rail changes the geometry the Toolbar floats over**, and at the medium tier `toolbar.css` already notes "an unscaled A4 Sheet already fills the viewport (ADR-0006) and there is no margin left to float over." So: expand toward the viewport edge, or gate the expansion on `width >= 102rem` where there is margin to spare.
+If the reveal is hover-triggered, [WCAG 1.4.13](https://www.w3.org/WAI/WCAG22/Understanding/content-on-hover-or-focus.html) applies: Dismissible, Hoverable, Persistent. A width-expanding rail whose labels are *inside* the control (not floating over content) sidesteps most of 1.4.13, because nothing is obscured and nothing needs dismissing — that is the cheaper design. **But an expanding rail changes the geometry the Toolbar floats over**, and at the medium tier `toolbar.css` already notes "an unscaled A4 Sheet already fills the viewport (ADR-0006) and there is no margin left to float over." So: expand toward the viewport edge, or gate the expansion on `width >= 107.5rem` where there is margin to spare.
 
 ### 9.2 Stop relying on `title` for the tooltip
 
@@ -404,7 +404,7 @@ Existing project features already cleared in [`modern-css-best-practices.md` §9
 
 **Ship (phase 1):**
 
-1. **Drawer toggle → top of the leading edge**, below 51rem. This is the fix for pain point 1 and it is the best-sourced change in the whole note (HIG's "far leading edge" for the sidebar control; M3's "The menu icon and FAB should always be top-aligned").
+1. **Drawer toggle → top of the leading edge**, below 53.5rem. This is the fix for pain point 1 and it is the best-sourced change in the whole note (HIG's "far leading edge" for the sidebar control; M3's "The menu icon and FAB should always be top-aligned").
 2. **Tools → a horizontal 4-button cluster at the bottom edge**, all four visible, `+ env(safe-area-inset-bottom)`. Colophon reservation `300 px → 98 px`. This is the fix for pain point 2, and it costs nothing horizontally.
 3. **Container chrome onto the buttons.** Verify 3:1 for each button against every surface it can float over, per M3's stated condition.
 4. **`scroll-padding-block-end` ≥ 58 px + safe area**, for WCAG 2.4.11.

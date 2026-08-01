@@ -292,7 +292,7 @@ test.describe('one cluster per tier', () => {
  * the CSS scroll lock, the light dismiss, and the Paper Mode guard.
  */
 test.describe('Drawer', () => {
-  // The Drawer is Reading Mode only; its toggle is display:none above 51rem.
+  // The Drawer is Reading Mode only; its toggle is display:none above 53.5rem.
   test.use({ viewport: VIEWPORTS.reading });
 
   const toggle = (page: Page): Locator => toolbar(page).locator('.toolbar-drawer');

@@ -18,9 +18,9 @@ const { content } = Astro.props;
 <style>
   @layer components {
     .sheets {
-      /* Screen gutters, not reference geometry — and also the arithmetic
-         behind --sheet-fit-width below, which is why they are named rather
-         than repeated. Zeroed for print in the layer below. */
+      /* Screen gutters, not paper geometry — and also the arithmetic behind the
+         two-up boundary below, which is why they are named rather than repeated.
+         Zeroed for print in the layer below. */
       --sheets-gap: 1.5rem;
       --sheets-pad: 1.5rem;
 
@@ -41,9 +41,11 @@ const { content } = Astro.props;
       }
     }
 
-    /* Wide: two Sheets side by side. 102rem clears the pair's 1611.4px — the
-       boundary is reasoned about in tokens.css beside its Reading Mode twin. */
-    @media screen and (width >= 102rem) {
+    /* Wide: two Sheets side by side. 107.5rem clears the pair's 1704px — the
+       boundary is reasoned about in tokens.css beside its Reading Mode twin.
+       It clears the paper, not the gutter: at 1720px the pair overruns this
+       grid's content box by 16px a side, which its own --sheets-pad absorbs. */
+    @media screen and (width >= 107.5rem) {
       .sheets {
         grid-template-columns: repeat(2, max-content);
       }
@@ -56,13 +58,16 @@ const { content } = Astro.props;
        The surface stays white in both themes for the same reason the paper
        does (spec US17): the CV is a document, and --color-text is set to be
        read off white. */
-    @media screen and (width < 51rem) {
+    @media screen and (width < 53.5rem) {
       .sheets {
         grid-template-columns: minmax(0, 1fr);
         gap: 0;
         max-width: var(--reading-column-max);
         min-width: var(--reading-column-min);
         margin-inline: auto;
+        /* Outside the spacing scale on purpose: this is the gap between the paper
+           and the Chrome below it, not one between units of CV content (ADR-0011). */
+        margin-block-end: 5rem;
         padding: var(--space-xl) var(--space-l);
         background-color: var(--color-main-bg);
       }

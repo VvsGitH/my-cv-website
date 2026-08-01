@@ -56,9 +56,6 @@ const { block } = Astro.props;
     .run,
     .list {
       margin-block-start: var(--space-s);
-      /* Tech Skills items are set a step smaller than the rest of the
-         Aside prose in the reference. */
-      font-size: var(--font-size-skill);
       color: var(--color-text);
     }
 
@@ -67,23 +64,22 @@ const { block } = Astro.props;
     }
 
     .list {
-      padding-inline-start: 0.2rem;
       line-height: 1.417;
     }
 
     li {
-      padding-inline-start: 0.62rem;
-      text-indent: -0.62rem;
+      padding-inline-start: 0.75rem;
+      text-indent: -0.75rem;
     }
 
     li::before {
       content: '•';
-      padding-inline-end: 0.34rem;
+      padding-inline-end: 0.4rem;
     }
 
     /* The reference's leading of 2 is set on 9.48px items; on Reading Mode's
        1rem it reads as a gap rather than a run. */
-    @media screen and (width < 51rem) {
+    @media screen and (width < 53.5rem) {
       .run {
         line-height: var(--prose-leading);
       }

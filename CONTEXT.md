@@ -5,7 +5,7 @@ A single-purpose site that presents Vito Paparella Santorsola's CV as sheets of 
 ## Language
 
 **Sheet**:
-One A4 page of the CV (210×297mm). The CV is two Sheets. A Sheet has fixed physical dimensions and is the unit that maps 1:1 to a page in the generated PDF.
+One A4 page of the CV. The CV is two Sheets. A Sheet has fixed dimensions in A4's 210/297 ratio — an 840px box on screen, taken back to a physical 210×297mm in the print layer — and is the unit that maps 1:1 to a page in the generated PDF.
 _Avoid_: page (ambiguous with browser/site page), card
 
 **Aside**:

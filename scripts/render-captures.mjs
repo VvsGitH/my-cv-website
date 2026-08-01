@@ -15,7 +15,7 @@ const A4_WIDTH = 595.28;
 const A4_HEIGHT = 841.89;
 const SIZE_TOLERANCE = 1;
 
-// Never below 51rem, and always set before `goto` (ADR-0009).
+// Never below 53.5rem, and always set before `goto` (ADR-0009).
 const CAPTURE_VIEWPORT = { width: 1280, height: 1600 };
 
 // Must stay the names Chrome.astro and BaseLayout.astro point at.
@@ -76,7 +76,6 @@ try {
       path: pdfPath(locale),
       preferCSSPageSize: true,
       printBackground: true,
-      margin: { top: 0, right: 0, bottom: 0, left: 0 },
     });
     await assertTwoA4Pages(pdfPath(locale));
     console.log(`${cvRoute(locale)} -> ${pdfPath(locale)}`);

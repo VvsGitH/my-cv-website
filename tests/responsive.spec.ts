@@ -4,13 +4,13 @@ import { routeFor } from './support/site';
 
 /**
  * The three tiers of CONTEXT.md, at the boundaries the paper's own width
- * settles: 51rem (816px) clears one 793.7px Sheet, 102rem (1632px) clears two
+ * settles: 53.5rem (856px) clears one 840px Sheet, 107.5rem (1720px) clears two
  * and the gap between them. ADR-0006 is why they are read off the paper at all
  * — it removed the scale-to-fit, so a Sheet is a literal A4 box.
  */
 
-/** 210mm × 297mm at 96dpi. */
-const A4 = { width: 793.7, height: 1122.5 };
+/** The screen box: --sheet-width, in A4's 210/297 ratio. mm only reach print. */
+const A4 = { width: 840, height: (840 * 297) / 210 };
 const TOLERANCE = 1;
 
 interface Box {
@@ -85,17 +85,17 @@ test('changes tier exactly on its boundaries, and not a pixel earlier', async ({
   await openPainted(page, routeFor('it'));
   const paper = sheet(page, 1);
 
-  await page.setViewportSize({ width: 815, height: 1200 });
-  await expect(paper.locator('.aside > .block--about'), 'at 815px, Reading Mode').toBeHidden();
+  await page.setViewportSize({ width: 855, height: 1200 });
+  await expect(paper.locator('.aside > .block--about'), 'at 855px, Reading Mode').toBeHidden();
 
-  await page.setViewportSize({ width: 816, height: 1200 });
-  await expect(paper.locator('.aside > .block--about'), 'at 816px, Paper Mode').toBeVisible();
+  await page.setViewportSize({ width: 856, height: 1200 });
+  await expect(paper.locator('.aside > .block--about'), 'at 856px, Paper Mode').toBeVisible();
 
-  await page.setViewportSize({ width: 1631, height: 1200 });
-  expect(await rowCount(page), 'at 1631px the Sheets should still stack').toBe(2);
+  await page.setViewportSize({ width: 1719, height: 1200 });
+  expect(await rowCount(page), 'at 1719px the Sheets should still stack').toBe(2);
 
-  await page.setViewportSize({ width: 1632, height: 1200 });
-  expect(await rowCount(page), 'at 1632px the Sheets should share a row').toBe(1);
+  await page.setViewportSize({ width: 1720, height: 1200 });
+  expect(await rowCount(page), 'at 1720px the Sheets should share a row').toBe(1);
 });
 
 /**
@@ -104,7 +104,7 @@ test('changes tier exactly on its boundaries, and not a pixel earlier', async ({
  * under each, the narrowest supported viewport, and common devices between.
  */
 const NO_OVERFLOW_WIDTHS = [
-  375, 390, 414, 500, 600, 700, 780, 815, 816, 817, 900, 1024, 1280, 1440, 1631, 1632, 1633, 1920,
+  375, 390, 414, 500, 600, 700, 780, 855, 856, 857, 900, 1024, 1280, 1440, 1719, 1720, 1721, 1920,
 ];
 
 test('never scrolls sideways, at any supported width', async ({ page }) => {

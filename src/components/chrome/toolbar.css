@@ -31,7 +31,7 @@
     border-radius: 2px;
     background: none;
     color: var(--color-heading);
-    font-size: 1.125rem;
+    font-size: var(--font-size-button);
     cursor: pointer;
   }
 
@@ -82,7 +82,7 @@
     opacity: 1;
   }
 
-  @media screen and (width >= 51rem) {
+  @media screen and (width >= 53.5rem) {
     /* Paper Mode has no Drawer, so it has no toggle. */
     .toolbar-drawer {
       display: none;
@@ -92,7 +92,7 @@
   /* Reading Mode turns the cluster on its side against the bottom edge, and is the
      only tier needing a `scroll-padding` counterpart for WCAG 2.4.11 (ADR-0008,
      which also records the rail's open overlap defect in Paper Mode). */
-  @media screen and (width < 51rem) {
+  @media screen and (width < 53.5rem) {
     .toolbar {
       inset-block: auto var(--toolbar-inset);
       flex-direction: row;

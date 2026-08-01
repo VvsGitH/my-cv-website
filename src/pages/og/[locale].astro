@@ -100,9 +100,11 @@ if (!header) {
     }
 
     /* The Sheet's own seam, so the A4 box stays real and only its rendering
-       shrinks. This is the token's last consumer — do not delete it. */
+       shrinks. This is the token's last consumer — do not delete it.
+       1188 is --sheet-width (840px) in A4's ratio, as a bare number because
+       CSS cannot divide one length by another: it moves when that token does. */
     .paper :global(.sheet-wrapper) {
-      --sheet-scale: calc((var(--card-height) - 2 * var(--card-pad-block)) / 1123);
+      --sheet-scale: calc((var(--card-height) - 2 * var(--card-pad-block)) / 1188);
     }
   }
 </style>

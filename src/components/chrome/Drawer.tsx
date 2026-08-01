@@ -72,7 +72,11 @@ export default function Drawer({ name, close, children }: Props) {
       }}
     >
       <div class="drawer-head">
-        <h2 id={TITLE_ID} class="drawer-title">
+        {/* Announced, not shown (ADR-0008). The name is a real `<h2>` the
+            `aria-labelledby` above points at rather than an `aria-label`
+            string, and `.is-sr-only` keeps it out of the head row, which
+            shows the close control alone. Deliberate: do not unhide it. */}
+        <h2 id={TITLE_ID} class="drawer-title is-sr-only">
           {name}
         </h2>
 

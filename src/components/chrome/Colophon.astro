@@ -137,7 +137,9 @@ const year = new Date().getFullYear();
            Colophon there are no already-read lines for it to cover. So the
            Colophon reserves the rectangle the cluster floats in, rather than
            indenting itself out of the column to dodge it (ticket 19). One row
-           now, not five: 98px where it used to be 300 (ADR-0008). */
+           now, not five: 108px where it used to be 300 (ADR-0008). Reading
+           Mode only — Paper Mode's Toolbar is a rail beside the Sheets, and
+           nothing in normal flow has to keep clear of it. */
         padding-block-end: calc(
           var(--toolbar-block-size) + var(--toolbar-inset) + var(--space-xl)
         );

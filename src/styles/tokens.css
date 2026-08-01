@@ -95,10 +95,11 @@
    has to keep clear of the cluster and line up with the column (ticket 19) —
    a remembered measurement drifts out of sync in silence.
 
-   The Toolbar is one horizontal row at every tier (ADR-0008): a pill floating
-   at the top centre in Paper Mode, a bottom row in Reading Mode. A pointer can
-   hit 36px; a thumb wants 44, so Reading Mode — the touch tier — grows the
-   control below.
+   The Toolbar takes one shape per tier (ADR-0008): a vertical rail against the
+   inline start in Paper Mode, centred on the viewport, and a horizontal row
+   against the bottom edge in Reading Mode. Its container carries the chrome at
+   both. A pointer can hit 36px; a thumb wants 44, so Reading Mode — the touch
+   tier — grows the control below.
    ========================================================================= */
 
   --toolbar-button-size: 2.25rem;
@@ -106,8 +107,13 @@
   /* The cluster's berth from the viewport edge, in one place: the Toolbar
      floats at it, the Colophon reserves it, and :root scroll-pads by it. */
   --toolbar-inset: var(--space-m);
-  /* One row's block size, which does not depend on how many controls stand in
-     it: one button, plus the container's own padding and border. */
+  /* The Reading Mode row's block size — one button, plus the container's own
+     padding and border — and it does not depend on how many controls stand in
+     the row. That row is the only thing this measures: the Colophon reserves
+     its berth (ticket 19) and :root scroll-pads by it. The Paper Mode rail's
+     extent is deliberately not a token, because nothing reads it — a rail
+     centred on the block axis against the inline edge obscures nothing that
+     scrolling could clear. */
   --toolbar-block-size: calc(
     var(--toolbar-button-size) + 2 * var(--space-xs) + 2 * var(--toolbar-border-size)
   );
@@ -177,11 +183,10 @@
     /* The portrait leads the compact header rather than filling a panel. */
     --photo-size: 6.5rem;
 
-    /* The touch tier. The cluster loses its container here — the chrome moves
-       onto the controls (toolbar.css) — so the row is exactly one button tall,
-       with no padding or border of its own to add. */
+    /* The touch tier. Only the control grows: the container's padding and
+       border stand at this tier too, so --toolbar-block-size's formula above
+       already describes the row and there is nothing to override here. */
     --toolbar-button-size: 2.75rem;
-    --toolbar-block-size: var(--toolbar-button-size);
     /* The one tier where the cluster sits on the bottom edge, which on a
        notched phone is where the home indicator lives. */
     --toolbar-inset: calc(var(--space-m) + env(safe-area-inset-bottom, 0px));

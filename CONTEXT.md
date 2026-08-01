@@ -41,11 +41,11 @@ The mobile presentation where the same content reflows into a single readable co
 _Avoid_: mobile view, responsive view
 
 **Drawer**:
-The left slide-in panel, in Reading Mode only, that holds the Aside content behind a toggle. A modal `<dialog>` (ADR-0008), opened from the Toolbar and closed from its own head row — which shows the panel's name and, at its inline end, the control that dismisses it.
+The left slide-in panel, in Reading Mode only, that holds the Aside content behind a toggle. A modal `<dialog>` (ADR-0008), opened from the Toolbar and closed from its own head row — which carries the control that dismisses it at its inline end, beside the panel's name as a heading that is announced rather than shown.
 _Avoid_: sidebar, menu
 
 **Toolbar**:
-The floating control cluster carrying the four actions — language, download, share, theme — plus the Drawer's toggle in Reading Mode. One horizontal row at every tier (ADR-0008): a pill floating at the top centre in Paper Mode, and a row against the bottom edge in Reading Mode, where the controls carry their own chrome instead of the container. The site's only fixed chrome; it goes inert behind an open Drawer.
+The floating control cluster carrying the four actions — language, download, share, theme — plus the Drawer's toggle in Reading Mode. One shape per tier (ADR-0008): a vertical rail against the inline start in Paper Mode, centred on the viewport, and a horizontal row against the bottom edge in Reading Mode, where the column reaches the rail's own edge. Its container carries the chrome at both. The site's only fixed chrome; it goes inert behind an open Drawer.
 _Avoid_: header, navbar, controls
 
 **Colophon**:

@@ -393,3 +393,76 @@ Manual checks the suite cannot make: reduced motion; the 3:1 control border in
 both themes; the pill's clearance over Sheet 1's top margin at 1280 **and** at
 1024, where `toolbar.css` already records that an unscaled Sheet fills the
 viewport and there is no margin left to float over.
+
+### Amended after shipping
+
+**2026-08-01.** Everything above records what this ticket shipped and stays as
+written. After living with it the owner reversed three of its decisions by hand,
+in `Drawer.tsx`, `drawer.css` and `toolbar.css`. `docs/adr/0008-…` was amended in
+place rather than superseded, and renamed
+`0008-native-dialog-drawer-and-the-toolbar-cluster.md` — its title no longer
+holds. What changed:
+
+- **Paper Mode's Toolbar is a vertical rail against the inline start**, centred
+  on the viewport, not the top-centre pill of `## Tasks`. This adopts, for that
+  tier alone, the full-height left rail this ticket rejected under
+  `## Out of scope`. The rejection's two grounds — M3's "vertical toolbars aren't
+  recommended for compact windows" and `.sheets`' `min-width: 23rem` horizontal
+  budget — are both about compact windows, and Paper Mode is not one. Reading
+  Mode is, and keeps the horizontal row.
+- **The container keeps its chrome in Reading Mode.** The `@media (width < 48rem)`
+  block no longer strips its padding, border, background and shadow, and the
+  `--color-muted` per-control border of the contrast decision was deleted with
+  it. Contrast is the container's `--color-aside-bg` fill again, at every tier.
+  The measured ratios that decision records are of rules that no longer exist.
+- **The Drawer's `<h2>` is `.is-sr-only`** — announced, not shown, against the
+  "the panel's name becomes visible" decision. The `aria-labelledby` at a real
+  `<h2>` rather than an `aria-label` string is unchanged, and so is the
+  `h2`-not-`h3` reasoning; only the visibility went. The head row is the close
+  control alone, pushed to the inline end by `margin-inline-start: auto`.
+
+Two defects came in with the hand-edits and were fixed in the same pass, neither
+about the shape:
+
+- `--toolbar-block-size`'s Reading Mode override still read
+  `var(--toolbar-button-size)` under a comment saying the row had no container to
+  add to it. With the container back the row is **54px**, not 44, so the
+  Colophon's berth and `scroll-padding-block-end` were both under-reserving by
+  10px. The override is deleted; the `:root` formula already computes 54. The
+  berth is **108px**, not the 98 this ticket's `### Geometry and the Colophon`
+  states.
+- The toast was centred on the wrong axis at both tiers: `translate: 0 50%`
+  pushed it down by half its height in Paper Mode with its clearance gap on the
+  block axis, where the rail stands beside it on the inline one; and
+  `translate: 0` in Reading Mode cancelled the horizontal centring that
+  `inset-inline-start: 50%` sets up, so on a 320px phone it could leave the
+  viewport.
+
+Four tests in `tests/toolbar.spec.ts` changed with the shape.
+`'runs its controls in one horizontal row in Paper Mode'` became
+`'stacks its controls in one vertical rail in Paper Mode'`;
+`'floats over the page without moving the paper'` swapped its centring assertion
+for the rail's own two; `'scroll-pads the top edge by the whole pill'` was
+**deleted** along with the `scroll-padding-block-start` rule it guarded, because
+a rail centred on the block axis cannot be scrolled clear on it and no token
+value could have satisfied the test; and the comments claiming the panel's name
+is visible were corrected. The `toHaveText` assertions on `.drawer-title` stay —
+`.is-sr-only` clips but does not remove, and they are what guards the
+`aria-labelledby` target having content.
+
+**One thing the reconciliation found and did not fix.** The rail overlaps the
+paper at both ends of Paper Mode. Measured against the built site: Sheet 1's
+left edge is at 115px at 1024 and 243px at 1280, well clear of the rail's
+x ∈ [14, 60] — but at **768–~830px**, Paper Mode's floor, an A4 Sheet is wider
+than the viewport and there is no inline margin at all, and the **two-up tier**
+fills the width the same way. At 768 and at 1616 the rail lands on the Aside's
+opening paragraph. The suite does not catch it because WCAG 2.4.11 is about
+focused *controls*, and none sit in the rail's band — it is prose that is
+covered. This is the structural cost of the inline edge: the pill this replaced
+floated over a block-axis margin, which every tier has, whereas the inline-axis
+margin exists only in the middle of the range. It wants its own ticket.
+
+`docs/research/toolbar-navigation-patterns.md` and
+`docs/todos/toolbar-re-design.md` were deliberately left alone. The research is
+not wrong; the owner overrode its recommendation for one tier, and that override
+belongs in the ADR.

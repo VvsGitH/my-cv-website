@@ -17,9 +17,12 @@
     inset-block: 0;
     inset-inline-start: 0;
     /* The UA sheet's `margin: auto` and `max-width`/`max-height` would inset a
-       panel that is meant to reach three edges. */
+       panel that is meant to reach three edges. `height: 100%` is stated as
+       well as `inset-block: 0` — belt and braces on a top-layer box, whose
+       height the UA sheet also has an opinion about. */
     margin: 0;
     max-width: none;
+    height: 100%;
     max-height: none;
     width: var(--drawer-width);
     /* `padding: 0` with a `flex: 1` body below is what keeps the dialog's own
@@ -82,31 +85,26 @@
     }
   }
 
-  /* The panel's own way out (ADR-0008): its name, and the control that
-     dismisses it at the inline end, where a reader expects it. */
+  /* The panel's own way out (ADR-0008): the control that dismisses it, at the
+     inline end where a reader expects it. The panel's name shares this row as
+     an `<h2>` the `aria-labelledby` points at, but it is `.is-sr-only` —
+     announced, never shown, and `position: absolute` besides — so the close
+     control is this row's only in-flow item and `margin-inline-start: auto`
+     below is what places it. */
   .drawer-head {
     display: flex;
     align-items: center;
-    justify-content: space-between;
     gap: var(--space-m);
     padding-block: var(--space-s) var(--space-m);
     padding-inline: var(--space-l) var(--space-s);
   }
 
-  .drawer-title {
-    font-size: var(--font-size-heading);
-    color: var(--color-heading);
-  }
-
   .drawer-close {
-    display: grid;
-    place-items: center;
-    flex: none;
+    margin-inline-start: auto;
     width: var(--toolbar-button-size);
     height: var(--toolbar-button-size);
     padding: 0;
     border: 0;
-    border-radius: 2px;
     background: none;
     color: var(--color-heading);
     font-size: 1.125rem;
@@ -114,13 +112,39 @@
   }
 
   /* `flex: 1` rather than a height: the body has to cover everything the head
-     leaves, for the light dismiss above. */
+     leaves, for the light dismiss above.
+
+     The one scroller the Chrome owns, and the only place this project dresses
+     a scrollbar: the UA's default bar is too heavy beside a 19rem panel. Two
+     syntaxes because they have no common ancestor — `scrollbar-width`/
+     `scrollbar-color` are the standard pair, `::-webkit-scrollbar` is what
+     Safari still answers to. Both take the same tint, off --color-muted so the
+     thumb follows the theme like everything else here. */
   .drawer-body {
+    /* Local rather than a token: nothing outside this panel has a scrollbar to
+       dress, and ::-webkit-scrollbar-thumb inherits it from here. */
+    --drawer-scrollbar-thumb: color-mix(in oklab, var(--color-muted) 55%, transparent);
+
     flex: 1;
     display: flex;
     flex-direction: column;
     overflow-y: auto;
     padding: 0 var(--space-l) var(--space-xl);
+    scrollbar-width: thin;
+    scrollbar-color: var(--drawer-scrollbar-thumb) transparent;
+  }
+
+  .drawer-body::-webkit-scrollbar {
+    width: 9px;
+  }
+
+  .drawer-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .drawer-body::-webkit-scrollbar-thumb {
+    background-color: var(--drawer-scrollbar-thumb);
+    border-radius: 20px;
   }
 
   /* The Blocks arrive wrapped in `<astro-slot>` (Astro's own hydration

@@ -166,10 +166,12 @@ test('offers a different PDF in each Locale', async ({ page }) => {
 });
 
 /**
- * WCAG 2.2 · 2.4.11 (Minimum). The Toolbar is one horizontal row at every tier
- * now (ADR-0008), so it can obscure a focused control at *either* edge: the
- * bottom, where it floats over the reading column, and the top, where the pill
- * floats over the page's margin. Both tiers run this.
+ * WCAG 2.2 · 2.4.11 (Minimum). The Toolbar takes a different shape per tier
+ * (ADR-0008) and obscures differently at each: a row over the foot of the
+ * reading column below 48rem, a rail in the margin beside the Sheets above it.
+ * Both tiers run this, and in Paper Mode it is the *only* thing standing behind
+ * 2.4.11 — a rail centred on the block axis cannot be scrolled clear on it, so
+ * there is no `scroll-padding` counterpart there to assert.
  */
 const expectNoControlBehindTheToolbar = async (page: Page): Promise<void> => {
   const targets = await page.locator(':is(a[href], button):visible').all();
@@ -199,12 +201,13 @@ const expectNoControlBehindTheToolbar = async (page: Page): Promise<void> => {
   expect(obscured, 'focusing these scrolled them under the Toolbar').toEqual([]);
 };
 
-/** How far the cluster reaches in from the edge it floats against. */
+/**
+ * How far the cluster reaches up from the bottom edge it floats against —
+ * Reading Mode's measure, and the one `scroll-padding-block-end` has to clear.
+ * Paper Mode's rail floats against an *inline* edge and has no counterpart.
+ */
 const toolbarReach = (page: Page): Promise<number> =>
-  toolbar(page).evaluate((element) => {
-    const box = element.getBoundingClientRect();
-    return box.top < innerHeight / 2 ? box.bottom : innerHeight - box.top;
-  });
+  toolbar(page).evaluate((element) => innerHeight - element.getBoundingClientRect().top);
 
 test.describe('Focus Not Obscured', () => {
   test.describe('Reading Mode', () => {
@@ -231,29 +234,19 @@ test.describe('Focus Not Obscured', () => {
   });
 
   test.describe('Paper Mode', () => {
-    // The pill at the top centre is a new obscuring surface (ADR-0008).
+    // The rail in the Sheets' margin is a new obscuring surface (ADR-0008).
     test.use({ viewport: VIEWPORTS.paper });
 
     test('never parks a focused control entirely behind the Toolbar', async ({ page }) => {
       await openPainted(page, routeFor('it'));
       await expectNoControlBehindTheToolbar(page);
     });
-
-    test('scroll-pads the top edge by the whole pill', async ({ page }) => {
-      await openPainted(page, routeFor('it'));
-
-      const padding = await page
-        .locator('html')
-        .evaluate((element) => getComputedStyle(element).scrollPaddingTop);
-
-      expect(padding).not.toBe('auto');
-      expect(Number.parseFloat(padding)).toBeGreaterThanOrEqual(await toolbarReach(page));
-    });
   });
 });
 
-test.describe('one horizontal row', () => {
-  const rowOf = (page: Page) =>
+/** One cluster, one shape per tier (ADR-0008). */
+test.describe('one cluster per tier', () => {
+  const controlsOf = (page: Page) =>
     toolbar(page).locator(':scope > .toolbar-button:visible').evaluateAll((controls) =>
       controls.map((control) => {
         const box = control.getBoundingClientRect();
@@ -265,7 +258,7 @@ test.describe('one horizontal row', () => {
     await page.setViewportSize(VIEWPORTS.reading);
     await openPainted(page, routeFor('it'));
 
-    const row = await rowOf(page);
+    const row = await controlsOf(page);
 
     // Five: the four actions plus the Drawer's toggle (CONTEXT.md: "Toolbar").
     expect(row).toHaveLength(5);
@@ -273,31 +266,38 @@ test.describe('one horizontal row', () => {
     expect(new Set(row.map((control) => control.x)).size, 'distinct columns').toBe(5);
   });
 
-  test('runs its controls in one horizontal row in Paper Mode', async ({ page }) => {
+  test('stacks its controls in one vertical rail in Paper Mode', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.paper);
     await openPainted(page, routeFor('it'));
 
-    const row = await rowOf(page);
+    const rail = await controlsOf(page);
 
-    // Four: Paper Mode has no Drawer, so it has no toggle.
-    expect(row).toHaveLength(4);
-    expect(new Set(row.map((control) => control.y)).size, 'distinct rows').toBe(1);
-    expect(new Set(row.map((control) => control.x)).size, 'distinct columns').toBe(4);
+    // Four: Paper Mode has no Drawer, so it has no toggle. And the axes are the
+    // inverse of Reading Mode's — one column, four rows.
+    expect(rail).toHaveLength(4);
+    expect(new Set(rail.map((control) => control.x)).size, 'distinct columns').toBe(1);
+    expect(new Set(rail.map((control) => control.y)).size, 'distinct rows').toBe(4);
   });
 
-  test('floats over the page without moving the paper in Paper Mode', async ({ page }) => {
+  test('floats beside the page without moving the paper in Paper Mode', async ({ page }) => {
     await page.setViewportSize(VIEWPORTS.paper);
     await openPainted(page, routeFor('it'));
 
-    const pill = (await toolbar(page).boundingBox())!;
-    const viewport = VIEWPORTS.paper.width;
+    const rail = (await toolbar(page).boundingBox())!;
+    const viewport = VIEWPORTS.paper;
 
-    // A pill, not a bar: it has to leave the page it floats over readable.
-    expect(pill.width).toBeLessThan(viewport / 3);
-    expect(pill.x + pill.width / 2, 'centred on the viewport').toBeCloseTo(viewport / 2, 0);
+    // A rail, not a sidebar: it has to leave the page it stands beside readable.
+    expect(rail.width).toBeLessThan(viewport.width / 3);
+    // Against the inline start, and centred on the block axis — the inverse of
+    // the pill this replaced, which was centred on the inline one.
+    expect(rail.x, 'against the inline start').toBeLessThan(viewport.width / 4);
+    expect(rail.y + rail.height / 2, 'centred on the viewport').toBeCloseTo(
+      viewport.height / 2,
+      0,
+    );
 
     // `position: fixed` takes it out of flow, so Sheet 1 starts where it did
-    // before there was anything above it — its own margin, not the pill's.
+    // before there was anything beside it — its own margin, not the rail's.
     const paperTop = (await sheet(page, 1).boundingBox())!.y;
     const withoutToolbar = await page.evaluate(() => {
       const cluster = document.querySelector<HTMLElement>('.toolbar')!;
@@ -370,8 +370,10 @@ test.describe('Drawer', () => {
 
       await expect(panel).toBeVisible();
       await expect(panel).toHaveAccessibleName(strings.name);
-      // And the name is visible, not just announced: `aria-labelledby` points
-      // at the `<h2>` (ADR-0008).
+      // And that name comes from real markup, not an `aria-label` string:
+      // `aria-labelledby` points at an `<h2>` (ADR-0008). The heading is
+      // `.is-sr-only` — announced, never shown — so this asserts its content,
+      // which is what the accessible name above is computed from.
       await expect(panel.locator('.drawer-title')).toHaveText(strings.name);
       // `autofocus` on the way out, not the panel: the head row holds a
       // focusable control, so the dialog's own focusing steps would otherwise
@@ -394,8 +396,9 @@ test.describe('Drawer', () => {
       await toggle(page).click();
       await expect(drawer(page)).toBeVisible();
 
-      // Visible, not an aria-label: the panel's name is an `<h2>` the
-      // `aria-labelledby` points at (ADR-0008).
+      // An `<h2>` the `aria-labelledby` points at, not an aria-label string
+      // (ADR-0008). Announced rather than shown, so the head row itself is the
+      // close control alone.
       await expect(drawer(page).locator('.drawer-title')).toHaveText(strings.name);
       await expect(closeControl(page)).toHaveAccessibleName(strings.close);
 

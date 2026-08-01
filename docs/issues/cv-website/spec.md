@@ -1,8 +1,10 @@
 # Spec: CV Website
 
-Status: ready-for-agent
+Status: shipped
 
-The reference design is the existing CV (`docs/assets/CV_page1.png`, `CV_page2.png`, and the source `docs/assets/CV_Vito_Paparella_Santorsola_2026_06.pdf`) and must be reproduced pixel-perfect — **except for spacing and body leading, which ticket 17 will deliberately regularise**. The reference was hand-set in Canva and its gaps are irregular; from ticket 17 onward they are to follow a 42/28/14/7px scale with one documented exception, so on those two axes the scale becomes authoritative and the reference does not. That ticket has not landed yet. Everything else — geometry, colour, faces, display type sizes — still matches the reference exactly. See `CONTEXT.md` for the ubiquitous language (Sheet, Aside, Main, Block, Group, Continuation, Explicit Paging, Paper Mode, Reading Mode, Drawer, Toolbar, Chrome, Locale) and `docs/adr/` for the load-bearing decisions. Background research: `docs/research/pdf-web-stack.md`.
+This is the product spec — what the site is for, and what it deliberately does not do. It is the only surviving document from the implementation phase; the tickets that carried it out have been deleted, and every decision worth keeping now lives in `docs/adr/`.
+
+The reference design is the existing CV (`docs/assets/CV_page1.png`, `CV_page2.png`, and the source `docs/assets/CV_Vito_Paparella_Santorsola_2026_06.pdf`) and is reproduced pixel-perfect — **except for spacing and body leading, where the scale is authoritative and the reference is not (ADR-0011)**. Everything else — geometry, colour, faces, display type sizes — matches the reference exactly; ADR-0014 records how it was measured and which of its flaws are preserved on purpose. See `CONTEXT.md` for the ubiquitous language (Sheet, Aside, Main, Block, Group, Continuation, Explicit Paging, Paper Mode, Reading Mode, Drawer, Toolbar, Colophon, Chrome, Locale) and `docs/adr/` for the load-bearing decisions. Background research: `docs/research/pdf-web-stack.md`.
 
 ## Problem Statement
 
@@ -10,7 +12,7 @@ Vito's CV exists only as a static PDF made in Canva. He can't share it as a live
 
 ## Solution
 
-A minimal website whose only job is to present the CV as sheets of paper and to download it as a PDF. It shows the CV as two A4 **Sheets** — two side by side on wide screens, stacked on medium screens, and reflowed into a comfortable single-column **Reading Mode** with a slide-in **Drawer** on phones. A floating **Toolbar** offers four actions: switch language (Italian default / English), download the PDF, share (copy URL), and toggle a light/dark background. The downloadable PDF is pre-rendered at build time from the exact same page, one file per **Locale**, so it is byte-stable and pixel-identical to the desktop rendering. Below the paper sits the **Colophon**, the one piece of Chrome in normal flow: five small statements the *site* makes about itself — copyright, the data regime the page falls under, the other Locale, the owner's channels, and the accessibility standard it is composed to. Nothing else frames the paper, and nothing the Colophon says reaches the PDF (ticket 19).
+A minimal website whose only job is to present the CV as sheets of paper and to download it as a PDF. It shows the CV as two A4 **Sheets** — two side by side on wide screens, stacked on medium screens, and reflowed into a comfortable single-column **Reading Mode** with a slide-in **Drawer** on phones. A floating **Toolbar** offers four actions: switch language (Italian default / English), download the PDF, share (copy URL), and toggle a light/dark background. The downloadable PDF is pre-rendered at build time from the exact same page, one file per **Locale**, so it is byte-stable and pixel-identical to the desktop rendering. Below the paper sits the **Colophon**, the one piece of Chrome in normal flow: five small statements the *site* makes about itself — copyright, the data regime the page falls under, the other Locale, the owner's channels, and the accessibility standard it is composed to. Nothing else frames the paper, and nothing the Colophon says reaches the PDF (ADR-0013).
 
 ## User Stories
 
@@ -52,7 +54,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 ## Implementation Decisions
 
 ### Stack
-- **Astro** (static output) + exactly one **Preact island** for the Toolbar and Drawer — see ADR-0003. One component tree is the single source of truth for both the live page and the PDF-captured page.
+- **Astro** (static output) + **two Preact islands**, the Toolbar and the Drawer — see ADR-0003, as amended by ADR-0007 and ADR-0008. One component tree is the single source of truth for both the live page and the PDF-captured page.
 - **Playwright** headless Chromium for the build-time PDF — see ADR-0001.
 - Deployed static to **GitHub Pages** via **GitHub Actions**, at the default `github.io` URL under base `/my-cv-website/`.
 
@@ -86,12 +88,12 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 
 ### Responsive — three tiers
 - **Wide (≥1632px): Paper Mode** — two Sheets side by side, with page padding/gap (the "grid of pages").
-- **Medium (816–1632px): Paper Mode** — Sheets stacked one per row, rigid A4 at 1:1. The Sheet is a literal 210×297mm box at every width in this tier: ADR-0006 dropped the scale-to-width in favour of fidelity, which is also why the tier starts at 816px — a boundary below the paper's own 793.7px puts a horizontal scrollbar on screen. Never enlarged past 1:1 either: A4 at 1:1 is the reference rendering, and enlarging is the browser's zoom to offer. The owner confirmed this reading during ticket 06.
+- **Medium (816–1632px): Paper Mode** — Sheets stacked one per row, rigid A4 at 1:1. The Sheet is a literal 210×297mm box at every width in this tier: ADR-0006 dropped the scale-to-width in favour of fidelity, which is also why the tier starts at 816px — a boundary below the paper's own 793.7px puts a horizontal scrollbar on screen. Never enlarged past 1:1 either: A4 at 1:1 is the reference rendering, and enlarging is the browser's zoom to offer. The owner confirmed this reading.
 - **Narrow (<816px): Reading Mode** — the same component reflows to single-column, normal-size reading view; Aside content moves into a left slide-in Drawer (hamburger toggle); Main is the primary scroll; a compact header sits at the top. A4 is dropped here.
 - Paper styles must be identical under `screen` and `print` media (or capture with `emulateMedia({ media: 'screen' })`) so the PDF equals the desktop rendering. Reading Mode styles must not affect Paper Mode/print output.
 
 ### Toolbar
-Floating cluster, four actions. Ticket 07 placed it as a vertical strip against the **left edge, centred on the viewport** — the owner asked for that placement in the ticket, over this line's original "bottom-right" — and gave it a fifth control, the Drawer's toggle, in Reading Mode only. In Reading Mode the strip rides the Drawer's outer edge while the panel is open. The four actions:
+Floating cluster, four actions, plus a fifth control — the Drawer's toggle — in Reading Mode only. It takes one shape per tier: a vertical rail against the inline start in Paper Mode, a horizontal row against the bottom edge in Reading Mode (ADR-0008). The four actions:
 1. **Language** — toggle EN/IT (navigates to the equivalent route in the other Locale).
 2. **Download** — serves the current Locale's pre-rendered PDF.
 3. **Share** — copies the current page URL to the clipboard, with a brief confirmation.
@@ -115,9 +117,7 @@ Floating cluster, four actions. Ticket 07 placed it as a vertical strip against 
 
 ## Testing Decisions
 
-A good test here asserts **externally observable behavior of the built artifact** — what a visitor sees and downloads — never component internals, CSS class names, or file structure. Tests should survive a refactor of the components as long as the rendered CV and PDFs are unchanged.
-
-**Single seam: Playwright end-to-end against the built output** (`astro build` result + generated PDFs). This is the highest available seam and reuses Playwright, already in the stack for PDF generation — no new test tooling. Coverage:
+**ADR-0010 owns this.** A good test here asserts externally observable behavior of the built artifact — never component internals. Coverage:
 
 - **Content & structure:** load `/` (IT) and `/en/`; assert the expected Blocks render in the correct Sheet and column, and that Italian vs English text differs where expected.
 - **Toolbar behavior:** language toggle navigates to the equivalent route in the other Locale; theme toggle changes the background behind the Sheets while the Sheet surface stays white; share writes the current URL to the clipboard; download links to the correct per-Locale PDF filename.
@@ -125,12 +125,12 @@ A good test here asserts **externally observable behavior of the built artifact*
 - **PDF validity:** each generated PDF is exactly 2 A4 pages, has the CV fonts embedded, and contains expected key strings (name, section headings, a sample bullet) for its Locale.
 - **Accessibility smoke:** Toolbar and Drawer are keyboard-operable and labeled.
 
-Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel-perfect fidelity is **not** asserted automatically — it is verified manually against `CV_page1.png` / `CV_page2.png` during the layout ticket (see Out of Scope).
+Pixel-perfect fidelity is **not** asserted automatically — it is verified manually against `CV_page1.png` / `CV_page2.png` (see Out of Scope).
 
 ## Out of Scope
 
 - Runtime/on-demand or client-side PDF generation.
-- Automated **visual-regression** / pixel-diff testing — pixel-perfect fidelity is checked manually against the reference PNGs during the layout ticket.
+- Automated **visual-regression** / pixel-diff testing — pixel-perfect fidelity is checked manually against the reference PNGs.
 - Byte-level PDF reproducibility (qpdf / `SOURCE_DATE_EPOCH`).
 - Auto-flow pagination (Paged.js).
 - Analytics (easy to add later).
@@ -140,30 +140,13 @@ Prior art: none yet (greenfield repo); this suite establishes the pattern. Pixel
 ## Further Notes
 
 ### Owner-provided assets / dependencies
-- **Profile photo** → landed at `docs/assets/images/CV_Image.png`, self-hosted at `src/assets/images/profile.png`, rendered circular over the photo disc (ticket 14).
-- Fonts — provided in `docs/assets/fonts/`, including the signature script face at `docs/assets/fonts/primera-signature/` (ticket 13).
+- **Profile photo** → landed at `docs/assets/images/CV_Image.png`, self-hosted at `src/assets/images/profile.png`, rendered circular over the photo disc.
+- Fonts — provided in `docs/assets/fonts/`, including the signature script face at `docs/assets/fonts/primera-signature/` (ADR-0012).
 - **GitHub username** for the final Pages URL (`<username>.github.io/my-cv-website/`).
 - Signature: rendered with the self-hosted **Primera Signature** script web-font (no image), "Bari, `<date>`" line kept.
 
-### Implementation tickets
-1. `01-scaffold.md` — Astro + TS scaffold, i18n routing (it default, en), Pages base, React island wiring.
-2. `02-fonts.md` — generate woff2, `@font-face`, font tokens + weight mapping.
-3. `03-design-system.md` — design tokens, global styles, the A4 Sheet primitive.
-4. `04-content-model.md` — shared schema + TypeScript content modules (IT + EN) with `sheet`/`column` tags.
-5. `05-cv-layout.md` — Sheet layout components (Aside/Main, header, all sections) in Paper Mode.
-6. `06-responsive.md` — three-tier responsive + Reading Mode + Drawer.
-7. `07-toolbar.md` — Preact island Toolbar (language, download, share, theme + persistence).
-8. `08-pdf-render.md` — Playwright build-time PDF script, per-Locale.
-9. `09-ci-deploy.md` — GitHub Actions build + PDF + Pages deploy.
-10. `10-seo-meta.md` — per-Locale meta, favicon, OG image.
-11. `11-italian-content.md` — draft Italian translation for owner review.
-12. `12-e2e-tests.md` — Playwright E2E suite (the single test seam).
-13. `13-signature-font.md` — self-host the owner's script font, wire it into the Privacy block's signature.
-14. `14-profile-photo.md` — self-host and render the owner's real profile photo, replacing the placeholder disc.
-15. `15-folder-structure.md` — `src/assets/` for fonts and images; component tiers `primitives`/`blocks`/`structure` (+ `chrome`), per ADR-0004.
-16. `16-main-section-blocks.md` — one `MainSectionBlock` for Experience/Projects/Education, with explicit Continuations (ADR-0005).
-17. `17-spacing-scale.md` — the 42/28/14/7px spacing scale, unified body size and leading.
-18. `18-preact-island.md` — Preact instead of React for the island (ADR-0003).
-19. `19-colophon.md` — the Colophon, plus the Toolbar's accessible names and WCAG 2.2 · 2.4.11.
-20. `20-chrome-two-islands.md` — Toolbar and Drawer as two islands, the Drawer a custom modal rather than a `<dialog>` (ADR-0007).
-21. `21-dialog-drawer-and-horizontal-toolbar.md` — the Drawer back to a native `<dialog>` with its own close control, and a horizontal Toolbar at every tier (ADR-0008).
+### Implementation history
+
+The 21 implementation tickets that built this site were deleted once their
+load-bearing content had been salvaged into `docs/adr/`. The git history holds
+them if they are ever needed; the ADRs hold everything that still matters.

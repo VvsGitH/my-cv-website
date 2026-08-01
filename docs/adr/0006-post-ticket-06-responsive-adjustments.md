@@ -9,6 +9,8 @@
 
 Commit `b72bbaa` ("Fix: some fixes post 06") introduced several changes to the responsive behavior and typography that deviate from the explicit design documented in ticket 06. This ADR tracks those deviations and their rationale.
 
+> **The implementation tickets have since been deleted.** "Ticket 06" below is the historical design this ADR was written against; the `Before` snippets quote it verbatim and are the only surviving record of it. Nothing here needs the ticket to be readable.
+
 > **Both boundaries moved once more after this ADR was written.** Reading Mode's went from 48rem to **51rem** and the wide tier's from 101rem to **102rem**, so that neither tier can start below the width of the paper it has to show — a 793.7px Sheet under a 768px boundary is a horizontal scrollbar. The reasoning lives in `tokens.css`; the `Before (ticket 06)` snippets below are quoted as 06 wrote them and are deliberately not updated.
 
 ## Deviations from ticket 06
@@ -127,7 +129,7 @@ width: max(20rem, 85vw);
 
 **Impact on spec**: Ticket 06 did not specify exact Drawer dimensions, only that it should be "as wide as a phone can spare". This change aligns better with that intent.
 
-**Superseded by ticket 07**: the width is now `min(19rem, 76vw)`. The Toolbar rides the panel's outer edge from that ticket on, so "what a phone can spare" has to spare room for it too — at 320px the panel is 243px and the Toolbar clears the viewport edge by 9px. See `docs/issues/cv-website/07-toolbar.md`.
+**Superseded**: the width is now `min(19rem, 76vw)`, and the cap is derived rather than written down. The Toolbar no longer rides the panel's outer edge at all — see ADR-0008 and the `--drawer-width` derivation in `tokens.css`.
 
 ---
 

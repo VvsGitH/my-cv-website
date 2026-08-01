@@ -62,6 +62,22 @@ sits in one column of one Sheet".
 - `CONTEXT.md` gains **Group** and **Continuation**, and **Block** loses "one
   Experience entry" from its definition.
 - The three types collapse without a variant tag, so Projects lose their
-  tighter bullet leading. That was a Canva artefact, and the spacing work in
-  ticket 17 more than repays the height it costs — but between tickets 16 and
-  17 a column may overflow, which is accepted.
+  tighter bullet leading. That was a Canva artefact, and the spacing scale
+  (ADR-0011) more than repays the height it costs.
+- **The drift assertion is one-directional.** It checks that the *copy* starts
+  with the original, so renaming the original to a prefix of itself passes
+  silently — `Progetti selezionati` → `Progetti` would not fire. Read it as
+  "the copy cannot drift from the original", not "the two cannot drift apart".
+- **`meta` cannot absorb Education's grade line.** `GroupMeta.astro` emits its
+  line as plain text, so `'Voto: **110/110**'` would print literal asterisks;
+  and `meta` is a different register from a result. The grade stays where it is.
+- **The Aside's markup is deliberately not restructured to match.** Languages is
+  a `<dl>` and Certifications a `<ul>`, and those are already the right
+  semantics. The "one `<article>` + n `<section>`" pattern earns its keep
+  exactly where each unit carries an `<h3>`, which is not the case there. A
+  consistency refactor would trade correct semantics for uniform ones.
+- **B2B Environment is the only Group in the CV that sits on a Sheet boundary**,
+  so it is the only one that can be split. The Group-level `continues` mechanism
+  therefore has no consumer in the real content — it was proven by a temporary
+  split rather than by production use. That is why it looks untested, and why it
+  should not be deleted as dead.

@@ -53,3 +53,13 @@ the repository is ever renamed, both have to follow.
 One manual setting, once, before the first run: **Settings → Pages → Build and
 deployment → Source: GitHub Actions**. Without it the deploy job fails, because
 no workflow can turn Pages on with the default `GITHUB_TOKEN`.
+
+### Two checks only a human can make, after the first deploy
+
+The test suite runs against the built output, not the deployed site (ADR-0010),
+so neither of these will ever close itself:
+
+1. Enable Pages as above, watch the first run through, and open both PDF links
+   from the live site.
+2. Run both Locales through Facebook's Sharing Debugger and LinkedIn's Post
+   Inspector, to confirm the link-preview cards unfurl as intended.

@@ -9,6 +9,8 @@
 
 The Drawer is a `role="dialog"` element of our own, held modal by putting the rest of the page in `inert` — **not** a native `<dialog>` opened with `showModal()`. Because the Toolbar no longer has to live inside the panel's subtree, the Chrome ships as **two Preact islands**, `Toolbar` and `Drawer`, sharing exactly one signal (`drawerOpen`, in `components/chrome/state.ts`).
 
+> **Historical.** Half of this ADR is superseded by ADR-0008, and the implementation tickets it names have since been deleted. It is kept as written — the argument stands on its own, and rewriting a decided ADR to match later code falsifies the log.
+
 This reverses two things ticket 06 decided and ticket 07 implemented: that Escape, the focus trap and the focus return should be the platform's, and that the Chrome should be a single island. It amends ADR-0003, which described the site as having "exactly one Preact island".
 
 ## Why the native dialog had to go

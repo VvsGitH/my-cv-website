@@ -18,3 +18,6 @@ The A4 geometry primitive (`components/Sheet.astro`) was merged into `structure/
 - `chrome/` is created by ticket 06/07, not now — git does not track empty directories.
 - Placing a genuinely reusable, non-CV-specific component becomes a judgement call: `primitives/` is scoped to the CV's typographic leaves by name.
 - No path aliases were introduced; the move made imports shallower (`../../content/types`), so there is nothing to abbreviate.
+- **The `Block` suffix stays, despite the stutter of `blocks/HeaderBlock.astro`.** Without it, `blocks/Header.astro` and Reading Mode's compact header in `chrome/` would be indistinguishable, and the language-proficiency `blocks/Languages.astro` would sit beside a future `chrome/LanguageToggle.tsx` as a trap. The suffix is what keeps a Block nameable next to its Chrome counterpart.
+- **`structure/Block.astro` is not a collision with the `blocks/` folder.** That file renders `<article class="block block--{kind}">`, so it *is* the Block; the files in `blocks/` are its bodies, one per `kind`.
+- The `ExperienceBlock` example in *Considered Options* names a file that no longer exists (ADR-0005 collapsed it into `MainSectionBlock`). Left as written rather than retconned — the argument is unaffected, and rewriting a decided ADR to match later code falsifies the log.

@@ -1,6 +1,6 @@
 # Toolbar & navigation patterns for the CV site's fixed chrome
 
-Research date: **2026-07-31**. This note answers the brief in `docs/todos/toolbar-re-design.md`.
+Research date: **2026-07-31**. This note answered a since-deleted brief proposing a speed-dial and a full-height left rail; ADR-0008 records how both were settled.
 
 **Source policy.** Every claim below is pinned to a source that owns it, and the sources are ranked:
 

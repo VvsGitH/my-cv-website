@@ -1,13 +1,6 @@
 import { signal } from '@preact/signals';
 
-/**
- * The Chrome's state, and the two actions that reach outside the render
- * (coding-standards: derive during render, act in event handlers).
- *
- * Both first values are constants: these initialisers also run during
- * prerender, and a signal that read `localStorage` or `matchMedia` would
- * desynchronise the first client render from the prerendered HTML, in silence.
- */
+/** Every initialiser here must be a constant — they run during prerender too (coding-standards). */
 
 /** Mirrors BaseLayout's inline script — change the key in both. */
 const THEME_STORAGE_KEY = 'cv-theme';
@@ -16,29 +9,13 @@ const COPIED_FEEDBACK_MS = 2000;
 
 export type Theme = 'light' | 'dark';
 
-/**
- * The one piece of state that crosses the boundary between the Chrome's two
- * islands (ADR-0007), and neither island imports the other. The Toolbar's
- * first control *opens* it; every way back out — Escape, the panel's own close
- * control, a click on the backdrop, the window growing into Paper Mode — runs
- * through the `<dialog>`'s `close` event, which is where the Drawer writes it
- * back to false (ADR-0008).
- *
- * There is one signal object at runtime because both island entries import
- * *this module* and Vite emits it once, as a chunk they share — ticket 20
- * records how that is verified against a build.
- */
+/** The one piece of state crossing the two islands (ADR-0007, ADR-0008). */
 export const drawerOpen = signal(false);
 
-/** The Toolbar's own, and read nowhere else. */
+/** Module-level despite the single instance — a sanctioned exception (coding-standards). */
 export const linkCopied = signal(false);
 
-/**
- * `<html data-theme>` is the theme's single source of truth: BaseLayout's
- * inline script writes it before the first paint, and the Toolbar's icon and
- * label are keyed off it in CSS. Holding a copy in a signal would only be a
- * second answer to the same question, wrong between prerender and hydration.
- */
+/** `<html data-theme>` is the theme's only source of truth — no signal mirrors it (ADR-0003). */
 export function toggleTheme(): void {
   const next: Theme = document.documentElement.dataset['theme'] === 'dark' ? 'light' : 'dark';
 
@@ -48,7 +25,7 @@ export function toggleTheme(): void {
   try {
     localStorage.setItem(THEME_STORAGE_KEY, next);
   } catch {
-    // Private modes throw on write. The theme still applies for this visit.
+    // Private modes throw on write; the theme still applies for this visit.
   }
 }
 
@@ -58,8 +35,7 @@ export async function copyLink(): Promise<void> {
   try {
     await navigator.clipboard.writeText(window.location.href);
   } catch {
-    // Denied permission, or an insecure origin. Confirming nothing is the
-    // honest outcome — the button has copied nothing.
+    // Denied, or an insecure origin — confirming nothing is the honest outcome.
     return;
   }
 

@@ -1,12 +1,5 @@
 ---
-/**
- * A section title with its underline rule.
- *
- * `srOnly` marks a Continuation (ADR-0005): a section spanning both Sheets
- * carries its heading on both, but the second copy is announced rather than
- * printed, so the CV still shows one title while the heading outline stays
- * well-formed across the Sheet boundary.
- */
+/** A section title with its rule. `srOnly` marks a Continuation (ADR-0005). */
 interface Props {
   text: string;
   srOnly?: boolean;
@@ -21,18 +14,14 @@ const { text, srOnly } = Astro.props;
   @layer components {
     .section-heading {
       font-size: var(--font-size-heading);
-      /* The reference sets the heading solid: a 22.66px face on a 23px
-         em-box, with the rule 5.5px under the baseline. */
+      /* Set solid, as the reference does — a 22.66px face on a 23px em-box. */
       line-height: 1.015;
       padding-block-end: 0.0625rem;
       border-block-end: 1px solid currentcolor;
     }
 
-    /* `.is-sr-only` sits in the `base` layer, so the padding and rule above
-       outrank its own `padding: 0` / `border: 0` and leave the hidden
-       heading a 2px box instead of a 1px one. It is out of flow either way,
-       so this costs no height — but the component that draws the rule is
-       the one that has to take it back. */
+    /* `.is-sr-only` is in the `base` layer, so the rule above outranks its own
+       reset — the component that draws it has to take it back. */
     .section-heading.is-sr-only {
       padding-block-end: 0;
       border-block-end: 0;

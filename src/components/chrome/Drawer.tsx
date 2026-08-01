@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'preact/hooks';
 import { drawerOpen } from './state';
 import './drawer.css';
 
-/** Mirrors the Reading Mode boundary, which tokens.css documents. */
+/** Mirrors the Reading Mode boundary in tokens.css — change both. */
 const PAPER_MODE_QUERY = '(width >= 51rem)';
 
 /** A singleton — Chrome.astro renders exactly one (coding-standards: `useId`). */
@@ -17,19 +17,7 @@ interface Props {
   children?: ComponentChildren;
 }
 
-/**
- * The Drawer (CONTEXT.md) — the panel carrying the Aside's Blocks below 51rem,
- * as a modal `<dialog>`. ADR-0008 has the reasoning; the short of it is that
- * the way out now lives *inside* the panel, so `showModal()` holding the rest
- * of the document inert costs nothing, and Escape, the focus trap, the initial
- * focus, the focus return and the top layer all go back to the platform.
- *
- * `close` is the one funnel: the control, Escape, the backdrop and the Paper
- * Mode guard all end at the dialog's `close` event, which is where the shared
- * signal is written back (state.ts).
- *
- * No `aria-modal` — HTML-AAM makes it implicit on a modal dialog.
- */
+/** The Drawer (CONTEXT.md), a modal `<dialog>` whose `close` event is the one funnel out (ADR-0008). */
 export default function Drawer({ name, close, children }: Props) {
   const panel = useRef<HTMLDialogElement>(null);
   const open = drawerOpen.value;
@@ -42,11 +30,8 @@ export default function Drawer({ name, close, children }: Props) {
     return () => panelElement.close();
   }, [open]);
 
-  // Load-bearing, not tidy: an *open* modal forced to `display: none` keeps
-  // `open === true`, keeps matching `:modal`, and keeps the document blocked
-  // with nothing on screen (ticket 21, "Measured rather than assumed"). Closing
-  // the panel here rather than through the signal keeps it from surviving even
-  // one render frame in Paper Mode.
+  // Load-bearing: closes directly rather than via the signal, so no frame of
+  // Paper Mode can hide an open modal and leave the document blocked (hacks/2026-08-01 §4).
   useEffect(() => {
     const paperMode = matchMedia(PAPER_MODE_QUERY);
     const closeOnPaper = () => {
@@ -64,24 +49,18 @@ export default function Drawer({ name, close, children }: Props) {
       class="drawer"
       aria-labelledby={TITLE_ID}
       onClose={() => (drawerOpen.value = false)}
-      // The whole light dismiss: a modal dialog's backdrop hit-tests to the
-      // dialog element itself (ADR-0008, which also records what that asks of
-      // drawer.css).
+      // The light dismiss: a modal's backdrop hit-tests to the dialog itself (ADR-0008).
       onClick={(event) => {
         if (event.target === event.currentTarget) panel.current?.close();
       }}
     >
       <div class="drawer-head">
-        {/* Announced, not shown (ADR-0008). The name is a real `<h2>` the
-            `aria-labelledby` above points at rather than an `aria-label`
-            string, and `.is-sr-only` keeps it out of the head row, which
-            shows the close control alone. Deliberate: do not unhide it. */}
+        {/* Announced, never shown — deliberate, do not unhide (ADR-0008). */}
         <h2 id={TITLE_ID} class="drawer-title is-sr-only">
           {name}
         </h2>
 
-        {/* Stated rather than inherited: without it the head row's markup
-            order would silently become the focus policy (ADR-0008). */}
+        {/* Stated, not inherited — else markup order becomes the focus policy (ADR-0008). */}
         <button
           type="button"
           autofocus

@@ -1,33 +1,18 @@
-/* Reading Mode's Drawer: the panel carrying the Aside's Blocks below 51rem.
-   Chrome, never paper (CONTEXT.md) — gone in print. The control that *opens*
-   it belongs to the Toolbar (ticket 07); the one that closes it is the panel's
-   own, and that is what makes the panel a modal `<dialog>` again (ADR-0008).
-
-   A plain stylesheet rather than the scoped `<style>` the coding standards ask
-   for: what it dresses is a `.tsx` island, which Astro's scoping does not
-   reach. It joins the `components` layer so it sits in the same cascade as the
-   paper's own styles (layer order: src/styles/global.css).
-
-   Nothing here stacks the panel: `showModal()` promotes it to the top layer,
-   above every stacking context on the page by construction. */
+/* The Drawer's dressing (ADR-0008). A plain stylesheet, not a scoped `<style>`,
+   because Astro's scoping does not reach a `.tsx` island (coding-standards). */
 
 @layer components {
   .drawer {
     position: fixed;
     inset-block: 0;
     inset-inline-start: 0;
-    /* The UA sheet's `margin: auto` and `max-width`/`max-height` would inset a
-       panel that is meant to reach three edges. `height: 100%` is stated as
-       well as `inset-block: 0` — belt and braces on a top-layer box, whose
-       height the UA sheet also has an opinion about. */
+    /* Undoing the UA sheet, which would inset a panel meant to reach three edges. */
     margin: 0;
     max-width: none;
     height: 100%;
     max-height: none;
     width: var(--drawer-width);
-    /* `padding: 0` with a `flex: 1` body below is what keeps the dialog's own
-       box fully covered by its children — a click on bare padding would reach
-       the light dismiss in Drawer.tsx and read as a backdrop click. */
+    /* Keeps the dialog's box fully covered by its children, for the light dismiss (ADR-0008). */
     padding: 0;
     border: 0;
     display: flex;
@@ -39,13 +24,11 @@
       translate var(--drawer-slide) ease,
       display var(--drawer-slide),
       overlay var(--drawer-slide);
-    /* Its own declaration, not part of the shorthand above: an engine without
-       `allow-discrete` then drops only this line, and keeps the slide. */
+    /* Its own declaration so an engine without it drops only this line, keeping the slide. */
     transition-behavior: allow-discrete;
   }
 
-  /* Load-bearing, not tidy: the author `display: flex` above beats the UA's
-     `dialog:not([open])` rule. ADR-0008 records what that costs in the PDF. */
+  /* Load-bearing: the author `display: flex` above beats the UA rule (hacks/2026-08-01 §1). */
   .drawer:not([open]) {
     display: none;
   }
@@ -54,18 +37,14 @@
     translate: 0 0;
   }
 
-  /* Without this the panel is simply *there* on the first frame: a transition
-     needs a start value, and `display: none` gives it none. */
+  /* A transition needs a start value; `display: none` gives it none. */
   @starting-style {
     .drawer[open] {
       translate: -100% 0;
     }
   }
 
-  /* The custom property reaches here because ::backdrop inherits from its
-     originating element. No literal fallback beside it: one would hold a
-     second copy of --color-ink's value, and it would mask the very failure
-     `'draws the backdrop behind the open panel'` exists to catch. */
+  /* No literal fallback: it would mask the failure the backdrop test exists to catch. */
   .drawer::backdrop {
     background-color: color-mix(in oklab, var(--color-ink) 45%, transparent);
     opacity: 0;
@@ -85,12 +64,8 @@
     }
   }
 
-  /* The panel's own way out (ADR-0008): the control that dismisses it, at the
-     inline end where a reader expects it. The panel's name shares this row as
-     an `<h2>` the `aria-labelledby` points at, but it is `.is-sr-only` —
-     announced, never shown, and `position: absolute` besides — so the close
-     control is this row's only in-flow item and `margin-inline-start: auto`
-     below is what places it. */
+  /* The panel's own way out (ADR-0008). The sr-only `<h2>` beside it is out of
+     flow, so the close control is this row's only item. */
   .drawer-head {
     display: flex;
     align-items: center;
@@ -111,18 +86,10 @@
     cursor: pointer;
   }
 
-  /* `flex: 1` rather than a height: the body has to cover everything the head
-     leaves, for the light dismiss above.
-
-     The one scroller the Chrome owns, and the only place this project dresses
-     a scrollbar: the UA's default bar is too heavy beside a 19rem panel. Two
-     syntaxes because they have no common ancestor — `scrollbar-width`/
-     `scrollbar-color` are the standard pair, `::-webkit-scrollbar` is what
-     Safari still answers to. Both take the same tint, off --color-muted so the
-     thumb follows the theme like everything else here. */
+  /* `flex: 1` so the body covers everything the head leaves, for the light dismiss.
+     The scrollbar is dressed twice for want of a common syntax (hacks/2026-08-01 §2). */
   .drawer-body {
-    /* Local rather than a token: nothing outside this panel has a scrollbar to
-       dress, and ::-webkit-scrollbar-thumb inherits it from here. */
+    /* Local, not a token: nothing else here has a scrollbar to dress. */
     --drawer-scrollbar-thumb: color-mix(in oklab, var(--color-muted) 55%, transparent);
 
     flex: 1;
@@ -147,33 +114,18 @@
     border-radius: 20px;
   }
 
-  /* The Blocks arrive wrapped in `<astro-slot>` (Astro's own hydration
-     bookkeeping) and are flex items of this panel regardless, because Astro
-     ships `astro-slot { display: contents }` with the island.
-
-     The gap above a section heading is Sheet.astro's, scoped to the Aside
-     column these Blocks no longer sit in. Same scale step, one column. */
+  /* Sheet.astro's Aside gap, restated here because its scope does not reach the panel. */
   .drawer-body .block + .block > .section-heading {
     margin-block-start: var(--space-xl);
   }
 
-  /* The scroll lock, which `showModal()` does *not* apply on its own — ADR-0007
-     claimed it did, and ADR-0008 measures the opposite. Pure CSS, because
-     top-layer promotion does not move the dialog in the DOM tree, so `:has()`
-     still finds it from `html`. */
+  /* The scroll lock `showModal()` does not apply (ADR-0008, hacks/2026-08-01 §3). */
   html:has(.drawer[open]) {
     overflow: hidden;
   }
 
-  /* And the gutter the lock would otherwise reclaim. Taking the scrollbar away
-     hands its width back to the reading column, which re-wraps every line
-     behind the panel — a layout shift the reader meets on the way *back* out.
-     Reserved in Reading Mode only: it is the one tier with a Drawer, and the
-     Paper tiers would pay for a gutter nothing ever takes.
-
-     It costs the phones it is aimed at nothing, because they overlay their
-     scrollbars and reserve no gutter to begin with. Where the shift is real —
-     a desktop window narrowed past the breakpoint — the property is supported. */
+  /* And the gutter that lock would otherwise reclaim, re-wrapping every line behind
+     the panel. Reading Mode only — the one tier with a Drawer. */
   @media screen and (width < 51rem) {
     html {
       scrollbar-gutter: stable;
@@ -182,9 +134,7 @@
 }
 
 @layer print {
-  /* Chrome is never captured (CONTEXT.md) — the second belt behind
-     `.drawer:not([open])` above, which is what actually keeps the panel off
-     Sheet 1 in the PDF. */
+  /* Chrome is never captured (CONTEXT.md). Second belt behind `.drawer:not([open])`. */
   @media print {
     .drawer {
       display: none;

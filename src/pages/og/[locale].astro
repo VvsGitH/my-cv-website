@@ -5,11 +5,7 @@ import { ogCard } from '../../lib/og-card';
 import Sheet from '../../components/structure/Sheet.astro';
 import '../../styles/global.css';
 
-/**
- * The source of the link-preview image — ticket 10, "The preview image is a
- * route, not a composed screenshot". `scripts/render-captures.mjs` screenshots
- * the `[data-og-card]` element below.
- */
+/** The link-preview image is a route, not a composed screenshot (ADR-0009). */
 export const getStaticPaths = () =>
   (Object.keys(cv) as Locale[]).map((locale) => ({ params: { locale }, props: { locale } }));
 
@@ -103,9 +99,8 @@ if (!header) {
       box-shadow: 0 1.25rem 3rem oklch(0% 0 0 / 0.45);
     }
 
-    /* --sheet-scale is the Sheet's own seam for exactly this (Sheet.astro), so
-       the A4 box stays real and only its rendering shrinks. 1123 is A4's height
-       in CSS px at 96dpi — the figure tokens.css measures the geometry in. */
+    /* The Sheet's own seam, so the A4 box stays real and only its rendering
+       shrinks. This is the token's last consumer — do not delete it. */
     .paper :global(.sheet-wrapper) {
       --sheet-scale: calc((var(--card-height) - 2 * var(--card-pad-block)) / 1123);
     }

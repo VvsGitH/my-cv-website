@@ -2,25 +2,9 @@ import type { Column, CvContent, Locale } from './types';
 import { en } from './en';
 import { it } from './it';
 
-/**
- * A Continuation repeats a heading that already exists elsewhere in the
- * content (ADR-0005). That duplication is deliberate — deriving the copy
- * would couple `Block.astro` to its siblings across Sheets — but a duplicate
- * left unpoliced drifts the first time a section is renamed, and the failure
- * is silent: the CV simply shows two different names for one section.
- *
- * So the copy is checked here instead, at module load, which for a static
- * build means `astro build` fails rather than shipping it. Consistent with
- * ADR-0002's habit of failing the build over shipping a broken layout.
- *
- * A *prefix* match, not equality: the copy carries a "(continua)" /
- * "(continued)" marker, so it starts with the original rather than equalling
- * it. The marker itself is not the assertion's business — renaming the
- * section is.
- */
+/** Fails the build if a Continuation's heading has drifted from the one it resumes (ADR-0005). */
 function assertContinuationsMatch(content: CvContent): void {
-  // Tracked per column: a Continuation resumes the nearest preceding section
-  // in its own column, and the two columns are independent runs of content.
+  // Per column: the two columns are independent runs of content.
   const lastHeading = new Map<Column, string>();
   const lastGroupTitle = new Map<Column, string>();
 
@@ -45,9 +29,7 @@ function assertContinuationsMatch(content: CvContent): void {
         fail('section heading', block.heading, original);
       }
     } else {
-      // Deliberately not updated by a Continuation: a section split across
-      // three Sheets has every copy measured against the original heading,
-      // not against the previous copy's marker.
+      // Not updated by a Continuation: every copy is measured against the original.
       lastHeading.set(block.column, block.heading);
     }
 
@@ -67,8 +49,7 @@ function assertContinuationsMatch(content: CvContent): void {
 /** The CV content for each Locale, keyed for lookup from a route. */
 export const cv: Record<Locale, CvContent> = { it, en };
 
-// Derived from `cv` rather than listing the Locales again: a third Locale
-// should not be able to join the site without being checked.
+// Derived from `cv`, so a third Locale cannot join unchecked.
 for (const content of Object.values(cv)) assertContinuationsMatch(content);
 
 export type * from './types';

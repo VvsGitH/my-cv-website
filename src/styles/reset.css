@@ -12,8 +12,7 @@
 }
 
 :where(*) {
-  /* Chromium (incl. headless, for the PDF pipeline) needs this to keep the
-     cream Aside / photo disc / proficiency bars in print & PDF output. */
+  /* Keeps the cream Aside, photo disc and bars in the PDF (coding-standards). */
   print-color-adjust: exact;
   -webkit-print-color-adjust: exact;
 }
@@ -25,9 +24,7 @@
   font-weight: var(--font-weight-body);
   font-size: var(--font-size-body);
   color: var(--color-text);
-  /* Plain fallback first (dropped by browsers that understand light-dark(),
-     kept by ones that don't); the media query below covers those same
-     browsers when the OS is in dark mode. */
+  /* Plain fallback first, for browsers without `light-dark()`. */
   background-color: var(--color-main-bg);
   background-color: light-dark(var(--color-main-bg), var(--color-dark-bg));
 }
@@ -38,11 +35,8 @@
   }
 }
 
-/* The theme's whole surface area: the background behind the Sheets, and
-   nothing else (spec US16/US17). The two rules above are what a visitor
-   without JS gets — the OS preference; `data-theme` is the Toolbar's explicit
-   choice, written on <html> before first paint by BaseLayout's inline script
-   and therefore never a flash (ticket 07). */
+/* The theme's whole surface area: the background behind the Sheets, nothing else.
+   The rules above are the no-JS case; `data-theme` is the Toolbar's explicit choice. */
 :where(html[data-theme='light']) body {
   background-color: var(--color-main-bg);
 }
@@ -103,8 +97,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  /* `::backdrop` is not a descendant of anything, so `*` does not reach it —
-     and the Drawer's is transitioned (drawer.css, ADR-0008). */
+  /* `::backdrop` is a descendant of nothing, so `*` does not reach it.
+     Note this collapses durations, not delays (coding-standards). */
   :where(*, *::before, *::after, *::backdrop) {
     animation-duration: 0.01ms !important;
     animation-iteration-count: 1 !important;

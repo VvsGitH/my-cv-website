@@ -1,11 +1,4 @@
-/**
- * The shared CV content schema (CONTEXT.md: Block, Sheet, Aside, Main,
- * Explicit Paging). Compile-time only — the TypeScript compiler is the
- * validator, so a bad `sheet` or `column` fails `astro check`/`astro build`
- * rather than shipping a broken layout (ADR-0002).
- *
- * Layout components read these types; they never define content.
- */
+/** The CV content schema. `tsc` is the validator (ADR-0002); layout reads these, never defines them. */
 
 export type Locale = 'it' | 'en';
 
@@ -21,23 +14,12 @@ export interface Placement {
   column: Column;
 }
 
-/**
- * A Block that belongs to a titled section. Every one carries its heading —
- * a section spanning both Sheets prints its title twice, the second time
- * marked `continues` and rendered for screen readers only (ADR-0005). The
- * older convention, where omitting the heading *meant* "this continues", is
- * gone: it made a forgotten heading indistinguishable from a deliberate one.
- */
+/** `heading` is required on every one, deliberately (ADR-0005). */
 interface SectionBlock extends Placement {
   heading: string;
 }
 
-/**
- * A run of CV prose. Plain text, except that `**…**` marks a bold run: the
- * reference CV bolds phrases mid-sentence, and keeping that inline — rather
- * than as arrays of typed spans — is what keeps these content files
- * editable as prose. Rendered in ticket 05.
- */
+/** Prose, in which `**…**` marks a bold run (ADR-0002). */
 export type RichText = string;
 
 /** Circular profile photo. The image file itself is a layout concern. */
@@ -67,10 +49,7 @@ export interface AboutBlock extends SectionBlock {
 
 export interface SkillGroup {
   name: string;
-  /**
-   * `inline` for runs of short keywords the reference CV sets as one
-   * separated line; `list` for the bulleted, descriptive groups.
-   */
+  /** How the reference sets this group — content, not presentation (ADR-0002). */
   display: 'inline' | 'list';
   items: RichText[];
 }
@@ -80,17 +59,7 @@ export interface SkillsBlock extends SectionBlock {
   groups: SkillGroup[];
 }
 
-/**
- * One Group of a Main section (CONTEXT.md: "Group") — one job, one project,
- * one qualification. The three read identically in the reference, so they
- * share a shape rather than a type each.
- *
- * The union is the load-bearing part. A Group that *opens* must carry its
- * `meta` and `period`; a Group that *continues* one interrupted by a Sheet
- * boundary must not repeat them, and carries only a copy of the title. That
- * distinction is what makes "split anywhere, even between two bullets" a
- * type error when done wrong rather than a layout bug found by eye.
- */
+/** One Group (CONTEXT.md). The union is what makes a mis-split a type error (ADR-0005). */
 export type MainSectionGroup =
   | {
       continues?: false;
@@ -108,13 +77,7 @@ export type MainSectionGroup =
       bullets?: RichText[];
     };
 
-/**
- * A titled section of the Main column — Experience, Selected Projects,
- * Education — or as much of one as fits in a single Sheet (ADR-0005). The
- * remainder is a **Continuation**: a second Block with `continues: true`,
- * whose heading is a marked copy of the original ("… (continued)") shown
- * only to screen readers. `content/index.ts` asserts the copies stay in sync.
- */
+/** A Main section, or as much of one as fits a Sheet; the rest is a Continuation (ADR-0005). */
 export interface MainSectionBlock extends SectionBlock {
   kind: 'mainSection';
   continues?: true;
@@ -158,7 +121,7 @@ export interface PrivacyBlock extends SectionBlock {
   statement: RichText;
   place: string;
   date: string;
-  /** Set in a script font — never a scan of the real signature (spec). */
+  /** Set in a script font — never a scan of the real signature (ADR-0012). */
   signature: string;
 }
 
@@ -173,12 +136,7 @@ export type Block =
   | CertificationsBlock
   | PrivacyBlock;
 
-/**
- * One Locale's CV. Blocks are ordered by their position in the array: the
- * layout filters by `sheet`/`column` and renders what survives in place.
- * Array position *is* the ordering — there is no `order` number to keep in
- * sync, and therefore none to duplicate or leave a gap in.
- */
+/** One Locale's CV. Array position is the ordering (ADR-0002). */
 export interface CvContent {
   locale: Locale;
   blocks: Block[];

@@ -1,36 +1,11 @@
-/* The Toolbar (CONTEXT.md: "Toolbar") — the floating cluster of the site's
-   four actions, plus the Drawer's toggle below 51rem. Chrome, never paper:
-   gone in print.
-
-   A plain stylesheet rather than the scoped `<style>` the coding standards ask
-   for, for the same reason drawer.css is one: what it dresses is a `.tsx`
-   island, which Astro's scoping does not reach. It joins the `components`
-   layer so it sits in the same cascade as the paper's own styles (layer order:
-   src/styles/global.css). */
+/* The Toolbar's dressing (ADR-0008). A plain stylesheet, not a scoped `<style>`,
+   because Astro's scoping does not reach a `.tsx` island (coding-standards). */
 
 @layer components {
   .toolbar {
-    /* --toolbar-button-size, --toolbar-inset and the row's block size derived
-       from them live in tokens.css: the Colophon reserves this cluster's berth
-       in Reading Mode (ticket 19) and cannot be left to remember the numbers.
-
-       One shape per tier (ADR-0008), and the base is Paper Mode's: a vertical
-       rail against the inline start, centred on the viewport, standing in the
-       margin beside the Sheets rather than over them. The inline edge is where
-       the page has room to give — the Sheets are a fixed A4 width and the
-       viewport is not — so the rail costs the paper no vertical space and
-       obscures none of it. Reading Mode turns it on its side; see below.
-
-       The container keeps its padding, border, background and shadow at both
-       tiers, and its --color-aside-bg fill is what carries contrast. The
-       --color-photo-circle edge sits on top of that fill and is decorative:
-       at ~1.25:1 against white it could not carry contrast on its own, and
-       nothing asks it to.
-
-       z-index 1 is only "above the paper". The Drawer is a modal `<dialog>`
-       now, so it is promoted to the top layer and outranks every stacking
-       context on the page by construction — there is nothing here for a bigger
-       number to win. */
+    /* The base shape is Paper Mode's vertical rail; Reading Mode flips it below
+       (ADR-0008). Sizes are tokens because the Colophon reserves this cluster's
+       berth and cannot be left to remember the numbers (ADR-0013). */
     position: fixed;
     inset-inline-start: var(--toolbar-inset);
     inset-block-start: 50%;
@@ -60,20 +35,15 @@
     cursor: pointer;
   }
 
-  /* Gated on a real hover: a tap leaves :hover stuck on the control a phone
-     visitor last touched, which reads as a selected state it is not. */
+  /* Gated: a tap otherwise leaves :hover stuck on the control last touched. */
   @media (hover: hover) {
     .toolbar-button:hover {
       background-color: var(--color-photo-circle);
     }
   }
 
-  /* The theme control shows — and is named after — the theme it switches
-     *to*. Both glyphs and both names ship, and the choice between them is
-     made here, off the attribute BaseLayout's inline script writes before the
-     first paint. Driving either from the island instead would leave a
-     returning dark-theme visitor with the light control's icon and, worse,
-     the light control's accessible name until `client:idle` fires. */
+  /* Both glyphs and both names ship; CSS picks, so the control is right before
+     hydration rather than after it (ADR-0003). */
   .toolbar-theme .icon-sun,
   .toolbar-theme .toolbar-theme-to-light {
     display: none;
@@ -89,10 +59,7 @@
     display: block;
   }
 
-  /* Centred on the cluster and clear of it on the side the cluster is not
-     against: beside the rail in Paper Mode, above the row in Reading Mode. So
-     the axis the toast is centred on and the axis its clearance gap sits on are
-     the two axes the cluster is *not* using, and both flip with it below. */
+  /* Centred and cleared on the two axes the cluster is not using; both flip below. */
   .toolbar-toast {
     position: absolute;
     inset-block-start: 50%;
@@ -105,9 +72,7 @@
     color: var(--color-main-bg);
     font-size: var(--font-size-meta);
     white-space: nowrap;
-    /* Opacity, not `display` or `visibility`: the live region has to stay in
-       the accessibility tree between announcements, or the browser has no
-       region to announce a change in. */
+    /* Opacity, not `display`: a live region must stay in the a11y tree to announce. */
     opacity: 0;
     pointer-events: none;
     transition: opacity 150ms ease;
@@ -124,35 +89,9 @@
     }
   }
 
-  /* No `scroll-padding` counterpart for Paper Mode, deliberately: the rail is
-     centred on the block axis and stands against the inline edge, so no amount
-     of block-axis scrolling moves a control out from behind it — the remedy
-     WCAG 2.2 · 2.4.11's Understanding document names does not reach this shape.
-     What answers 2.4.11 here is geometry instead: no focusable control sits in
-     the rail's band at any Paper Mode width, and
-     `'never parks a focused control entirely behind the Toolbar'` holds that at
-     both tiers.
-
-     Known and open, because 2.4.11 is about *controls* and this is prose: the
-     rail occupies x ∈ [14, 60], and a centred Sheet only clears it once the
-     inline margin reaches 60px. Stacked, that is ~914px up to the two-up
-     boundary; below it — from 816px, Paper Mode's floor — the 793.7px Sheet
-     leaves too little margin and the rail lands on the Aside's opening
-     paragraph. Two-up starts the same way and clears at ~1731px. The pill this
-     replaced floated over a block-axis margin, which every tier has; the
-     inline-axis margin only exists above those two widths (ADR-0008). */
-
-  /* Reading Mode is the one tier where the column reaches the rail's own edge,
-     so the cluster turns on its side and drops to the bottom rather than
-     pushing the text aside. The inline budget is what decides it: `.sheets`
-     carries `min-width: var(--reading-column-min)`, so a rail here would raise
-     the minimum viable viewport and cut the measure below M3's 40–60 character
-     floor (docs/research/toolbar-navigation-patterns.md). That argument is the
-     whole reason the shape differs by tier, and it applies below 51rem alone.
-
-     The bottom edge rather than the top: the row covers lines the reader has
-     already passed instead of the ones under their eye, and the measure stays
-     full width either way. */
+  /* Reading Mode turns the cluster on its side against the bottom edge, and is the
+     only tier needing a `scroll-padding` counterpart for WCAG 2.4.11 (ADR-0008,
+     which also records the rail's open overlap defect in Paper Mode). */
   @media screen and (width < 51rem) {
     .toolbar {
       inset-block: auto var(--toolbar-inset);
@@ -161,8 +100,7 @@
       translate: -50% 0;
     }
 
-    /* Both axes flip with the cluster: centred on the inline axis now, and
-       clear of the row on the block one. */
+    /* Both axes flip with the cluster. */
     .toolbar-toast {
       inset-block: auto 100%;
       inset-inline-start: 50%;
@@ -178,8 +116,7 @@
 }
 
 @layer print {
-  /* Chrome is never captured (CONTEXT.md). Fixed-position chrome would
-     otherwise print on the first page. */
+  /* Chrome is never captured (CONTEXT.md). */
   @media print {
     .toolbar {
       display: none;

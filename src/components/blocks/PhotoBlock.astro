@@ -4,11 +4,9 @@ import type { PhotoBlock } from '../../content/types';
 import profilePhoto from '../../assets/images/profile.png';
 
 /**
- * The circular portrait: the reference's cut-out photo over a pale-yellow
- * disc (spec US30 — swappable by dropping a new file at
- * `docs/assets/images/` and re-running the copy, see ticket 14). The disc
- * colour stays behind the `<Image>` as a safety layer in case the source
- * photo isn't fully opaque at its edges.
+ * The cut-out portrait over its disc. The disc colour stays behind the `<Image>`
+ * in case a future photo is not fully opaque to its edges; the intrinsic size is
+ * 2x the CSS disc, for print and retina.
  */
 interface Props {
   block: PhotoBlock;

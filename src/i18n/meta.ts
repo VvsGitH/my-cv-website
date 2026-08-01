@@ -1,10 +1,8 @@
 import type { Locale } from '../content/types';
 
 /**
- * What the document says about itself in each Locale — the words a search
- * result and a shared link show. A sibling of `ui.ts` rather than a group
- * inside it: `ui` is handed whole to the island as a prop, and these have no
- * business in that payload (ticket 10).
+ * What the document says about itself in each Locale. A sibling of `ui.ts`, not a
+ * group inside it — `ui` is serialized whole into island props (coding-standards).
  */
 export interface MetaStrings {
   title: string;

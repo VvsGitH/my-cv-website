@@ -8,24 +8,7 @@ import Colophon from './Colophon.astro';
 import Drawer from './Drawer';
 import Toolbar from './Toolbar';
 
-/**
- * Everything the site shows that is not the paper (CONTEXT.md: "Chrome") — the
- * Toolbar, the Drawer that carries the Aside's Blocks below 51rem, and the
- * Colophon.
- *
- * The Toolbar and the Drawer are two islands, not one (ADR-0007). Each takes
- * only its own strings: island props are serialised into the HTML, once per
- * island. They meet in `state.ts` and nowhere else.
- *
- * The Drawer renders the same Blocks a *second* time rather than moving them:
- * the two Sheets' Asides have to arrive in one panel and CSS cannot reparent.
- * Ticket 06 ("Reading Mode reflows the same components…") records why the
- * alternatives are worse. Nobody meets both copies — Paper Mode hides this
- * panel, Reading Mode hides the Asides on the paper.
- *
- * The portrait is excluded: it is the one Aside Block that stays on the paper
- * in Reading Mode, where it opens the compact header.
- */
+/** The Chrome (CONTEXT.md): two islands and the Colophon. ADR-0007, ADR-0008, ADR-0013. */
 interface Props {
   content: CvContent;
 }
@@ -36,8 +19,7 @@ const asideBlocks = content.blocks.filter(
   (block) => block.column === 'aside' && block.kind !== 'photo',
 );
 
-// scripts/render-captures.mjs writes one PDF per Locale after the build; this
-// is the name and the place it has to put them. Change one end, change the other.
+// Written down twice, deliberately (ADR-0009). Change one end, change the other.
 const pdfHref = `${import.meta.env.BASE_URL}Vito_Paparella_Santorsola_CV_${content.locale.toUpperCase()}.pdf`;
 ---
 

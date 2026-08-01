@@ -56,11 +56,8 @@ const ogImage = new URL(`${import.meta.env.BASE_URL}og-${locale}.png`, Astro.sit
     <meta property="og:image:alt" content={strings.ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Inline and blocking, so the chosen theme is on <html> before the first
-      paint and the dark background never flashes (ticket 07). The key and the
-      attribute are the other half of src/components/chrome/state.ts — change
-      them in both. localStorage throws outright in some privacy modes, hence
-      the catch; the OS preference is the fallback either way. -->
+    <!-- Inline and blocking, so the theme is on <html> before the first paint.
+      The key mirrors chrome/state.ts — change it in both. -->
     <script is:inline>
       let stored = null;
       try {
@@ -77,9 +74,8 @@ const ogImage = new URL(`${import.meta.env.BASE_URL}og-${locale}.png`, Astro.sit
     </script>
 
     <style is:inline>
-      /* Cascade layer order (lowest to highest precedence): 
-        reset < base < components < print. 
-        This bare statement must come first */
+      /* reset < base < components < print. This bare statement must precede
+         the imports, or the minifier reorders it (coding-standards). */
       @layer reset,base,components,print;
     </style>
   </head>
@@ -87,8 +83,7 @@ const ogImage = new URL(`${import.meta.env.BASE_URL}og-${locale}.png`, Astro.sit
     <main>
       <slot />
     </main>
-    <!-- Chrome sits outside <main>: it is not the paper (CONTEXT.md). The
-      Drawer lands here from ticket 06, the Toolbar will from ticket 07. -->
+    <!-- Chrome sits outside <main>: it is not the paper (CONTEXT.md). -->
     <slot name="chrome" />
   </body>
 </html>

@@ -7,7 +7,7 @@ import { readPdf, withoutWhitespace } from './support/pdf';
 import { distPathForHref, LOCALES, otherLocale, routeFor } from './support/site';
 
 /**
- * The Colophon (CONTEXT.md) — what the site says about itself, ticket 19.
+ * The Colophon (CONTEXT.md) — what the site says about itself (ADR-0013).
  *
  * `contentinfo` is the locator throughout rather than a class: a `<footer>`
  * maps to that role only while it is outside `<main>`, so finding it by role
@@ -87,7 +87,7 @@ for (const locale of LOCALES) {
     });
 
     test('signs the site off in the owner’s name', async ({ page }) => {
-      // The year comes from the build and moves on its own (ticket 19), so it
+      // The year comes from the build and moves on its own (ADR-0013), so it
       // is deliberately not asserted — only the notice and whose it is.
       await expect(colophon(page)).toContainText('©');
       await expect(colophon(page)).toContainText(headerOf(locale).name);

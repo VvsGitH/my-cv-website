@@ -9,15 +9,11 @@ import {
   type PDFPage,
 } from 'pdf-lib';
 
-/**
- * Enough of a PDF reader for the assertions ticket 12 asks for. Why it is
- * hand-rolled rather than `pdfjs-dist`, and the two encoding traps in it, are in
- * that ticket's closing notes.
- */
+/** Enough of a PDF reader for ADR-0010's assertions, which also records the two encoding traps. */
 
 export interface PdfFont {
   subtype: string;
-  /** Type3 fonts carry no name — ticket 12, "Fonts embedded". */
+  /** Type3 fonts carry no name (ADR-0009). */
   baseFont: string | undefined;
   embedded: boolean;
 }

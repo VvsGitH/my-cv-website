@@ -12,25 +12,9 @@ export interface ToolbarLinks {
 }
 
 /**
- * The Toolbar (CONTEXT.md: "Toolbar") — language, download, share, theme, and
- * the Drawer's toggle below 51rem. Every control is icon-only and carries its
- * name in `aria-label`, except the theme control, whose name has to be right
- * before hydration and is therefore a pair of visually-hidden labels the CSS
- * chooses between (toolbar.css). The matching `title` rides alongside because
- * it is what draws the tooltip, not because it names anything. The icons are
- * private-use codepoints, hidden from the accessibility tree
- * (src/styles/icons.css).
- *
- * One of the Chrome's two islands (ADR-0007). It *opens* the Drawer without
- * importing it, and that is all it does to `drawerOpen`: every way back out
- * runs through the panel's own `close` event (ADR-0008, state.ts). So the
- * toggle does not morph and carries no `aria-expanded` — behind an open panel
- * this whole cluster is inert, and a control renamed "close" that nobody can
- * reach would be a lie in the markup. The island never reads the signal, so it
- * does not re-render when the panel opens.
- *
- * No `role="toolbar"`: that role obliges arrow-key navigation with a roving
- * tabindex, and five controls in the tab order need no such thing.
+ * The Toolbar (CONTEXT.md). ADR-0007 (two islands), ADR-0008 (its two shapes,
+ * no `aria-expanded`, no `role="toolbar"`), ADR-0003 (why the theme control is
+ * named by a pair of sr-only labels rather than an `aria-label`).
  */
 interface Props {
   toolbar: ToolbarStrings;
@@ -90,8 +74,7 @@ export default function Toolbar({ toolbar, drawer, links }: Props) {
         <span class="is-sr-only toolbar-theme-to-light">{toolbar.themeToLight}</span>
       </button>
 
-      {/* Empty until the URL is on the clipboard: a live region announces the
-          change to its content, so there has to be a change to announce. */}
+      {/* Empty until copied: a live region announces a change, so there must be one. */}
       <p class="toolbar-toast" role="status" data-visible={linkCopied.value ? '' : undefined}>
         {linkCopied.value ? toolbar.shared : null}
       </p>

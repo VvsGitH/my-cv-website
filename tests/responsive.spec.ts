@@ -99,17 +99,9 @@ test('changes tier exactly on its boundaries, and not a pixel earlier', async ({
 });
 
 /**
- * The reason both boundaries are where they are: a Sheet is a literal 793.7px
- * box since ADR-0006, so a tier that starts below the paper's own width scrolls
- * sideways. That is what 48rem did at 768px, and reading the boundary off the
- * paper is only half the fix — the widths *between* the boundaries have to hold
- * too, and so does 375px, where `--reading-column-min` (23rem) sets the floor.
- *
- * A horizontal scrollbar on a CV is a bug at every width, not at the two the
- * tier assertions above happen to name, so this sweeps rather than samples:
- * both boundaries and the pixel under each, the narrowest supported viewport,
- * the widths where the Sheet is wider than the reading column, and the common
- * phones and laptops in between.
+ * A sideways scrollbar is a bug at every width, not only at the two boundaries
+ * (ADR-0006), so this sweeps rather than samples: both boundaries and the pixel
+ * under each, the narrowest supported viewport, and common devices between.
  */
 const NO_OVERFLOW_WIDTHS = [
   375, 390, 414, 500, 600, 700, 780, 815, 816, 817, 900, 1024, 1280, 1440, 1631, 1632, 1633, 1920,

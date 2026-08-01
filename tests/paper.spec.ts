@@ -56,7 +56,7 @@ for (const locale of LOCALES) {
       expect(rendered).toEqual(headingsOf(locale));
     });
 
-    /** The assertion ticket 11 handed over; the current slack is tabled there. */
+    /** ADR-0010 records why this exists and how it is designed. */
     test('keeps every column inside the paper', async ({ page }) => {
       for (const number of SHEETS) {
         for (const column of COLUMNS) {
@@ -71,8 +71,8 @@ for (const locale of LOCALES) {
       }
     });
 
-    /** Design intent from ticket 17, and silently broken by any of the four
-     * values `--main-first-heading-gap` derives from drifting. */
+    /** Design intent (ADR-0011), silently broken by any input to
+     * `--main-first-heading-gap` drifting. */
     test('opens both columns of Sheet 1 on the same line', async ({ page }) => {
       const topOf = (column: Column) =>
         sheet(page, 1)

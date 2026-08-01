@@ -28,15 +28,11 @@ const { content } = Astro.props;
       padding: var(--sheets-pad);
     }
 
-    /* Arranging the Sheets is a screen concern: on paper each one is a block
-       that takes its own page, and this container has no say in it. Every
-       alignment declaration stays inside `screen` for a measured reason —
-       ticket 06, "Print parity was measured".
+    /* Arranging the Sheets is a screen concern, and every alignment declaration
+       stays inside `screen` for a measured reason (coding-standards).
 
-       Grid rather than a wrapping flex line: the wide tier scales the pair to
-       span the viewport exactly, and a flex line that rounded up by a fraction
-       of a pixel would drop one Sheet onto a row of its own. A grid's track
-       count cannot move under it. */
+       Grid, not a wrapping flex line: a track count cannot move under a
+       sub-pixel rounding the way a flex line can. */
     @media screen {
       .sheets {
         display: grid;
@@ -45,14 +41,8 @@ const { content } = Astro.props;
       }
     }
 
-    /* Wide: two Sheets side by side, sharing the row with the gap between
-       them — the grid of pages.
-
-       102rem (1632px) rather than ticket 06's 80rem: ADR-0006 removed the
-       dynamic --sheet-fit-width scaling in favour of a literal A4 box, so this
-       tier has to clear two 793.7px Sheets and the 1.5rem gap between them
-       — 1611.4px — or the pair overflows the viewport. The boundary is stated
-       once here and reasoned about in tokens.css beside its Reading Mode twin. */
+    /* Wide: two Sheets side by side. 102rem clears the pair's 1611.4px — the
+       boundary is reasoned about in tokens.css beside its Reading Mode twin. */
     @media screen and (width >= 102rem) {
       .sheets {
         grid-template-columns: repeat(2, max-content);

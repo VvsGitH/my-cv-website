@@ -4,21 +4,18 @@ import { PDFDocument } from 'pdf-lib';
 import { chromium } from 'playwright';
 import config from '../astro.config.mjs';
 
-// Everything headless Chromium captures off the built site: the downloadable
-// PDF per Locale (ADR-0001) and the link-preview image per Locale (ticket 10).
-// Run from the repo root, after `astro build`. The whys behind the capture
-// recipe below are in docs/issues/cv-website/08-pdf-render.md.
+// Everything headless Chromium captures off the built site, run from the repo
+// root after `astro build`. ADR-0009 is why every step below is where it is —
+// read it before changing the order, the viewport or the emulation.
 
 const outDir = config.outDir ?? 'dist';
 
-// A4 in PostScript points, and the slack for Chromium's mm -> px -> pt
-// rounding, which lands ~0.3pt short of the nominal width.
+// A4 in points, with slack for Chromium's mm -> px -> pt rounding (ADR-0009).
 const A4_WIDTH = 595.28;
 const A4_HEIGHT = 841.89;
 const SIZE_TOLERANCE = 1;
 
-// Never below 51rem — ticket 08, "set the viewport before you load the page".
-// The card sizes itself, so this is the only viewport either capture needs.
+// Never below 51rem, and always set before `goto` (ADR-0009).
 const CAPTURE_VIEWPORT = { width: 1280, height: 1600 };
 
 // Must stay the names Chrome.astro and BaseLayout.astro point at.
@@ -29,7 +26,7 @@ const cvRoute = (locale) =>
   locale === config.i18n.defaultLocale ? config.base : `${config.base}${locale}/`;
 const cardRoute = (locale) => `${config.base}og/${locale}/`;
 
-/** Ticket 08, "The 2-page split is asserted, not assumed". */
+/** The 2-page split is asserted, not assumed (ADR-0009). */
 async function assertTwoA4Pages(path) {
   const pdf = await PDFDocument.load(await readFile(path));
   const pages = pdf.getPages();
@@ -55,7 +52,7 @@ async function assertTwoA4Pages(path) {
 const server = await preview({ logLevel: 'error' });
 let browser;
 
-/** Leaves the page fully painted — ticket 08, "The portrait was missing". */
+/** Leaves the page fully painted; the image decode is load-bearing (ADR-0009). */
 async function openPainted(page, route) {
   const response = await page.goto(new URL(route, `http://localhost:${server.port}`).href);
   if (!response.ok()) {
@@ -74,7 +71,7 @@ try {
 
   for (const locale of config.i18n.locales) {
     await openPainted(page, cvRoute(locale));
-    // Print emulation, never `emulateMedia({ media: 'screen' })` — ticket 08.
+    // Print emulation, never `emulateMedia({ media: 'screen' })` (ADR-0009).
     await page.pdf({
       path: pdfPath(locale),
       preferCSSPageSize: true,
@@ -85,8 +82,7 @@ try {
     console.log(`${cvRoute(locale)} -> ${pdfPath(locale)}`);
 
     await openPainted(page, cardRoute(locale));
-    // The element, not the viewport: the card declares its own size, so it
-    // stays the one place that size is written down.
+    // The element, not the viewport: the card declares its own size.
     await page.locator('[data-og-card]').screenshot({ path: cardPath(locale) });
     console.log(`${cardRoute(locale)} -> ${cardPath(locale)}`);
   }

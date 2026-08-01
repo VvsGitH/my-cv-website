@@ -9,14 +9,13 @@ const stylesDir = fileURLToPath(new URL('./src/styles/', import.meta.url));
 
 // https://astro.build/config
 export default defineConfig({
-  // Every absolute URL BaseLayout publishes is built from this — ticket 10,
-  // "The site origin was the one owner input".
+  // Every absolute URL BaseLayout publishes is built from this.
   site: 'https://vvsgith.github.io',
   // GitHub Pages serves the site under the repository name.
   base: '/my-cv-website/',
   output: 'static',
-  // `devtools` injects `preact/debug` in dev only. Without it, a hydration
-  // mismatch stops hydrating and re-renders in silence — Preact logs nothing.
+  // `preact/debug` in dev only, because a hydration mismatch is otherwise
+  // silent (hacks/2026-08-01 §11).
   integrations: [preact({ devtools: true })],
   i18n: {
     locales: ['it', 'en'],
@@ -28,9 +27,7 @@ export default defineConfig({
   },
   vite: {
     plugins: [
-      // Generates metric-matched local @font-face fallbacks (size-adjust /
-      // ascent-override / descent-override) so text doesn't reflow once the
-      // self-hosted face swaps in.
+      // Metric-matched local fallbacks, so text does not reflow on swap (ADR-0012).
       FontaineTransform.vite({
         fallbacks: ['Arial'],
         resolvePath: (id) => pathToFileURL(resolve(stylesDir, id)),

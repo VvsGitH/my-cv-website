@@ -8,9 +8,9 @@ Make the same components respond across the three tiers, including Reading Mode 
 
 ## Tasks
 
-- **Wide (≥1280px):** two Sheets side by side, page padding/gap.
-- **Medium (768–1280px):** Sheets stacked one per row, scaled to width, rigid A4.
-- **Narrow (<768px): Reading Mode** — reflow to single-column, normal text size; Aside content → left slide-in Drawer (toggle); Main is primary scroll; compact header (photo + name + title + contacts) at top.
+- **Wide (≥1632px):** two Sheets side by side, page padding/gap.
+- **Medium (816–1632px):** Sheets stacked one per row, scaled to width, rigid A4.
+- **Narrow (<816px): Reading Mode** — reflow to single-column, normal text size; Aside content → left slide-in Drawer (toggle); Main is primary scroll; compact header (photo + name + title + contacts) at top.
 - Reading Mode must **not** affect Paper Mode/print CSS (mobile is never captured for the PDF).
 - Drawer: accessible (focus trap, ESC to close, `aria-*`), animates from left.
 
@@ -27,16 +27,25 @@ Make the same components respond across the three tiers, including Reading Mode 
 
 ### Implementation
 
-The two boundaries are **48rem** and **80rem**, written with media-query range
-syntax (`(width < 48rem)`, `(width >= 80rem)`) so each value appears once per
-query rather than as a `47.9375rem` twin. They are stated in `tokens.css`,
-which is also where Reading Mode's type scale lives.
+The two boundaries are **51rem** and **102rem**, written with media-query range
+syntax (`(width < 51rem)`, `(width >= 102rem)`) so each value appears once per
+query rather than as a `50.9375rem` twin. Reading Mode's is stated in
+`tokens.css`, which is also where its type scale lives; the wide one is stated
+in `Document.astro`, the only rule that uses it.
+
+> **Both numbers moved after this ticket shipped.** 06 built them as 48rem and
+> 80rem, which was right while the paper scaled to fit. ADR-0006 removed the
+> scaling, so a Sheet became a literal 793.7px box and any boundary below the
+> paper's own width put a horizontal scrollbar on screen: 51rem (816px) clears
+> one Sheet, 102rem (1632px) clears two and the gap between them. The rest of
+> this section describes what 06 built, including the `--sheet-fit-width` /
+> `--sheet-scale` pair ADR-0006 deleted.
 
 - **`Document.astro`** owns the arrangement: a grid, one Sheet per row by
-  default and two `max-content` columns from 80rem. It publishes
+  default and two `max-content` columns from the wide boundary. It publishes
   `--sheet-fit-width` — the width one Sheet may occupy — per tier.
 - **`Sheet.astro`** turns that into `--sheet-scale` and keeps everything else
-  it already did. Below 48rem it dismantles the A4 box.
+  it already did. Below 51rem it dismantles the A4 box.
 - **`chrome/`** is created here (ADR-0004 said 06/07 would): `Drawer.astro` +
   the `DrawerPanel.tsx` island + `drawer.css`.
 - **`i18n/ui.ts`** is new — the Chrome's own strings, per Locale. Ticket 07
@@ -139,7 +148,7 @@ against the built CSS, not the source.
 
 ### Handed to ticket 08 (PDF render) — the capture viewport is load-bearing
 
-**Capture at a viewport ≥ 48rem.** This is not cosmetic. Chrome requests a font
+**Capture at a viewport ≥ 51rem.** This is not cosmetic. Chrome requests a font
 only when rendering needs it. In Reading Mode the Aside's Blocks are
 `display: none` on the paper and the Drawer is closed, so **Lato-Italic** (the
 Languages proficiency labels) and **Primera Signature** (the signature) are
@@ -191,7 +200,7 @@ Blocks are one level further in. Assert on rendered order (`y`), not on
 `.sheets`' children.
 
 For the Drawer: the toggle opens a `:modal` dialog, focus lands inside it,
-Escape closes it and returns focus to the toggle, and crossing 48rem with it
+Escape closes it and returns focus to the toggle, and crossing 51rem with it
 open closes it (verified by hand here; all four are cheap in Playwright).
 
 Reference numbers at the time of writing (Chrome, 16px root): 1280 → scale

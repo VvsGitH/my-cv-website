@@ -86,7 +86,7 @@ roughly sixty lines of hand-written modal go with it.
   exists: `overflow: hidden` reclaims the scrollbar's width and re-wraps every
   line behind the panel.
 
-- **`drawer.css`'s `@media (width >= 48rem) { display: none }` is deleted, not
+- **`drawer.css`'s `@media (width >= 51rem) { display: none }` is deleted, not
   adapted.** An *open* modal forced to `display: none` keeps `open === true`,
   keeps matching `:modal`, and keeps the document blocked with nothing on
   screen — a dead page with no way out. That rule is what creates the state,
@@ -127,7 +127,7 @@ roughly sixty lines of hand-written modal go with it.
   `position: fixed`, `inset-block-start: var(--toolbar-inset)`,
   `inset-inline-start: 50%`, `translate: -50% 0`, `display: flex` in a row,
   keeping the padding, border, background and shadow it has today. One
-  `@media screen and (width < 48rem)` block moves it to
+  `@media screen and (width < 51rem)` block moves it to
   `inset-block: auto var(--toolbar-inset)` and strips the container's padding,
   border, background and shadow, putting a `var(--toolbar-border-size) solid
   var(--color-muted)` border and a `--color-aside-bg` fill on `.toolbar-button`
@@ -169,7 +169,7 @@ roughly sixty lines of hand-written modal go with it.
   declaration. Delete the three-level stacking and the `visibility` machinery
   it depended on, the `prefers-reduced-motion` block (it existed only to cancel
   a `transition-delay` the new list does not have), the `html[data-drawer-open]`
-  lock and the `@media (width >= 48rem)` hide.
+  lock and the `@media (width >= 51rem)` hide.
 - `chrome/drawer.css`: **`.drawer:not([open]) { display: none }` is
   load-bearing** — the author `display: flex` in `@layer components` beats the
   UA's `dialog:not([open])` rule, and without it the closed panel paints a
@@ -264,7 +264,7 @@ roughly sixty lines of hand-written modal go with it.
 - **A scroll-aware Toolbar** that yields while reading. A good phase 2 once
   98px has been lived with; it fixes neither complaint on its own and adds a
   scroll listener to an island whose first principle is KISS.
-- **A Drawer in Paper Mode.** Above 48rem `Sheet.astro:35-37` renders the same
+- **A Drawer in Paper Mode.** Above 51rem `Sheet.astro:35-37` renders the same
   Aside Blocks on the paper. There is nothing to open, so the pill has four
   controls.
 - **The `--color-heading` focus ring's ~1.4:1 against `--color-dark-bg`.**
@@ -307,7 +307,7 @@ roughly sixty lines of hand-written modal go with it.
   the panel all close it; every one of them returns focus to the toggle.
 - The page behind an open panel cannot be scrolled, cannot take focus, and no
   element carries a hand-written `inert`.
-- Growing the window past 48rem with the panel open closes it and leaves the
+- Growing the window past 51rem with the panel open closes it and leaves the
   page scrollable and focusable — never a blocked document with nothing on
   screen.
 - Under `prefers-reduced-motion: reduce` the panel does not stick at
@@ -322,7 +322,7 @@ roughly sixty lines of hand-written modal go with it.
 
 ## Depends on
 
-- 06 (Reading Mode, the 48rem boundary), 07 (Toolbar placement and `ui.ts`),
+- 06 (Reading Mode, the 51rem boundary), 07 (Toolbar placement and `ui.ts`),
   12 (E2E suite), 17 (`--space-*` scale), 19 (the Colophon's reserved berth and
   WCAG 2.2 · 2.4.11), 20 (two islands, the shared signal, ADR-0007)
 
@@ -364,7 +364,7 @@ isolated repros rather than taken from documentation:
   `true`, `:modal` still matches, and `focus()` on an outside control does not
   move focus — an invisible, unscrollable, unfocusable page. This is what makes
   the `matchMedia` guard load-bearing rather than tidy, and why
-  `drawer.css`'s 48rem hide is deleted instead of adapted.
+  `drawer.css`'s 51rem hide is deleted instead of adapted.
 - **`html:has(.drawer[open])` matches.** Top-layer promotion does not move the
   dialog in the DOM tree, so the pure-CSS scroll lock works.
 - **The backdrop hit-tests to the dialog element**, so the one-line light
@@ -410,7 +410,7 @@ holds. What changed:
   recommended for compact windows" and `.sheets`' `min-width: 23rem` horizontal
   budget — are both about compact windows, and Paper Mode is not one. Reading
   Mode is, and keeps the horizontal row.
-- **The container keeps its chrome in Reading Mode.** The `@media (width < 48rem)`
+- **The container keeps its chrome in Reading Mode.** The `@media (width < 51rem)`
   block no longer strips its padding, border, background and shadow, and the
   `--color-muted` per-control border of the contrast decision was deleted with
   it. Contrast is the container's `--color-aside-bg` fill again, at every tier.
@@ -453,10 +453,11 @@ is visible were corrected. The `toHaveText` assertions on `.drawer-title` stay �
 **One thing the reconciliation found and did not fix.** The rail overlaps the
 paper at both ends of Paper Mode. Measured against the built site: Sheet 1's
 left edge is at 115px at 1024 and 243px at 1280, well clear of the rail's
-x ∈ [14, 60] — but at **768–~830px**, Paper Mode's floor, an A4 Sheet is wider
-than the viewport and there is no inline margin at all, and the **two-up tier**
-fills the width the same way. At 768 and at 1616 the rail lands on the Aside's
-opening paragraph. The suite does not catch it because WCAG 2.4.11 is about
+x ∈ [14, 60] — but a centred 793.7px Sheet only reaches 60px of inline margin
+at **~914px**, so from **816px**, Paper Mode's floor, up to there the rail
+lands on the Aside's opening paragraph. The **two-up tier** starts over the
+paper the same way: the pair is 1611.4px wide and clears the rail only from
+**~1731px**. The suite does not catch it because WCAG 2.4.11 is about
 focused *controls*, and none sit in the rail's band — it is prose that is
 covered. This is the structural cost of the inline edge: the pill this replaced
 floated over a block-axis margin, which every tier has, whereas the inline-axis

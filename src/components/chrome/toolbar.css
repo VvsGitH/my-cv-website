@@ -1,5 +1,5 @@
 /* The Toolbar (CONTEXT.md: "Toolbar") — the floating cluster of the site's
-   four actions, plus the Drawer's toggle below 48rem. Chrome, never paper:
+   four actions, plus the Drawer's toggle below 51rem. Chrome, never paper:
    gone in print.
 
    A plain stylesheet rather than the scoped `<style>` the coding standards ask
@@ -117,7 +117,7 @@
     opacity: 1;
   }
 
-  @media screen and (width >= 48rem) {
+  @media screen and (width >= 51rem) {
     /* Paper Mode has no Drawer, so it has no toggle. */
     .toolbar-drawer {
       display: none;
@@ -134,12 +134,13 @@
      both tiers.
 
      Known and open, because 2.4.11 is about *controls* and this is prose: the
-     rail stands clear of Sheet 1 from ~907px up to the two-up boundary, but at
-     768–~830px an A4 Sheet is wider than the viewport and leaves no inline
-     margin, and the two-up tier fills the width the same way. At both ends the
-     rail lands on the Aside's opening paragraph. The pill this replaced floated
-     over a block-axis margin, which every tier has; the inline-axis margin only
-     exists in the middle of the range (ADR-0008). */
+     rail occupies x ∈ [14, 60], and a centred Sheet only clears it once the
+     inline margin reaches 60px. Stacked, that is ~914px up to the two-up
+     boundary; below it — from 816px, Paper Mode's floor — the 793.7px Sheet
+     leaves too little margin and the rail lands on the Aside's opening
+     paragraph. Two-up starts the same way and clears at ~1731px. The pill this
+     replaced floated over a block-axis margin, which every tier has; the
+     inline-axis margin only exists above those two widths (ADR-0008). */
 
   /* Reading Mode is the one tier where the column reaches the rail's own edge,
      so the cluster turns on its side and drops to the bottom rather than
@@ -147,12 +148,12 @@
      carries `min-width: var(--reading-column-min)`, so a rail here would raise
      the minimum viable viewport and cut the measure below M3's 40–60 character
      floor (docs/research/toolbar-navigation-patterns.md). That argument is the
-     whole reason the shape differs by tier, and it applies below 48rem alone.
+     whole reason the shape differs by tier, and it applies below 51rem alone.
 
      The bottom edge rather than the top: the row covers lines the reader has
      already passed instead of the ones under their eye, and the measure stays
      full width either way. */
-  @media screen and (width < 48rem) {
+  @media screen and (width < 51rem) {
     .toolbar {
       inset-block: auto var(--toolbar-inset);
       flex-direction: row;

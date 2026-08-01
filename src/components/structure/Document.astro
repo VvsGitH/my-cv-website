@@ -48,10 +48,12 @@ const { content } = Astro.props;
     /* Wide: two Sheets side by side, sharing the row with the gap between
        them — the grid of pages.
 
-       Changed from ticket 06's 80rem to 101rem (1616px) to prevent layout
-       overflow at 1280px. The dynamic --sheet-fit-width scaling was removed
-       in favor of fixed A4 dimensions; see ADR-0006. */
-    @media screen and (width >= 101rem) {
+       102rem (1632px) rather than ticket 06's 80rem: ADR-0006 removed the
+       dynamic --sheet-fit-width scaling in favour of a literal A4 box, so this
+       tier has to clear two 793.7px Sheets and the 1.5rem gap between them
+       — 1611.4px — or the pair overflows the viewport. The boundary is stated
+       once here and reasoned about in tokens.css beside its Reading Mode twin. */
+    @media screen and (width >= 102rem) {
       .sheets {
         grid-template-columns: repeat(2, max-content);
       }
@@ -64,7 +66,7 @@ const { content } = Astro.props;
        The surface stays white in both themes for the same reason the paper
        does (spec US17): the CV is a document, and --color-text is set to be
        read off white. */
-    @media screen and (width < 48rem) {
+    @media screen and (width < 51rem) {
       .sheets {
         grid-template-columns: minmax(0, 1fr);
         gap: 0;

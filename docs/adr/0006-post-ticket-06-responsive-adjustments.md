@@ -9,13 +9,15 @@
 
 Commit `b72bbaa` ("Fix: some fixes post 06") introduced several changes to the responsive behavior and typography that deviate from the explicit design documented in ticket 06. This ADR tracks those deviations and their rationale.
 
+> **Both boundaries moved once more after this ADR was written.** Reading Mode's went from 48rem to **51rem** and the wide tier's from 101rem to **102rem**, so that neither tier can start below the width of the paper it has to show — a 793.7px Sheet under a 768px boundary is a horizontal scrollbar. The reasoning lives in `tokens.css`; the `Before (ticket 06)` snippets below are quoted as 06 wrote them and are deliberately not updated.
+
 ## Deviations from ticket 06
 
 ### 1. Wide breakpoint moved from 80rem to 101rem
 
 **What changed:**
 - Ticket 06 specified two boundaries: **48rem** (Reading Mode threshold) and **80rem** (wide mode threshold for two-column layout)
-- Commit `b72bbaa` changed the wide breakpoint from `80rem` to `101rem` in `Document.astro`
+- Commit `b72bbaa` changed the wide breakpoint from `80rem` to `101rem` in `Document.astro` (since moved again, to `102rem` — see the note above)
 
 **Before (ticket 06):**
 ```css
@@ -72,7 +74,7 @@ Commit `b72bbaa` ("Fix: some fixes post 06") introduced several changes to the r
 }
 ```
 
-**After**: Both removed. Sheet stays at `--sheet-scale: 1` (its `var()` default) in all screen modes above 48rem.
+**After**: Both removed. Sheet stays at `--sheet-scale: 1` (its `var()` default) in all screen modes above 51rem.
 
 **Rationale**: Forcing `--sheet-scale: 1` ensures Sheets always render at their true A4 size (210mm × 297mm). The scaling system was causing precision issues and complexity without clear benefits at modern viewport widths.
 
@@ -83,7 +85,7 @@ Commit `b72bbaa` ("Fix: some fixes post 06") introduced several changes to the r
 ### 3. Reading Mode typography reduced
 
 **What changed:**
-- Several font sizes in Reading Mode (< 48rem) were reduced in `src/styles/tokens.css`
+- Several font sizes in Reading Mode (< 48rem at the time, < 51rem now) were reduced in `src/styles/tokens.css`
 
 **Before (ticket 06 defaults):**
 - `--font-size-subtitle: 0.9375rem`

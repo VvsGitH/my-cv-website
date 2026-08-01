@@ -59,7 +59,7 @@ not earning its keep:
 
 The argument *for* keeping it was real — geometry and internal composition
 change for different reasons — but it loses to a concrete cost: ticket 06
-must dismantle the A4 box below 768px for Reading Mode, and a scoped-style
+must dismantle the A4 box below 816px for Reading Mode, and a scoped-style
 boundary sitting exactly where an override is needed has to be crossed with
 `:global()`. `EntryTitle.astro` already carries a comment documenting that
 exact pain ("`.section-heading` comes from the SectionHeading component, so

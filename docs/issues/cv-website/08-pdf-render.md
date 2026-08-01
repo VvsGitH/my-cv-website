@@ -46,7 +46,7 @@ Two things ticket 05 left on this ticket's doorstep:
 
 ### From ticket 06 — set the viewport before you load the page
 
-**Capture at a viewport ≥ 48rem (e.g. 1280×1600).** Below that the page lays
+**Capture at a viewport ≥ 51rem (e.g. 1280×1600).** Below that the page lays
 out in Reading Mode, where the Aside's Blocks are `display: none` on the paper
 and the Drawer is closed. Chrome requests a font only when rendering needs one,
 so **Lato-Italic** (Languages proficiency labels) and **Primera Signature**

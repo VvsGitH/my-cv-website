@@ -4,7 +4,7 @@ import type { Column, Locale, SheetNumber } from '../src/content/types';
 import { openPainted, renderedKinds, sheet, slackBelowLastBlock, VIEWPORTS } from './support/page';
 import { LOCALES, routeFor } from './support/site';
 
-// Declared rather than inherited from the config: below 48rem the Asides leave
+// Declared rather than inherited from the config: below 51rem the Asides leave
 // the paper, so the number every measurement here rests on is load-bearing.
 test.use({ viewport: VIEWPORTS.paper });
 

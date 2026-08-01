@@ -97,7 +97,7 @@ separately searchable and separately acceptable.
   leaving the Toolbar no margin to float over. A second fixed strip would mean
   shrinking the paper to make room for the frame. The Toolbar is also the site's
   one fixed element, and being the only one is what gives it weight.
-- **Reading Mode reserves vertical clearance for the Toolbar.** Below 48rem the
+- **Reading Mode reserves vertical clearance for the Toolbar.** Below 51rem the
   Toolbar drops to the bottom of the viewport (`toolbar.css:157-162`) and stays
   a five-control vertical strip, so it covers roughly the bottom-left 4.2rem ×
   16rem — and on a `min-width: 23rem` column (`Document.astro:71-72`) that is
@@ -181,13 +181,13 @@ as a comment beside the string, where whoever adds them will meet it.
 ### Reading Mode clearance
 
 - `src/styles/tokens.css`: promote `--toolbar-button-size` (`2.25rem`, and
-  `2.75rem` below 48rem) out of `.toolbar`, and add a derived
+  `2.75rem` below 51rem) out of `.toolbar`, and add a derived
   `--toolbar-block-size` alongside it, documented as the strip's full height —
   five controls, four inner gaps and two of padding at `--space-xs`, plus
   borders.
 - `src/components/chrome/toolbar.css`: consume the tokens instead of declaring
   the size locally. No visual change intended.
-- `Colophon.astro`: below 48rem only, `padding-block-end` of
+- `Colophon.astro`: below 51rem only, `padding-block-end` of
   `calc(var(--toolbar-block-size) + var(--space-m) + var(--space-xl))` — the
   strip's height, its offset from the viewport bottom, and breathing room.
 
@@ -202,7 +202,7 @@ Separately acceptable from the Colophon; see the *Acceptance* split.
   the accname chain, never surfaces on touch, and is deprioritised by some
   assistive-tech configurations. Keep `title` — it is what draws the tooltip.
 - Verify **WCAG 2.2 · 2.4.11 Focus Not Obscured (Minimum)** across Reading Mode,
-  not only against the Colophon: tab through every focusable element below 48rem
+  not only against the Colophon: tab through every focusable element below 51rem
   and confirm none lands entirely behind the fixed Toolbar. The Colophon's own
   clearance settles its case; this checks the rest.
 
@@ -223,7 +223,7 @@ Extend the ticket 12 suite, against the built output as ever:
   carries `lang` and `hreflang` for that Locale.
 - Its email and LinkedIn hrefs equal the header's — the derivation holds.
 - The copyright line contains the owner's name. **Not the year.**
-- Below 48rem, the Colophon's content is not overlapped by the Toolbar at full
+- Below 51rem, the Colophon's content is not overlapped by the Toolbar at full
   scroll.
 - Neither PDF contains any Colophon string, in either Locale.
 
@@ -270,7 +270,7 @@ Extend the ticket 12 suite, against the built output as ever:
 
 ## Depends on
 
-- 04 (content model, `Contact.url`), 06 (Reading Mode, 48rem), 07 (Toolbar
+- 04 (content model, `Contact.url`), 06 (Reading Mode, 51rem), 07 (Toolbar
   placement and `ui.ts`), 08 (PDF capture and its page assertion), 12 (E2E
   suite), 17 (`--space-*` scale)
 

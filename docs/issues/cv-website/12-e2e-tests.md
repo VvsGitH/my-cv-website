@@ -11,7 +11,7 @@ Establish the single test seam: Playwright end-to-end against the built output (
 - Run against the `astro build` output (served/previewed locally), the same artifact CI deploys.
 - **Content & structure:** `/` (IT) and `/en/` render the expected Blocks in the correct Sheet/column; IT vs EN text differs where expected.
 - **Toolbar:** language toggle navigates to the equivalent route in the other Locale; theme toggle changes the background but not the Sheet surface; share writes the current URL to the clipboard; download links to the correct per-Locale PDF filename.
-- **Responsive tiers:** viewport emulation asserts 2-up (≥1280px), stacked (768–1280px), Reading Mode + operable Drawer (<768px).
+- **Responsive tiers:** viewport emulation asserts 2-up (≥1632px), stacked (816–1632px), Reading Mode + operable Drawer (<816px), and no sideways scroll at any supported width from 375px up.
 - **PDF validity:** each generated PDF is exactly 2 A4 pages, has CV fonts embedded, and contains expected key strings for its Locale.
 - **Accessibility smoke:** Toolbar and Drawer keyboard-operable and labeled.
 - **No content overflows its Sheet** — see the handover from ticket 11 below.
@@ -127,10 +127,10 @@ The three-tier assertions and the Drawer's behaviour are written out in
 landed (1280 → two 604px Sheets on one row; 1024 → one 793.7px Sheet, never
 enlarged; 375 → a 327px reading column with the portrait first).
 
-**The trap applies to every measurement in this file:** below 48rem the page is
+**The trap applies to every measurement in this file:** below 51rem the page is
 in Reading Mode, where the Asides are `display: none` on the paper. Any test
 that measures paper — the slack table above, the two columns' first headings —
-must set a viewport ≥ 48rem first, or it will measure a column that isn't
+must set a viewport ≥ 51rem first, or it will measure a column that isn't
 there. Playwright's default 1280×720 is fine; an explicit
 `test.use({ viewport: … })` is better, since the number is load-bearing rather
 than incidental.
@@ -159,10 +159,11 @@ exact failure mode ticket 11 handed over.
 
 **Two things in the handovers above were stale, and one measurement moved.**
 
-- The wide tier is **101rem (1616px)**, not the 1280px in the task list —
-  ADR-0006 moved it and removed `--sheet-scale` with it. A Sheet is a literal
-  210×297mm box at every width above 48rem, so the suite asserts two-up at
-  exactly 1616 and stacked at 1615.
+- The wide tier is **102rem (1632px)**. The task list above said 1280px when
+  this ticket was written — ADR-0006 moved it and removed `--sheet-scale` with
+  it, and both have since been brought in line. A Sheet is a literal 210×297mm
+  box at every width above 51rem, so the suite asserts two-up at exactly 1632
+  and stacked at 1631.
 - The slack table predated the `--space-xl` 42→40px hand-tune. Remeasured with
   all faces loaded, Aside to the panel's bottom edge and Main to the Sheet's:
 
@@ -211,7 +212,7 @@ So the suite also requires at least one Type3 font per file. It is the only
 handle those two faces offer.
 
 **One trap found while writing it.** The Drawer's toggle has no accessible name
-in Paper Mode, because it is `display: none` above 48rem and so is not in the
+in Paper Mode, because it is `display: none` above 51rem and so is not in the
 accessibility tree at all. That is correct — the Toolbar carries four actions on
 paper and five in Reading Mode (CONTEXT.md) — but an accessible-name assertion
 written at the default viewport fails against it. The name assertions live in

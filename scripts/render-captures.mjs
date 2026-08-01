@@ -17,7 +17,7 @@ const A4_WIDTH = 595.28;
 const A4_HEIGHT = 841.89;
 const SIZE_TOLERANCE = 1;
 
-// Never below 48rem — ticket 08, "set the viewport before you load the page".
+// Never below 51rem — ticket 08, "set the viewport before you load the page".
 // The card sizes itself, so this is the only viewport either capture needs.
 const CAPTURE_VIEWPORT = { width: 1280, height: 1600 };
 

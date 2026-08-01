@@ -96,11 +96,13 @@ The button is 2.25rem on the Paper tiers and 2.75rem in Reading Mode, which is
 the touch tier.
 
 One overlap the Paper tiers cannot avoid, worth stating rather than glossing:
-between 768px and ~840px the unscaled A4 Sheet already fills the viewport
-(ADR-0006 removed the scaling), so there is no margin left for the Toolbar to
-float over and it sits on the Aside's cream panel. It covers the panel's inset
-rather than its text at rest, but the page scrolls sideways at those widths and
-scrolling can bring text under it. That is the cost of ADR-0006's decision, not
+between 816px and ~914px the unscaled A4 Sheet (ADR-0006 removed the scaling)
+leaves less inline margin than the rail's 60px, so the Toolbar has nothing to
+float over and sits on the Aside's cream panel. It covers the panel's inset
+rather than its text. Since the Reading Mode boundary moved to 51rem the paper
+does fit at these widths — the page no longer scrolls sideways, which is what
+kept text from being dragged under the rail — so what is left is a rest-state
+overlap of the panel's margin. That is the cost of ADR-0006's decision, not
 something this ticket can fix from the Toolbar.
 
 ### Theme
@@ -183,7 +185,7 @@ nothing, including with a stored dark theme):
   control's icon and accessible name follow, persists across reload and
   navigation, no flash.
 - **Keyboard:** Enter on the toggle opens and moves focus into the dialog;
-  Escape closes and returns focus to the toggle; growing past 48rem with the
+  Escape closes and returns focus to the toggle; growing past 51rem with the
   panel open closes it and releases the inert page.
 
 Print parity is argued, not measured: every rule this ticket adds outside the

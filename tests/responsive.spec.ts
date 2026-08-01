@@ -3,8 +3,10 @@ import { drawer, openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
 import { routeFor } from './support/site';
 
 /**
- * The three tiers of CONTEXT.md, at the boundaries ADR-0006 settled on rather
- * than the 1280px still written in ticket 12's task list.
+ * The three tiers of CONTEXT.md, at the boundaries the paper's own width
+ * settles: 51rem (816px) clears one 793.7px Sheet, 102rem (1632px) clears two
+ * and the gap between them. ADR-0006 is why they are read off the paper at all
+ * — it removed the scale-to-fit, so a Sheet is a literal A4 box.
  */
 
 /** 210mm × 297mm at 96dpi. */
@@ -83,17 +85,52 @@ test('changes tier exactly on its boundaries, and not a pixel earlier', async ({
   await openPainted(page, routeFor('it'));
   const paper = sheet(page, 1);
 
-  await page.setViewportSize({ width: 767, height: 1200 });
-  await expect(paper.locator('.aside > .block--about'), 'at 767px, Reading Mode').toBeHidden();
+  await page.setViewportSize({ width: 815, height: 1200 });
+  await expect(paper.locator('.aside > .block--about'), 'at 815px, Reading Mode').toBeHidden();
 
-  await page.setViewportSize({ width: 768, height: 1200 });
-  await expect(paper.locator('.aside > .block--about'), 'at 768px, Paper Mode').toBeVisible();
+  await page.setViewportSize({ width: 816, height: 1200 });
+  await expect(paper.locator('.aside > .block--about'), 'at 816px, Paper Mode').toBeVisible();
 
-  await page.setViewportSize({ width: 1615, height: 1200 });
-  expect(await rowCount(page), 'at 1615px the Sheets should still stack').toBe(2);
+  await page.setViewportSize({ width: 1631, height: 1200 });
+  expect(await rowCount(page), 'at 1631px the Sheets should still stack').toBe(2);
 
-  await page.setViewportSize({ width: 1616, height: 1200 });
-  expect(await rowCount(page), 'at 1616px the Sheets should share a row').toBe(1);
+  await page.setViewportSize({ width: 1632, height: 1200 });
+  expect(await rowCount(page), 'at 1632px the Sheets should share a row').toBe(1);
+});
+
+/**
+ * The reason both boundaries are where they are: a Sheet is a literal 793.7px
+ * box since ADR-0006, so a tier that starts below the paper's own width scrolls
+ * sideways. That is what 48rem did at 768px, and reading the boundary off the
+ * paper is only half the fix — the widths *between* the boundaries have to hold
+ * too, and so does 375px, where `--reading-column-min` (23rem) sets the floor.
+ *
+ * A horizontal scrollbar on a CV is a bug at every width, not at the two the
+ * tier assertions above happen to name, so this sweeps rather than samples:
+ * both boundaries and the pixel under each, the narrowest supported viewport,
+ * the widths where the Sheet is wider than the reading column, and the common
+ * phones and laptops in between.
+ */
+const NO_OVERFLOW_WIDTHS = [
+  375, 390, 414, 500, 600, 700, 780, 815, 816, 817, 900, 1024, 1280, 1440, 1631, 1632, 1633, 1920,
+];
+
+test('never scrolls sideways, at any supported width', async ({ page }) => {
+  await openPainted(page, routeFor('it'));
+
+  const overflowing: string[] = [];
+  for (const width of NO_OVERFLOW_WIDTHS) {
+    await page.setViewportSize({ width, height: 1000 });
+
+    const overflow = await page.evaluate(() => {
+      const root = document.documentElement;
+      return root.scrollWidth - root.clientWidth;
+    });
+
+    if (overflow > 0) overflowing.push(`${width}px by ${overflow}px`);
+  }
+
+  expect(overflowing, 'these widths scroll sideways').toEqual([]);
 });
 
 test.describe('Reading Mode', () => {

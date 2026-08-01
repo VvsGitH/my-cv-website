@@ -168,7 +168,7 @@ test('offers a different PDF in each Locale', async ({ page }) => {
 /**
  * WCAG 2.2 · 2.4.11 (Minimum). The Toolbar takes a different shape per tier
  * (ADR-0008) and obscures differently at each: a row over the foot of the
- * reading column below 48rem, a rail in the margin beside the Sheets above it.
+ * reading column below 51rem, a rail in the margin beside the Sheets above it.
  * Both tiers run this, and in Paper Mode it is the *only* thing standing behind
  * 2.4.11 — a rail centred on the block axis cannot be scrolled clear on it, so
  * there is no `scroll-padding` counterpart there to assert.
@@ -320,7 +320,7 @@ test.describe('one cluster per tier', () => {
  * would leave a blocked document with nothing on screen.
  */
 test.describe('Drawer', () => {
-  // The Drawer is Reading Mode only; its toggle is display:none above 48rem.
+  // The Drawer is Reading Mode only; its toggle is display:none above 51rem.
   test.use({ viewport: VIEWPORTS.reading });
 
   const toggle = (page: Page): Locator => toolbar(page).locator('.toolbar-drawer');

@@ -15,7 +15,7 @@ Nothing about what the site does changes. This is the architecture only.
 
 - `chrome/Drawer.tsx` (new): `role="dialog"` panel plus a backdrop, opened off
   `drawerOpen`. Owns what the platform used to give — page `inert`, scroll
-  lock, focus in and back, Escape — and the `matchMedia` close at 48rem.
+  lock, focus in and back, Escape — and the `matchMedia` close at 51rem.
 - `chrome/Toolbar.tsx`: one copy, no `placement` prop, narrower strings.
 - `chrome/ChromeIsland.tsx`: deleted. `chrome/Chrome.astro` renders the two
   islands, each `client:idle`.
@@ -142,7 +142,7 @@ five new ones. Against the built output in Chrome at Reading Mode width:
 - `main` and the Colophon carry `inert`, both islands do not;
 - Escape closes with focus in the Toolbar; the backdrop click closes; focus
   returns to the toggle;
-- growing past 48rem with the panel open closes it and releases the `inert` and
+- growing past 51rem with the panel open closes it and releases the `inert` and
   the scroll lock;
 - at 500px the panel, the strip and the share toast all sit inside the
   viewport, the toast opening back across the panel. The 320px arithmetic is

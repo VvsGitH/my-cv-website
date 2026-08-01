@@ -118,15 +118,28 @@
     var(--toolbar-button-size) + 2 * var(--space-xs) + 2 * var(--toolbar-border-size)
   );
 
-  /* As wide as a phone can spare: at 320px, the narrowest width this site
-     targets, 76vw leaves ~77px of backdrop — enough of a target to dismiss the
-     panel by tapping beside it — and the 19rem cap keeps the measure readable
-     on a tablet-sized phone (ticket 07). */
-  --drawer-width: min(19rem, 76vw);
+  /* As wide as a phone can spare: at 375px, the narrowest width this site
+     targets, 76vw leaves ~90px of backdrop — enough of a target to dismiss the
+     panel by tapping beside it — and the cap keeps the measure readable on a
+     tablet-sized phone (ticket 07).
+
+     The cap is derived rather than written down, because the two numbers are
+     the same statement about the same tier: the panel opens over the reading
+     column, so the widest it may be is that column less the backdrop it has to
+     leave beside it. Written as a literal it was 19rem, and it went stale the
+     moment --reading-column-min moved. --drawer-backdrop-min is the floor for
+     that strip; 76vw is what keeps it proportional above the minimum width. */
+  --drawer-backdrop-min: 4rem;
+  --drawer-width: min(calc(var(--reading-column-min) - var(--drawer-backdrop-min)), 76vw);
   --drawer-slide: 250ms;
 
   /* Reading Mode's measure — as wide as the text should run, and no narrower
-     than the narrowest screen this site targets. */
+     than the narrowest screen this site targets. 23rem is 368px at a 16px
+     root, which is what makes 375px the narrowest viewport that lays out
+     without a horizontal scrollbar: `.sheets` carries this as a `min-width`
+     down here (Document.astro), and so does the Colophon. Lowering the
+     supported width means lowering this first — the two move together
+     (tests/responsive.spec.ts asserts it). */
   --reading-column-min: 23rem;
   --reading-column-max: 34rem;
 
@@ -151,7 +164,7 @@
 }
 
 /* =============================================================================
-   Reading Mode (CONTEXT.md), below 48rem. The CV stops being paper here, so
+   Reading Mode (CONTEXT.md), below 51rem. The CV stops being paper here, so
    the type stops being paper type: prose goes to a normal 1rem reading size,
    and the display sizes set against it come down to sit with it. Section
    headings keep the reference's 22.66px — the one display size that already
@@ -159,15 +172,22 @@
    document; everything here is chosen for a phone.
 
    The three tiers are keyed off two boundaries, and these are them: Reading
-   Mode below 48rem, two Sheets side by side from 80rem (ticket 06). Both are
-   in rem so they follow the reader's own font size.
+   Mode below 51rem, two Sheets side by side from 102rem (Document.astro). Both
+   are in rem so they follow the reader's own font size.
+
+   Neither is ticket 06's number any more, and both moved for the same reason —
+   a Sheet is a literal 210mm (793.7px) box since ADR-0006 dropped
+   `--sheet-scale`, so a boundary below the paper's own width puts a horizontal
+   scrollbar on screen. 51rem (816px) clears one Sheet, 102rem (1632px) clears
+   two and the gap between them. Ticket 06 specified 48rem and 80rem, when the
+   paper still scaled to fit.
 
    `screen and` is load-bearing on every Reading Mode query in this codebase:
    print media must never see these values, or the PDF stops being the desktop
    rendering (ticket 06's acceptance).
    ============================================================================= */
 
-@media screen and (width < 48rem) {
+@media screen and (width < 51rem) {
   :root {
     --font-size-name: 1.75rem;
     --font-size-subtitle: 1rem;

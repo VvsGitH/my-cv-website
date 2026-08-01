@@ -7,17 +7,49 @@ import type { Column, SheetNumber } from '../../src/content/types';
  * wrapping moves with the real faces. The third wait is this suite's own: the
  * Chrome's two islands are `client:idle`, and a click sent before Astro clears
  * `ssr` off them is silently lost.
+ *
+ * `document.fonts.ready` alone is not enough, and this is the same trap ticket
+ * 06 hands to ticket 08: Chrome requests a face only when rendering needs it,
+ * so `ready` resolves over the faces requested *so far* and anything rendered
+ * afterwards restarts the cycle — swapping metrics out under a measurement
+ * already taken.
+ *
+ * **Hydration is what renders afterwards, so the font wait has to come last.**
+ * The Toolbar's controls are icomoon glyphs and the island only draws them once
+ * Astro clears `ssr`, so waiting for the faces before that wait leaves the one
+ * window that matters. In that window the header Block measures 163.97px on
+ * fallback metrics instead of the 165.97px `--header-height` is a hard-coded
+ * measurement of (tokens.css), which drops Main's first heading 2px above the
+ * Aside's and fails `paper.spec.ts`'s two-column assertion. It only reproduces
+ * under the load of the full suite, which is what stretches hydration out.
+ *
+ * So: paint, hydrate, then request every declared face and hold until the font
+ * engine is at rest — `status` is `loading` while any request is in flight,
+ * whoever started it, and `loaded` only when none is.
+ *
+ * The `catch` is for Fontaine's metric-matched fallbacks: they are `local()`
+ * faces that resolve against whatever the machine has, so one going missing is
+ * expected rather than a failure to surface here.
  */
 export async function openPainted(page: Page, route: string): Promise<void> {
   const response = await page.goto(route);
   expect(response?.status(), `${route} should be served`).toBe(200);
 
-  await page.evaluate(async () => {
-    await Promise.all(Array.from(document.images, (image) => image.decode()));
-    await document.fonts.ready;
-  });
+  await page.evaluate(() =>
+    Promise.all(Array.from(document.images, (image) => image.decode())),
+  );
 
   await expect(page.locator('astro-island[ssr]')).toHaveCount(0);
+
+  await page.evaluate(() =>
+    Promise.all(
+      Array.from(document.fonts, (face) =>
+        document.fonts.load(`${face.style} ${face.weight} 1em "${face.family}"`).catch(() => []),
+      ),
+    ),
+  );
+
+  await page.waitForFunction(() => document.fonts.status === 'loaded');
 }
 
 /**
@@ -28,7 +60,7 @@ export async function openPainted(page: Page, route: string): Promise<void> {
 export const VIEWPORTS = {
   reading: { width: 375, height: 812 },
   stacked: { width: 1024, height: 1400 },
-  twoUp: { width: 1616, height: 1200 },
+  twoUp: { width: 1632, height: 1200 },
   paper: { width: 1280, height: 1600 },
 } as const;
 

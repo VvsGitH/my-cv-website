@@ -131,7 +131,7 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
     }
 
     /* -----------------------------------------------------------------------
-       Reading Mode (CONTEXT.md), below 48rem: A4 is abandoned. Every box
+       Reading Mode (CONTEXT.md), below 51rem: A4 is abandoned. Every box
        between the reading column and the Blocks steps out of the flow, so the
        Blocks of both Sheets become the items of Document.astro's single grid
        — which is how "the same components reflow" rather than a second
@@ -139,7 +139,7 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
        here). `display: contents` also drops the panel, its inset, the column
        gap and the A4 footprint in one move, with nothing left to unset.
        ----------------------------------------------------------------------- */
-    @media screen and (width < 48rem) {
+    @media screen and (width < 51rem) {
       .sheet-wrapper,
       .sheet,
       .columns,

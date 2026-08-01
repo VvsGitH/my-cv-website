@@ -13,7 +13,7 @@ export interface ToolbarLinks {
 
 /**
  * The Toolbar (CONTEXT.md: "Toolbar") — language, download, share, theme, and
- * the Drawer's toggle below 48rem. Every control is icon-only and carries its
+ * the Drawer's toggle below 51rem. Every control is icon-only and carries its
  * name in `aria-label`, except the theme control, whose name has to be right
  * before hydration and is therefore a pair of visually-hidden labels the CSS
  * chooses between (toolbar.css). The matching `title` rides alongside because

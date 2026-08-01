@@ -4,7 +4,7 @@ import { drawerOpen } from './state';
 import './drawer.css';
 
 /** Mirrors the Reading Mode boundary, which tokens.css documents. */
-const PAPER_MODE_QUERY = '(width >= 48rem)';
+const PAPER_MODE_QUERY = '(width >= 51rem)';
 
 /** A singleton — Chrome.astro renders exactly one (coding-standards: `useId`). */
 const TITLE_ID = 'drawer-title';
@@ -18,7 +18,7 @@ interface Props {
 }
 
 /**
- * The Drawer (CONTEXT.md) — the panel carrying the Aside's Blocks below 48rem,
+ * The Drawer (CONTEXT.md) — the panel carrying the Aside's Blocks below 51rem,
  * as a modal `<dialog>`. ADR-0008 has the reasoning; the short of it is that
  * the way out now lives *inside* the panel, so `showModal()` holding the rest
  * of the document inert costs nothing, and Escape, the focus trap, the initial

@@ -1,4 +1,4 @@
-/* Reading Mode's Drawer: the panel carrying the Aside's Blocks below 48rem.
+/* Reading Mode's Drawer: the panel carrying the Aside's Blocks below 51rem.
    Chrome, never paper (CONTEXT.md) — gone in print. The control that *opens*
    it belongs to the Toolbar (ticket 07); the one that closes it is the panel's
    own, and that is what makes the panel a modal `<dialog>` again (ADR-0008).
@@ -174,7 +174,7 @@
      It costs the phones it is aimed at nothing, because they overlay their
      scrollbars and reserve no gutter to begin with. Where the shift is real —
      a desktop window narrowed past the breakpoint — the property is supported. */
-  @media screen and (width < 48rem) {
+  @media screen and (width < 51rem) {
     html {
       scrollbar-gutter: stable;
     }

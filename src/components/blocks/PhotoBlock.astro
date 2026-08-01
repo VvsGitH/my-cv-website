@@ -22,8 +22,8 @@ const { block } = Astro.props;
 <style>
   @layer components {
     .photo {
-      /* Centred in the Aside panel. Its height is one of the four inputs to
-         --main-first-heading-gap; see tokens.css. */
+      /* Centred in the Aside panel. --photo-size is also the floor Main's header
+         Block answers to, which is what aligns the two columns; see Sheet.astro. */
       width: var(--photo-size);
       aspect-ratio: 1;
       margin-inline: auto;

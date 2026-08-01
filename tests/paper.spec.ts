@@ -71,8 +71,7 @@ for (const locale of LOCALES) {
       }
     });
 
-    /** Design intent (ADR-0011), silently broken by any input to
-     * `--main-first-heading-gap` drifting. */
+    /** Design intent (ADR-0011), which the floor on the header Block delivers. */
     test('opens both columns of Sheet 1 on the same line', async ({ page }) => {
       const topOf = (column: Column) =>
         sheet(page, 1)
@@ -83,6 +82,27 @@ for (const locale of LOCALES) {
       const [aside, main] = [await topOf('aside'), await topOf('main')];
 
       expect(Math.abs(aside - main), `aside at ${aside}, main at ${main}`).toBeLessThanOrEqual(1);
+    });
+
+    /** The condition the alignment above rests on, asserted separately so that
+     * outgrowing it reads as its own cause rather than as a mystery drift. */
+    test('keeps the header shorter than the portrait it answers to', async ({ page }) => {
+      // The Block's own box is the floor, so only its content answers the question.
+      const heightOf = (selector: string) =>
+        sheet(page, 1)
+          .locator(selector)
+          .evaluate((element) => element.getBoundingClientRect().height);
+
+      const [header, portrait] = [
+        await heightOf('.block--header > .cv-header'),
+        await heightOf('.block--photo .photo'),
+      ];
+
+      expect(
+        header,
+        `the header is ${header}px against a ${portrait}px portrait — the floor in ` +
+          'Sheet.astro no longer holds, and the two columns have drifted apart',
+      ).toBeLessThanOrEqual(portrait);
     });
   });
 }

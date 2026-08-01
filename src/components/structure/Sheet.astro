@@ -13,15 +13,12 @@ const blocksIn = (column: Column) =>
   content.blocks.filter((block) => block.sheet === sheet && block.column === column);
 
 const asideBlocks = blocksIn('aside');
-// An Aside with no portrait has nothing left to show in Reading Mode, and an
-// empty `complementary` is noise in the landmark outline.
-const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
 ---
 
 <div class="sheet-wrapper">
   <div class="sheet">
     <div class="columns">
-      <aside class="aside" data-carries-portrait={carriesPortrait ? '' : undefined}>
+      <aside class="aside">
         {asideBlocks.map((block) => <Block block={block} />)}
       </aside>
       <div class="main">{blocksIn('main').map((block) => <Block block={block} />)}</div>
@@ -70,8 +67,7 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
       /* Fixed, never `fit-content` — the panel is Sheet geometry (ADR-0011). */
       height: var(--aside-height);
       break-inside: avoid;
-      /* The same inset as Main's, which is what --main-first-heading-gap no
-         longer has to reconcile; see tokens.css. */
+      /* The same inset as Main's, so the two columns start level (ADR-0011). */
       padding-block-start: var(--sheet-pad-block-start);
       padding-inline: var(--aside-pad-inline-start) var(--aside-pad-inline-end);
       background-color: var(--color-aside-bg);
@@ -94,9 +90,10 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
       margin-block-start: 0;
     }
 
-    /* Aligned to the Aside's, not spaced from the header — derived in tokens.css. */
-    .main :global(.block--header + .block > .section-heading) {
-      margin-block-start: var(--main-first-heading-gap);
+    /* Main's opening Block answers to the Aside's portrait, so the two columns'
+       first section headings land on one line through --space-xl like every other. */
+    .main :global(.block--header) {
+      min-block-size: var(--photo-size);
     }
 
     /* Aside only: the rules reach the panel edge, the text column does not. */
@@ -137,9 +134,9 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
         margin-block-start: var(--space-xl);
       }
 
-      /* With no Aside beside it the derived gap means nothing, and goes negative. */
-      .main :global(.block--header + .block > .section-heading) {
-        margin-block-start: var(--space-xl);
+      /* With no Aside beside it there is nothing to answer to. */
+      .main :global(.block--header) {
+        min-block-size: auto;
       }
     }
   }

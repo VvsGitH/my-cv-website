@@ -2,9 +2,8 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import type { Column, SheetNumber } from '../../src/content/types';
 
 /**
- * Paint, hydrate, then load every declared face — in that order. The ordering is
- * a workaround, not a preference (hacks/2026-08-01 §5); the font trap itself is
- * ADR-0009. The catch is for Fontaine fallbacks, which may be absent locally.
+ * Paint, load every declared face, then hydrate. The font trap itself is ADR-0009;
+ * the catch is for Fontaine fallbacks, which may be absent locally.
  */
 export async function openPainted(page: Page, route: string): Promise<void> {
   const response = await page.goto(route);
@@ -13,8 +12,6 @@ export async function openPainted(page: Page, route: string): Promise<void> {
   await page.evaluate(() =>
     Promise.all(Array.from(document.images, (image) => image.decode())),
   );
-
-  await expect(page.locator('astro-island[ssr]')).toHaveCount(0);
 
   await page.evaluate(() =>
     Promise.all(
@@ -25,6 +22,8 @@ export async function openPainted(page: Page, route: string): Promise<void> {
   );
 
   await page.waitForFunction(() => document.fonts.status === 'loaded');
+
+  await expect(page.locator('astro-island[ssr]')).toHaveCount(0);
 }
 
 /** One viewport per tier. `paper` is also the capture viewport (ADR-0009). */

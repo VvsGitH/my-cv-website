@@ -90,15 +90,6 @@
      two move together (tests/responsive.spec.ts asserts it). */
   --reading-column-min: 23rem;
   --reading-column-max: 34rem;
-
-  /* The one gap outside the scale (ADR-0011): whatever aligns Main's first section
-     heading with the Aside's. --header-height is the rendered height of
-     article.block--header — content, not geometry, so it is measured rather than
-     derived, and goes stale in silence (hacks/2026-08-01 §6). */
-  --header-height: 166.72px;
-  --main-first-heading-gap: calc(
-    var(--photo-size) + var(--space-xl) - var(--header-height)
-  );
 }
 
 /* Reading Mode (CONTEXT.md): the CV stops being paper, so the type stops being
@@ -128,7 +119,7 @@
     --space-xl: 3rem;
 
     /* The portrait leads the compact header rather than filling a panel. */
-    --photo-size: 6.5rem;
+    --photo-size: 10rem;
 
     /* The touch tier. Only the control grows — the formula above still holds. */
     --toolbar-button-size: 2.75rem;

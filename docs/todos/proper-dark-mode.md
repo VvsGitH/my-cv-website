@@ -1,3 +1,7 @@
+# Proper Dark Theme
+
+## New color palette
+
 - Light:
   - color-main-bg: #E4E4E4
   - color-sheet-bg: #ffffff
@@ -19,3 +23,7 @@
   - color-muted is replaced by color-text
   - color-ink is replaced by color-heading
   - color-signature is replaced by color-heading
+
+## The focus ring is ~1.4:1 on the dark background
+
+`--color-heading` as a focus-ring colour measures ~1.4:1 against `--color-dark-bg`. Aggravated in Reading Mode, where the Toolbar's bottom row meets that background more often than the Paper Mode rail does. ADR-0008 lists it as open.

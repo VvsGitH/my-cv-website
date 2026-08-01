@@ -8,9 +8,9 @@ Known, deliberate follow-ups. Each was decided against *for now* rather than rej
 
 Not done because it restructures the cascade in a fidelity-critical document. The sr-only Continuation case and `BulletsBlock`'s wrapper `div` both need handling, and it invalidates every measured spacing number. ADR-0011.
 
-## The focus ring is ~1.4:1 on the dark background
+## No half pixels
 
-`--color-heading` as a focus-ring colour measures ~1.4:1 against `--color-dark-bg`. Aggravated in Reading Mode, where the Toolbar's bottom row meets that background more often than the Paper Mode rail does. ADR-0008 lists it as open.
+After the initial pdf-to-web port, the style is left with lots of half pixel measures. The only main constraint is the A4 proportions.
 
 ## A scroll-aware Toolbar
 

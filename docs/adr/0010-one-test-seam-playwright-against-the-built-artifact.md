@@ -23,7 +23,7 @@ Its design, each part load-bearing:
 - **Set a viewport ≥ 53.5rem.** Below it the page is in Reading Mode, where the Asides are `display: none` on the paper: the test would measure a column that is not there. This trap applies to **every** paper measurement in the suite, including the two-column heading alignment.
 - **Assert `> 0`, not a floor.**
 
-**The canary is Sheet 1's Aside, and it has almost no air left.** Remeasured after the designed type scale, which grew the prose faster than the paper grew under it: IT `+5.0` / EN `+4.0` on Sheet 1's Aside, against `+98.5` for Sheet 1 Main and `+57.2` / `+64.4` for Sheet 2 Main. **A single added line in About Me or Tech Skills will overrun the panel** — and `.sheet-wrapper` is now `overflow: clip`, so it will be cut off in silence rather than visibly spilling. This assertion is the only thing that catches it. Either treat Sheet 1's Aside as full, or buy the room back (a step off `--space-xl`, or the Aside's `--prose-leading`) before adding to it.
+**The canary is Sheet 1's Aside, and it has almost no air left.** Remeasured after the designed type scale, which grew the prose faster than the paper grew under it: IT `+5.0` / EN `+4.0` on Sheet 1's Aside, against `+98.5` for Sheet 1 Main and `+57.2` / `+64.4` for Sheet 2 Main.
 
 ## Consequences
 

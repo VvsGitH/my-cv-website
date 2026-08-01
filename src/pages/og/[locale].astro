@@ -39,7 +39,7 @@ if (!header) {
     <div
       class="card"
       data-og-card
-      style={`--card-width: ${ogCard.width}; --card-height: ${ogCard.height}`}
+      style={`--card-width: ${ogCard.width}px; --card-height: ${ogCard.height}px`}
     >
       <div class="intro">
         <p class="name">{header.name}</p>
@@ -58,15 +58,15 @@ if (!header) {
       /* --card-width / --card-height arrive unitless from lib/og-card.ts: the
          Sheet's scale below is a ratio of two of these, and CSS cannot divide
          one length by another. */
-      --card-pad-block: 48;
+      --card-pad-block: 48px;
       --card-ink: var(--color-main-bg);
 
       display: flex;
       align-items: center;
       gap: 4rem;
-      width: calc(var(--card-width) * 1px);
-      height: calc(var(--card-height) * 1px);
-      padding-block: calc(var(--card-pad-block) * 1px);
+      width: var(--card-width);
+      height: var(--card-height);
+      padding-block: var(--card-pad-block);
       padding-inline: 4rem;
       background-color: var(--color-dark-bg);
     }
@@ -100,11 +100,11 @@ if (!header) {
     }
 
     /* The Sheet's own seam, so the A4 box stays real and only its rendering
-       shrinks. This is the token's last consumer — do not delete it.
-       1188 is --sheet-width (840px) in A4's ratio, as a bare number because
-       CSS cannot divide one length by another: it moves when that token does. */
-    .paper :global(.sheet-wrapper) {
-      --sheet-scale: calc((var(--card-height) - 2 * var(--card-pad-block)) / 1188);
+       shrinks. */
+    .paper :global(.sheet) {
+      --calc-card-height: calc(var(--card-height) - 2 * var(--card-pad-block));
+      --calc-sheet-height: calc(var(--sheet-width) / calc(var(--sheet-ar)));
+      zoom: calc(var(--calc-card-height) / var(--calc-sheet-height) );
     }
   }
 </style>

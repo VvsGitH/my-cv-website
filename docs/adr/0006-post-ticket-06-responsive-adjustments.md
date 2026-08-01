@@ -80,7 +80,10 @@ Commit `b72bbaa` ("Fix: some fixes post 06") introduced several changes to the r
 
 **Rationale**: Forcing `--sheet-scale: 1` ensures Sheets always render at full size. The scaling system was causing precision issues and complexity without clear benefits at modern viewport widths.
 
-> **"Full size" is no longer 210mm × 297mm.** The Sheet is now an **840px box held in A4's 210/297 ratio** (`--sheet-width`, `--sheet-ar`), and millimetres reach only the print layer, where `Sheet.astro` applies `zoom: calc(210mm / var(--sheet-width))` to take it back to A4 for the capture (ADR-0009 records why that is `zoom` rather than a transform). Fidelity to A4 *proportions* is what this decision preserves; the paper renders larger than 1:1 on screen because the screen is not paper.
+> **"Full size" is no longer 210mm × 297mm.** 
+> The Sheet is now an **840px box held in A4's 210/297 ratio** (`--sheet-width`, `--sheet-ar`), and millimetres reach only the print layer, where `Sheet.astro` applies `zoom: calc(210mm / var(--sheet-width))` to take it back to A4 for the capture (ADR-0009 records why that is `zoom` rather than a transform).  
+> Fidelity to A4 *proportions* is what this decision preserves; the paper renders larger than 1:1 on screen because the screen is not paper.  
+> .sheet-wrapper and --sheet-scale were also removed, since `zoom` made them obsolete.
 
 **Impact on spec**: Ticket 06 explicitly stated "A Sheet is never scaled **above** 1" and "scaled down to fit", implying Sheets *would* scale down when needed. That guarantee is now a guarantee they never scale.
 

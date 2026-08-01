@@ -57,32 +57,17 @@ const { block } = Astro.props;
     .list {
       margin-block-start: var(--space-s);
       color: var(--color-text);
-    }
-
-    .run {
-      line-height: 2;
-    }
-
-    .list {
-      line-height: 1.417;
+      line-height: var(--prose-leading);
     }
 
     li {
-      padding-inline-start: 0.75rem;
-      text-indent: -0.75rem;
+      padding-inline-start: var(--bullet-list-pad-start);
+      text-indent: calc(var(--bullet-list-pad-start) * -1);
     }
 
     li::before {
       content: '•';
-      padding-inline-end: 0.4rem;
-    }
-
-    /* The reference's leading of 2 is set on 9.48px items; on Reading Mode's
-       1rem it reads as a gap rather than a run. */
-    @media screen and (width < 53.5rem) {
-      .run {
-        line-height: var(--prose-leading);
-      }
+      padding-inline-end: calc(var(--bullet-list-pad-start) - 0.35rem);
     }
   }
 </style>

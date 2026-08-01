@@ -29,7 +29,6 @@
 
   /* One value document-wide (ADR-0011). */
   --prose-leading: 1.4;
-
   /* A token because Reading Mode takes it back — justification needs a wider measure. */
   --prose-align: justify;
 
@@ -37,7 +36,6 @@
      millimetres reach only the print layer, where Sheet.astro zooms it back to
      210mm. The Aside is an inset panel, not a full-bleed column. --- */
 
-  --sheet-scale: 1; /* Used for scaling the sheet. Only OG page at the moment */
   --sheet-ar: 210 / 297; /* A4 page: 210mm / 297mm */
   --sheet-width: 840px; /* multiple of 210 */
 
@@ -54,7 +52,10 @@
   --aside-height: calc(100% - var(--sheet-pad-block-end));
   --aside-pad-inline-start: var(--sheet-pad-inline-start);
   --aside-pad-inline-end: var(--sheet-pad-inline-start); /* heading rules span it */
+
   --photo-size: 11rem;
+  --bullet-list-pad-start: 0.75rem;
+  --skill-bar-height: 0.3125rem;
 
   /* --- The spacing scale (ADR-0011). Nominal margins: every gap between units of
      CV content is one of these five, in both columns. --- */

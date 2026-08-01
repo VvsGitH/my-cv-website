@@ -15,39 +15,23 @@ const blocksIn = (column: Column) =>
 const asideBlocks = blocksIn('aside');
 ---
 
-<div class="sheet-wrapper">
-  <div class="sheet">
-    <div class="columns">
-      <aside class="aside">
-        {asideBlocks.map((block) => <Block block={block} />)}
-      </aside>
-      <div class="main">{blocksIn('main').map((block) => <Block block={block} />)}</div>
-    </div>
+<div class="sheet">
+  <div class="columns">
+    <aside class="aside">
+      {asideBlocks.map((block) => <Block block={block} />)}
+    </aside>
+    <div class="main">{blocksIn('main').map((block) => <Block block={block} />)}</div>
   </div>
 </div>
 
 <style>
   /* Wrapped, or an unlayered scoped style would outrank `print` (coding-standards). */
   @layer components {
-    .sheet-wrapper {
-      /* Reserves the scaled footprint, which `transform: scale()` does not. */
-      aspect-ratio: var(--sheet-ar);
-      width: calc(var(--sheet-width) * var(--sheet-scale));
-      height: auto;
-      /* `min-height` zeroes the content-based automatic minimum, which would
-         otherwise let the unscaled .sheet outvote `aspect-ratio`; `overflow`
-         keeps that same unscaled height out of print fragmentation, where it
-         costs a third page. */
-      min-height: 0;
-      overflow: clip;
-    }
-
     .sheet {
       aspect-ratio: var(--sheet-ar);
       width: var(--sheet-width);
       height: auto;
       background: var(--color-main-bg);
-      transform: scale(var(--sheet-scale));
       transform-origin: top left;
     }
 
@@ -105,7 +89,6 @@ const asideBlocks = blocksIn('aside');
        the Blocks steps out of the flow and the Blocks of both Sheets become items
        of Document.astro's single grid (ADR-0004). */
     @media screen and (width < 53.5rem) {
-      .sheet-wrapper,
       .sheet,
       .columns,
       .aside {
@@ -146,7 +129,7 @@ const asideBlocks = blocksIn('aside');
        into an XObject when printing, and the PDF loses every /Font — `zoom`
        scales at layout time, so the paper stays selectable text. */
     @media print {
-      .sheet-wrapper {
+      .sheet {
         zoom: calc(210mm / var(--sheet-width));
       }
     }

@@ -67,7 +67,7 @@ const { content } = Astro.props;
         margin-inline: auto;
         /* Outside the spacing scale on purpose: this is the gap between the paper
            and the Chrome below it, not one between units of CV content (ADR-0011). */
-        margin-block-end: 5rem;
+        margin-block-end: var(--space-xl);
         padding: var(--space-xl) var(--space-l);
         background-color: var(--color-main-bg);
       }

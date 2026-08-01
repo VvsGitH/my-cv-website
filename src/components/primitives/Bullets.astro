@@ -32,13 +32,13 @@ const { items } = Astro.props;
     }
 
     li {
-      padding-inline-start: 0.75rem;
-      text-indent: -0.75rem;
+      padding-inline-start: var(--bullet-list-pad-start);
+      text-indent: calc(var(--bullet-list-pad-start) * -1);
     }
 
     li::before {
       content: '•';
-      padding-inline-end: 0.4rem;
+      padding-inline-end: calc(var(--bullet-list-pad-start) - 0.35rem);
     }
   }
 </style>

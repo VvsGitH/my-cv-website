@@ -16,7 +16,7 @@ const { text, srOnly } = Astro.props;
       font-size: var(--font-size-heading);
       /* Set solid, as the reference does — a 22.66px face on a 23px em-box. */
       line-height: 1.015;
-      padding-block-end: 0.0625rem;
+      padding-block-end: calc(var(--space-xs) / 4);
       border-block-end: 1px solid currentcolor;
     }
 

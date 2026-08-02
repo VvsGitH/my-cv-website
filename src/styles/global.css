@@ -17,6 +17,7 @@
   @media print {
     body {
       background-color: var(--color-main-bg);
+      text-rendering: optimizeLegibility;
     }
   }
 }

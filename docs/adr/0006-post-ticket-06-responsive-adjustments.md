@@ -9,13 +9,17 @@
 
 Commit `b72bbaa` ("Fix: some fixes post 06") introduced several changes to the responsive behavior and typography that deviate from the explicit design documented in ticket 06. This ADR tracks those deviations and their rationale.
 
+> **The implementation tickets have since been deleted.** "Ticket 06" below is the historical design this ADR was written against; the `Before` snippets quote it verbatim and are the only surviving record of it. Nothing here needs the ticket to be readable.
+
+> **Both boundaries moved once more after this ADR was written.** Reading Mode's went from 48rem to **53.5rem** and the wide tier's from 101rem to **107.5rem**, so that neither tier can start below the width of the paper it has to show — a Sheet wider than its own boundary is a horizontal scrollbar. Both were raised again when the paper itself grew to 840px. The reasoning lives in `tokens.css`; the `Before (ticket 06)` snippets below are quoted as 06 wrote them and are deliberately not updated.
+
 ## Deviations from ticket 06
 
 ### 1. Wide breakpoint moved from 80rem to 101rem
 
 **What changed:**
 - Ticket 06 specified two boundaries: **48rem** (Reading Mode threshold) and **80rem** (wide mode threshold for two-column layout)
-- Commit `b72bbaa` changed the wide breakpoint from `80rem` to `101rem` in `Document.astro`
+- Commit `b72bbaa` changed the wide breakpoint from `80rem` to `101rem` in `Document.astro` (since moved again, to `107.5rem` — see the note above)
 
 **Before (ticket 06):**
 ```css
@@ -72,9 +76,14 @@ Commit `b72bbaa` ("Fix: some fixes post 06") introduced several changes to the r
 }
 ```
 
-**After**: Both removed. Sheet stays at `--sheet-scale: 1` (its `var()` default) in all screen modes above 48rem.
+**After**: Both removed. `--sheet-scale` is declared once in `tokens.css` as `1`, and the OG card route is its only consumer; the Sheet is unscaled in every screen mode above 53.5rem.
 
-**Rationale**: Forcing `--sheet-scale: 1` ensures Sheets always render at their true A4 size (210mm × 297mm). The scaling system was causing precision issues and complexity without clear benefits at modern viewport widths.
+**Rationale**: Forcing `--sheet-scale: 1` ensures Sheets always render at full size. The scaling system was causing precision issues and complexity without clear benefits at modern viewport widths.
+
+> **"Full size" is no longer 210mm × 297mm.** 
+> The Sheet is now an **840px box held in A4's 210/297 ratio** (`--sheet-width`, `--sheet-ar`), and millimetres reach only the print layer, where `Sheet.astro` applies `zoom: calc(210mm / var(--sheet-width))` to take it back to A4 for the capture (ADR-0009 records why that is `zoom` rather than a transform).  
+> Fidelity to A4 *proportions* is what this decision preserves; the paper renders larger than 1:1 on screen because the screen is not paper.  
+> .sheet-wrapper and --sheet-scale were also removed, since `zoom` made them obsolete.
 
 **Impact on spec**: Ticket 06 explicitly stated "A Sheet is never scaled **above** 1" and "scaled down to fit", implying Sheets *would* scale down when needed. That guarantee is now a guarantee they never scale.
 
@@ -83,22 +92,18 @@ Commit `b72bbaa` ("Fix: some fixes post 06") introduced several changes to the r
 ### 3. Reading Mode typography reduced
 
 **What changed:**
-- Several font sizes in Reading Mode (< 48rem) were reduced in `src/styles/tokens.css`
+- Several font sizes in Reading Mode (< 48rem at the time, < 53.5rem now) were reduced in `src/styles/tokens.css`
 
 **Before (ticket 06 defaults):**
 - `--font-size-subtitle: 0.9375rem`
 - `--font-size-subheading: 1.0625rem`
 - `--font-size-body: 1rem`
-- `--font-size-skill: 1rem`
-- `--font-size-level: 0.875rem`
 
 **After (commit b72bbaa):**
 - `--font-size-subtitle: 1rem` (increased slightly)
 - `--font-size-heading: 1.25rem` (new, added)
 - `--font-size-subheading: 1rem` (reduced from 1.0625rem)
 - `--font-size-body: 0.875rem` (reduced from 1rem)
-- `--font-size-skill: 0.875rem` (reduced from 1rem)
-- `--font-size-level: 0.75rem` (reduced from 0.875rem)
 
 **Rationale**: Ticket 06 did not specify exact font sizes for Reading Mode—it only said content should reflow "at normal text size". The reductions fit more content vertically on narrow viewports and improve readability with actual content.
 
@@ -125,7 +130,7 @@ width: max(20rem, 85vw);
 
 **Impact on spec**: Ticket 06 did not specify exact Drawer dimensions, only that it should be "as wide as a phone can spare". This change aligns better with that intent.
 
-**Superseded by ticket 07**: the width is now `min(19rem, 76vw)`. The Toolbar rides the panel's outer edge from that ticket on, so "what a phone can spare" has to spare room for it too — at 320px the panel is 243px and the Toolbar clears the viewport edge by 9px. See `docs/issues/cv-website/07-toolbar.md`.
+**Superseded**: the width is now `min(19rem, 76vw)`, and the cap is derived rather than written down. The Toolbar no longer rides the panel's outer edge at all — see ADR-0008 and the `--drawer-width` derivation in `tokens.css`.
 
 ---
 

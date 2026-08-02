@@ -2,43 +2,45 @@ import { expect, type Locator, type Page } from '@playwright/test';
 import type { Column, SheetNumber } from '../../src/content/types';
 
 /**
- * Leaves the page fully painted and interactive. Images and `document.fonts.ready`
- * are the pair `scripts/render-captures.mjs` waits on for the same reason — line
- * wrapping moves with the real faces. The third wait is this suite's own: the
- * Toolbar is `client:idle`, and a click sent before Astro clears `ssr` off the
- * island is silently lost.
+ * Paint, load every declared face, then hydrate. The font trap itself is ADR-0009;
+ * the catch is for Fontaine fallbacks, which may be absent locally.
  */
 export async function openPainted(page: Page, route: string): Promise<void> {
   const response = await page.goto(route);
   expect(response?.status(), `${route} should be served`).toBe(200);
 
-  await page.evaluate(async () => {
-    await Promise.all(Array.from(document.images, (image) => image.decode()));
-    await document.fonts.ready;
-  });
+  await page.evaluate(() =>
+    Promise.all(Array.from(document.images, (image) => image.decode())),
+  );
+
+  await page.evaluate(() =>
+    Promise.all(
+      Array.from(document.fonts, (face) =>
+        document.fonts.load(`${face.style} ${face.weight} 1em "${face.family}"`).catch(() => []),
+      ),
+    ),
+  );
+
+  await page.waitForFunction(() => document.fonts.status === 'loaded');
 
   await expect(page.locator('astro-island[ssr]')).toHaveCount(0);
 }
 
-/**
- * One viewport per tier, at the boundaries ADR-0006 settled on. `paper` is also
- * the capture viewport in `scripts/render-captures.mjs`, and playwright.config
- * makes it the default — measuring what the PDF is cut from.
- */
+/** One viewport per tier. `paper` is also the capture viewport (ADR-0009). */
 export const VIEWPORTS = {
   reading: { width: 375, height: 812 },
   stacked: { width: 1024, height: 1400 },
-  twoUp: { width: 1616, height: 1200 },
+  twoUp: { width: 1720, height: 1200 },
   paper: { width: 1280, height: 1600 },
 } as const;
 
 export const sheet = (page: Page, number: SheetNumber): Locator =>
   page.locator('.sheet').nth(number - 1);
 
-/** The page's own Toolbar. The Drawer carries a second copy of it. */
-export const pageToolbar = (page: Page): Locator => page.locator('.toolbar--page');
+export const toolbar = (page: Page): Locator => page.locator('.toolbar');
 
-export const drawer = (page: Page): Locator => page.locator('dialog.drawer');
+/** The panel — a `<dialog>` opened with `showModal()` (ADR-0008). */
+export const drawer = (page: Page): Locator => page.locator('.drawer');
 
 /** The kind of every Block rendered into one column, in document order. */
 export async function renderedKinds(
@@ -53,12 +55,7 @@ export async function renderedKinds(
   );
 }
 
-/**
- * Room left between the last Block of a column and the edge it has to stay
- * inside — positive means it fits. The two reference lines are the ones ticket
- * 17's handover picks: the Aside against its own cream panel, the Main against
- * the Sheet. Returned rather than asserted so a failure can say how far over.
- */
+/** Slack to the edge each column must stay inside — Aside to its panel, Main to the Sheet (ADR-0010). */
 export async function slackBelowLastBlock(
   sheetLocator: Locator,
   column: Column,

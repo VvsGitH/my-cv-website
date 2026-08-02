@@ -56,37 +56,18 @@ const { block } = Astro.props;
     .run,
     .list {
       margin-block-start: var(--space-s);
-      /* Tech Skills items are set a step smaller than the rest of the
-         Aside prose in the reference. */
-      font-size: var(--font-size-skill);
       color: var(--color-text);
-    }
-
-    .run {
-      line-height: 2;
-    }
-
-    .list {
-      padding-inline-start: 0.2rem;
-      line-height: 1.417;
+      line-height: var(--prose-leading);
     }
 
     li {
-      padding-inline-start: 0.62rem;
-      text-indent: -0.62rem;
+      padding-inline-start: var(--bullet-list-pad-start);
+      text-indent: calc(var(--bullet-list-pad-start) * -1);
     }
 
     li::before {
       content: '•';
-      padding-inline-end: 0.34rem;
-    }
-
-    /* The reference's leading of 2 is set on 9.48px items; on Reading Mode's
-       1rem it reads as a gap rather than a run. */
-    @media screen and (width < 48rem) {
-      .run {
-        line-height: var(--prose-leading);
-      }
+      padding-inline-end: calc(var(--bullet-list-pad-start) - 0.35rem);
     }
   }
 </style>

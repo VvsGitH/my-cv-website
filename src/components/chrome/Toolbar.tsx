@@ -1,5 +1,5 @@
 import type { Locale } from '../../content/types';
-import type { UiStrings } from '../../i18n/ui';
+import type { DrawerStrings, ToolbarStrings } from '../../i18n/ui';
 import { copyLink, drawerOpen, linkCopied, toggleTheme } from './state';
 import './toolbar.css';
 
@@ -12,46 +12,29 @@ export interface ToolbarLinks {
 }
 
 /**
- * The Toolbar (CONTEXT.md: "Toolbar") — language, download, share, theme, and
- * the Drawer's toggle below 48rem. Every control is icon-only and carries its
- * name in `aria-label`, except the theme control, whose name has to be right
- * before hydration and is therefore a pair of visually-hidden labels the CSS
- * chooses between (toolbar.css). The matching `title` rides alongside because
- * it is what draws the tooltip, not because it names anything. The icons are
- * private-use codepoints, hidden from the accessibility tree
- * (src/styles/icons.css).
- *
- * No `role="toolbar"`: that role obliges arrow-key navigation with a roving
- * tabindex, and five controls in the tab order need no such thing.
+ * The Toolbar (CONTEXT.md). ADR-0007 (two islands), ADR-0008 (its two shapes,
+ * no `aria-expanded`, no `role="toolbar"`), ADR-0003 (why the theme control is
+ * named by a pair of sr-only labels rather than an `aria-label`).
  */
 interface Props {
-  strings: UiStrings;
+  toolbar: ToolbarStrings;
+  /** Only `open` is read here: the toggle no longer morphs (ADR-0008). */
+  drawer: DrawerStrings;
   links: ToolbarLinks;
-  /**
-   * `page` is the Toolbar against the page; `drawer` is the copy inside the
-   * Drawer's dialog, which the panel's slide carries. ChromeIsland explains
-   * why there are two.
-   */
-  placement: 'page' | 'drawer';
 }
 
-export default function Toolbar({ strings, links, placement }: Props) {
-  const { drawer, toolbar } = strings;
-
+export default function Toolbar({ toolbar, drawer, links }: Props) {
   return (
-    <div
-      class={`toolbar toolbar--${placement}`}
-      data-drawer-open={drawerOpen.value ? '' : undefined}
-    >
+    <div class="toolbar">
       <button
         type="button"
         class="toolbar-button toolbar-drawer"
-        title={drawerOpen.value ? drawer.close : drawer.open}
-        aria-label={drawerOpen.value ? drawer.close : drawer.open}
+        title={drawer.open}
+        aria-label={drawer.open}
         aria-haspopup="dialog"
-        onClick={() => (drawerOpen.value = !drawerOpen.value)}
+        onClick={() => (drawerOpen.value = true)}
       >
-        <span class={drawerOpen.value ? 'icon-cross' : 'icon-menu'} aria-hidden="true"></span>
+        <span class="icon-menu" aria-hidden="true"></span>
       </button>
 
       <a
@@ -91,8 +74,7 @@ export default function Toolbar({ strings, links, placement }: Props) {
         <span class="is-sr-only toolbar-theme-to-light">{toolbar.themeToLight}</span>
       </button>
 
-      {/* Empty until the URL is on the clipboard: a live region announces the
-          change to its content, so there has to be a change to announce. */}
+      {/* Empty until copied: a live region announces a change, so there must be one. */}
       <p class="toolbar-toast" role="status" data-visible={linkCopied.value ? '' : undefined}>
         {linkCopied.value ? toolbar.shared : null}
       </p>

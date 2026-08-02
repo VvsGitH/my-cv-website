@@ -46,7 +46,6 @@ const { block } = Astro.props;
     dd {
       margin-inline-start: 0;
       font-style: italic;
-      font-size: var(--font-size-level);
       color: var(--color-muted);
     }
 
@@ -54,7 +53,7 @@ const { block } = Astro.props;
       grid-column: 1 / -1;
       /* The reference draws a ~5px rule: the filled run in --color-muted
          over a pale-blue track. */
-      height: 0.3125rem;
+      height: var(--skill-bar-height);
       margin-block-start: var(--space-xs);
       background-image: linear-gradient(
         to right,

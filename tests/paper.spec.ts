@@ -4,7 +4,7 @@ import type { Column, Locale, SheetNumber } from '../src/content/types';
 import { openPainted, renderedKinds, sheet, slackBelowLastBlock, VIEWPORTS } from './support/page';
 import { LOCALES, routeFor } from './support/site';
 
-// Declared rather than inherited from the config: below 48rem the Asides leave
+// Declared rather than inherited from the config: below 53.5rem the Asides leave
 // the paper, so the number every measurement here rests on is load-bearing.
 test.use({ viewport: VIEWPORTS.paper });
 
@@ -56,7 +56,7 @@ for (const locale of LOCALES) {
       expect(rendered).toEqual(headingsOf(locale));
     });
 
-    /** The assertion ticket 11 handed over; the current slack is tabled there. */
+    /** ADR-0010 records why this exists and how it is designed. */
     test('keeps every column inside the paper', async ({ page }) => {
       for (const number of SHEETS) {
         for (const column of COLUMNS) {
@@ -71,8 +71,7 @@ for (const locale of LOCALES) {
       }
     });
 
-    /** Design intent from ticket 17, and silently broken by any of the four
-     * values `--main-first-heading-gap` derives from drifting. */
+    /** Design intent (ADR-0011), which the floor on the header Block delivers. */
     test('opens both columns of Sheet 1 on the same line', async ({ page }) => {
       const topOf = (column: Column) =>
         sheet(page, 1)
@@ -83,6 +82,27 @@ for (const locale of LOCALES) {
       const [aside, main] = [await topOf('aside'), await topOf('main')];
 
       expect(Math.abs(aside - main), `aside at ${aside}, main at ${main}`).toBeLessThanOrEqual(1);
+    });
+
+    /** The condition the alignment above rests on, asserted separately so that
+     * outgrowing it reads as its own cause rather than as a mystery drift. */
+    test('keeps the header shorter than the portrait it answers to', async ({ page }) => {
+      // The Block's own box is the floor, so only its content answers the question.
+      const heightOf = (selector: string) =>
+        sheet(page, 1)
+          .locator(selector)
+          .evaluate((element) => element.getBoundingClientRect().height);
+
+      const [header, portrait] = [
+        await heightOf('.block--header > .cv-header'),
+        await heightOf('.block--photo .photo'),
+      ];
+
+      expect(
+        header,
+        `the header is ${header}px against a ${portrait}px portrait — the floor in ` +
+          'Sheet.astro no longer holds, and the two columns have drifted apart',
+      ).toBeLessThanOrEqual(portrait);
     });
   });
 }

@@ -66,10 +66,6 @@ const { block } = Astro.props;
       margin-block-start: var(--space-xl);
     }
 
-    .contact {
-      height: 2.25rem;
-    }
-
     dt {
       font-family: var(--font-heading);
       font-weight: var(--font-weight-heading);
@@ -89,11 +85,9 @@ const { block } = Astro.props;
       text-underline-offset: 0.15em;
     }
 
-    /* Reading Mode's compact header (ticket 06): the portrait is pulled out of
-       the Aside to sit directly above this Block, so the whole cluster centres
-       under it, and the three fixed contact columns — 435px of them — become
-       one that fits a phone. */
-    @media screen and (width < 48rem) {
+    /* Reading Mode's compact header: the portrait sits above this Block, so the
+       cluster centres under it and the three contact columns become one. */
+    @media screen and (width < 53.5rem) {
       .cv-header {
         text-align: center;
       }
@@ -110,7 +104,6 @@ const { block } = Astro.props;
       }
 
       .contact {
-        height: auto;
         display: flex;
         gap: var(--space-m);
       }

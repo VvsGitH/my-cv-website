@@ -3,7 +3,7 @@ import { VIEWPORTS } from './tests/support/page';
 import { BASE, ORIGIN, PREVIEW_PORT } from './tests/support/site';
 
 /**
- * The single test seam (ticket 12): Playwright against the built output, served
+ * The single test seam (ADR-0010): Playwright against the built output, served
  * by `astro preview` — the same artifact CI deploys, not the dev server.
  */
 

@@ -1,8 +1,8 @@
 name: Deploy to GitHub Pages
 
 # A push to the default branch is the whole publishing action: build, capture
-# the PDFs and preview images, deploy. The whys — step order, the one-off repo
-# setting it assumes — are in docs/issues/cv-website/09-ci-deploy.md.
+# the PDFs and preview images, deploy. The one-off repo setting it assumes is
+# in README.md.
 
 on:
   push:
@@ -31,8 +31,7 @@ jobs:
 
       - run: npm i
 
-      # Chromium only — the capture step is the sole browser consumer. Its own
-      # step and not an npm hook, per ticket 08's closing note.
+      # Chromium only, and its own step rather than an npm hook (ADR-0009).
       - run: npx playwright install --with-deps chromium
 
       - run: npm run build
@@ -40,10 +39,8 @@ jobs:
       # Before the upload, so a failed capture publishes nothing.
       - run: npm run captures:render
 
-      # After the capture, so the suite can read the PDFs it asserts about, and
-      # before the upload, so a regression publishes nothing either (ticket 12).
-      # The runner, not `npm test`: the `pretest` hook exists to spare a local
-      # run a stale `dist`, and the two steps above have already done that work.
+      # After the capture, so the suite can read the PDFs; before the upload, so a
+      # regression publishes nothing. The runner, not `npm test` (ADR-0010).
       - run: npx playwright test
 
       - uses: actions/upload-pages-artifact@v5

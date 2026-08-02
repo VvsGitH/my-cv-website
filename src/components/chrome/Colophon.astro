@@ -5,16 +5,8 @@ import { otherLocale } from '../../i18n/locale';
 import { ui } from '../../i18n/ui';
 
 /**
- * The Colophon (CONTEXT.md: "Colophon") — the five statements the site makes
- * about *itself*, which is what keeps them off the paper and out of the PDF.
- *
- * Nothing here is a second copy of anything: the owner's name and the two
- * channels are read off the header Block, the same way Chrome.astro fills the
- * Drawer from the Aside's. Ticket 19 records the cost — drop LinkedIn's `url`
- * and this quietly loses a link, which is the right direction to break in.
- *
- * A plain `.astro` component, not part of the island (ADR-0003): five
- * statements and three links have nothing to hydrate.
+ * The Colophon (CONTEXT.md) — ADR-0013. The name and both channels are derived
+ * from the header Block rather than restated, at the cost recorded there.
  */
 interface Props {
   content: CvContent;
@@ -32,8 +24,7 @@ if (!header) {
 // Località has no `url` because it is not an action, and drops out here.
 const channels = header.contacts.filter((contact) => contact.url);
 
-// From the build, not the page load — a copyright notice dates publication,
-// and ticket 09 rebuilds on every push.
+// From the build, not the page load — a copyright notice dates publication (ADR-0013).
 const year = new Date().getFullYear();
 ---
 
@@ -64,8 +55,7 @@ const year = new Date().getFullYear();
 <style>
   @layer components {
     .colophon {
-      /* The Colophon is printed on the page background, so its ink is the one
-         the *other* theme's surface carries. */
+      /* On the page background, so its ink is the other theme's surface. */
       --colophon-ink: var(--color-ink);
       --colophon-ink-dark: var(--color-main-bg);
 
@@ -77,7 +67,7 @@ const year = new Date().getFullYear();
 
       margin-inline: auto;
       padding: var(--space-l) var(--space-l) var(--space-xl) var(--space-l);
-      font-size: var(--font-size-meta);
+      font-size: var(--font-size-body);
       text-align: center;
       line-height: 1.6;
       /* The same three steps reset.css takes for the background this has to
@@ -106,8 +96,7 @@ const year = new Date().getFullYear();
       width: max-content;
     }
 
-    /* The whole hierarchy of the block: with one size and one ink to spend,
-       what marks the imprint is the tracking (ticket 19). */
+    /* With one size and one ink to spend, tracking is the whole hierarchy (ADR-0013). */
     .imprint {
       font-family: var(--font-display);
       font-weight: var(--font-weight-display);
@@ -126,19 +115,17 @@ const year = new Date().getFullYear();
       text-underline-offset: 0.15em;
     }
 
-    @media screen and (width < 48rem) {
+    @media screen and (width < 53.5rem) {
       .colophon {
         /* The reading column's own measure: the Colophon runs in the column
            rather than under it. */
         min-width: var(--reading-column-min);
         max-width: var(--reading-column-max);
-        /* Reading Mode drops the Toolbar to the foot of the viewport
-           (toolbar.css), where its own justification fails — below the
-           Colophon there are no already-read lines for it to cover. So the
-           Colophon reserves the rectangle the strip floats in, rather than
-           indenting itself out of the column to dodge it (ticket 19). */
+        /* Reserves the rectangle the Toolbar floats in, rather than indenting out
+           of the column to dodge it (ADR-0013). Reading Mode only: Paper Mode's
+           rail stands beside the Sheets, clear of normal flow. */
         padding-block-end: calc(
-          var(--toolbar-block-size) + var(--space-m) + var(--space-xl)
+          var(--toolbar-block-size) + var(--toolbar-inset) + var(--space-xl)
         );
       }
     }

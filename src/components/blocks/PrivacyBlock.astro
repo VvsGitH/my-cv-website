@@ -34,13 +34,12 @@ const { block } = Astro.props;
       color: var(--color-text);
     }
 
-    /* Spec US29: an approximation in a script face, never a scan of the
-       real signature. Self-hosted Primera Signature — see ticket 13. */
+    /* A script-face approximation, never a scan of the real signature (ADR-0012). */
     .signature {
       margin-block-start: var(--space-s);
       font-family: var(--font-signature);
       font-weight: var(--font-weight-signature);
-      font-size: 2rem;
+      font-size: var(--font-size-name);
       text-align: right;
       line-height: 1.6;
       color: var(--color-signature);

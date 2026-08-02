@@ -27,19 +27,18 @@ const { items } = Astro.props;
   @layer components {
     .bullets {
       margin-block-start: var(--bullet-gap, var(--space-s));
-      padding-inline-start: 0.22rem;
       line-height: var(--prose-leading);
       color: var(--color-text);
     }
 
     li {
-      padding-inline-start: 0.85rem;
-      text-indent: -0.85rem;
+      padding-inline-start: var(--bullet-list-pad-start);
+      text-indent: calc(var(--bullet-list-pad-start) * -1);
     }
 
     li::before {
       content: '•';
-      padding-inline-end: 0.45rem;
+      padding-inline-end: calc(var(--bullet-list-pad-start) - 0.35rem);
     }
   }
 </style>

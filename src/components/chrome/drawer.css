@@ -1,95 +1,140 @@
-/* Reading Mode's Drawer: the panel carrying the Aside's Blocks below 48rem.
-   Chrome, never paper (CONTEXT.md) — gone above the breakpoint and gone in
-   print. The control that opens it belongs to the Toolbar (ticket 07); this
-   file dresses the panel only.
-
-   A plain stylesheet rather than the scoped `<style>` the coding standards ask
-   for: what it dresses is a `.tsx` island, which Astro's scoping does not
-   reach. It joins the `components` layer so it sits in the same cascade as the
-   paper's own styles (layer order: src/styles/global.css). */
+/* The Drawer's dressing (ADR-0008). A plain stylesheet, not a scoped `<style>`,
+   because Astro's scoping does not reach a `.tsx` island (coding-standards). */
 
 @layer components {
   .drawer {
-    /* A dialog is centred by its own `margin: auto` and capped by its default
-       max-width/max-height; a Drawer is pinned to the inline start, full
-       height, and as wide as a phone can spare.
-
-       What a phone can spare changed in ticket 07: the Toolbar now rides the
-       panel's outer edge, so the panel has to leave room for it. 76vw keeps
-       ~54px of Toolbar plus its gap on screen at 320px, the narrowest width
-       this site targets; the 19rem cap keeps the measure readable on a
-       tablet-sized phone. Ticket 06 asked for "as wide as a phone can spare",
-       and this is the same reading of it with one more thing to spare for. */
-    width: min(19rem, 76vw);
+    position: fixed;
+    inset-block: 0;
+    inset-inline-start: 0;
+    /* Undoing the UA sheet, which would inset a panel meant to reach three edges. */
+    margin: 0;
     max-width: none;
     height: 100%;
     max-height: none;
-    margin: 0 auto 0 0;
+    width: var(--drawer-width);
+    /* Keeps the dialog's box fully covered by its children, for the light dismiss (ADR-0008). */
     padding: 0;
     border: 0;
+    display: flex;
+    flex-direction: column;
     background-color: var(--color-aside-bg);
     color: var(--color-text);
-    /* The scroll belongs to .drawer-body, not here: a scroll container clips
-       both axes, and the Toolbar copy this dialog carries sits *outside* the
-       panel's inline end (toolbar.css). */
-    overflow: visible;
     translate: -100% 0;
-    /* `allow-discrete` on display and overlay is what animates the *closing*
-       half: without it the dialog leaves the top layer on the first frame and
-       the panel disappears instead of sliding out. The reset collapses all of
-       this under `prefers-reduced-motion`. */
     transition:
-      translate 250ms ease,
-      display 250ms allow-discrete,
-      overlay 250ms allow-discrete;
+      translate var(--drawer-slide) ease,
+      display var(--drawer-slide),
+      overlay var(--drawer-slide);
+    /* Its own declaration so an engine without it drops only this line, keeping the slide. */
+    transition-behavior: allow-discrete;
+  }
+
+  /* Load-bearing: the author `display: flex` above beats the UA rule (hacks/2026-08-01 §1). */
+  .drawer:not([open]) {
+    display: none;
   }
 
   .drawer[open] {
     translate: 0 0;
   }
 
-  /* The opening frame. Without it the panel is already in place when the top
-     layer first paints it, and only the closing half animates. */
+  /* A transition needs a start value; `display: none` gives it none. */
   @starting-style {
     .drawer[open] {
       translate: -100% 0;
     }
   }
 
+  /* No literal fallback: it would mask the failure the backdrop test exists to catch. */
   .drawer::backdrop {
     background-color: color-mix(in oklab, var(--color-ink) 45%, transparent);
+    opacity: 0;
+    transition:
+      opacity var(--drawer-slide) ease,
+      overlay var(--drawer-slide);
+    transition-behavior: allow-discrete;
   }
 
+  .drawer[open]::backdrop {
+    opacity: 1;
+  }
+
+  @starting-style {
+    .drawer[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  /* The panel's own way out (ADR-0008). The sr-only `<h2>` beside it is out of
+     flow, so the close control is this row's only item. */
+  .drawer-head {
+    display: flex;
+    align-items: center;
+    gap: var(--space-m);
+    padding-block: var(--space-s) var(--space-m);
+    padding-inline: var(--space-l) var(--space-s);
+  }
+
+  .drawer-close {
+    margin-inline-start: auto;
+    width: var(--toolbar-button-size);
+    height: var(--toolbar-button-size);
+    padding: 0;
+    border: 0;
+    background: none;
+    color: var(--color-heading);
+    font-size: var(--font-size-button);
+    cursor: pointer;
+  }
+
+  /* `flex: 1` so the body covers everything the head leaves, for the light dismiss.
+     The scrollbar is dressed twice for want of a common syntax (hacks/2026-08-01 §2). */
   .drawer-body {
+    /* Local, not a token: nothing else here has a scrollbar to dress. */
+    --drawer-scrollbar-thumb: color-mix(in oklab, var(--color-muted) 55%, transparent);
+
+    flex: 1;
     display: flex;
     flex-direction: column;
-    height: 100%;
     overflow-y: auto;
-    padding: var(--space-m) var(--space-l) var(--space-xl);
+    padding: 0 var(--space-l) var(--space-xl);
+    scrollbar-width: thin;
+    scrollbar-color: var(--drawer-scrollbar-thumb) transparent;
   }
 
-  /* The Blocks arrive wrapped in `<astro-slot>` (Astro's own hydration
-     bookkeeping) and are flex items of this panel regardless, because Astro
-     ships `astro-slot { display: contents }` with the island.
+  .drawer-body::-webkit-scrollbar {
+    width: 9px;
+  }
 
-     The gap above a section heading is Sheet.astro's, scoped to the Aside
-     column these Blocks no longer sit in. Same scale step, one column. */
+  .drawer-body::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  .drawer-body::-webkit-scrollbar-thumb {
+    background-color: var(--drawer-scrollbar-thumb);
+    border-radius: 20px;
+  }
+
+  /* Sheet.astro's Aside gap, restated here because its scope does not reach the panel. */
   .drawer-body .block + .block > .section-heading {
     margin-block-start: var(--space-xl);
   }
 
-  /* Paper Mode has no Drawer. Hiding the dialog is not enough on its own — a
-     modal one left open would keep the paper behind it inert, which is why
-     ChromeIsland.tsx closes it at this same boundary. */
-  @media screen and (width >= 48rem) {
-    .drawer {
-      display: none;
+  /* The scroll lock `showModal()` does not apply (ADR-0008, hacks/2026-08-01 §3). */
+  html:has(.drawer[open]) {
+    overflow: hidden;
+  }
+
+  /* And the gutter that lock would otherwise reclaim, re-wrapping every line behind
+     the panel. Reading Mode only — the one tier with a Drawer. */
+  @media screen and (width < 53.5rem) {
+    html {
+      scrollbar-gutter: stable;
     }
   }
 }
 
 @layer print {
-  /* Chrome is never captured (CONTEXT.md). */
+  /* Chrome is never captured (CONTEXT.md). Second belt behind `.drawer:not([open])`. */
   @media print {
     .drawer {
       display: none;

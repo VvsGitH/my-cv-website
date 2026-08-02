@@ -23,7 +23,7 @@ const { lines, period } = Astro.props;
       display: flex;
       justify-content: space-between;
       align-items: start;
-      gap: 1rem;
+      gap: var(--space-s);
       margin-block-start: var(--space-s);
       font-family: var(--font-display);
       font-weight: var(--font-weight-display);
@@ -38,6 +38,12 @@ const { lines, period } = Astro.props;
     .period {
       flex: none;
       color: var(--color-muted);
+    }
+
+    @media screen and (width < 53.5rem) {
+      .group-meta {
+        flex-direction: column;
+      }
     }
   }
 </style>

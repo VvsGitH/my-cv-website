@@ -13,3 +13,6 @@ The downloadable CV PDF is produced at **build time** by a headless Chromium (Pl
 - The build needs headless Chromium in CI (`npx playwright install --with-deps`).
 - One PDF is rendered **per Locale**.
 - Byte-level reproducibility (qpdf, `SOURCE_DATE_EPOCH`) is deliberately skipped: the PDF is generated fresh in CI and never committed, so noisy diffs never arise.
+- **The capture is a recipe, not a call.** Every step in `scripts/render-captures.mjs` — the viewport, its ordering against `goto`, the print emulation, the image decode — exists because the alternative fails silently. **ADR-0009** records each one; read it before touching that script.
+- **Screen/PDF parity is provable, and was proved**: inflate both renderings' content streams and diff every positioned drawing operator. Both Locales came out with all 8112 operators identical. Reach for this whenever a change touches the `print` layer or the Sheet geometry.
+- **This ADR is why `text-box-trim` is refused** (ADR-0011): Firefox has not shipped it, so Chromium would capture the PDF tighter than Firefox renders the screen — the exact drift this decision exists to prevent. Any feature with that asymmetry falls the same way.

@@ -2,17 +2,7 @@
 import type { Column, CvContent, SheetNumber } from '../../content/types';
 import Block from './Block.astro';
 
-/**
- * One Sheet of the CV (CONTEXT.md: "Sheet") — a real 210mm × 297mm box
- * holding the cream Aside panel and the white Main column, each filled with
- * the Blocks that name it (Explicit Paging, ADR-0002). Blocks render in
- * content order.
- *
- * The A4 box is always physically real: responsive scaling is purely visual
- * via `--sheet-scale`, so print/PDF capture — which reads the untransformed
- * layout box via `@page` in global.css — is never affected by whatever scale
- * the screen happens to be showing.
- */
+/** One Sheet (CONTEXT.md), filled by Explicit Paging (ADR-0002) in content order. */
 interface Props {
   content: CvContent;
   sheet: SheetNumber;
@@ -23,133 +13,89 @@ const blocksIn = (column: Column) =>
   content.blocks.filter((block) => block.sheet === sheet && block.column === column);
 
 const asideBlocks = blocksIn('aside');
-// Reading Mode reads the Aside in the Drawer and keeps only the portrait in
-// the flow, so an Aside without one has nothing left to show and the styles
-// below drop it — an empty `complementary` is noise in the landmark outline.
-const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
 ---
 
-<div class="sheet-wrapper">
-  <div class="sheet">
-    <div class="columns">
-      <aside class="aside" data-carries-portrait={carriesPortrait ? '' : undefined}>
-        {asideBlocks.map((block) => <Block block={block} />)}
-      </aside>
-      <div class="main">{blocksIn('main').map((block) => <Block block={block} />)}</div>
-    </div>
+<div class="sheet">
+  <div class="columns">
+    <aside class="aside">
+      {asideBlocks.map((block) => <Block block={block} />)}
+    </aside>
+    <div class="main">{blocksIn('main').map((block) => <Block block={block} />)}</div>
   </div>
 </div>
 
 <style>
-  /* `components` layer (see global.css) — kept in the cascade-layer system so
-     a later `print`-layer rule can still override this without a specificity
-     fight; unlayered styles would always win otherwise. */
+  /* Wrapped, or an unlayered scoped style would outrank `print` (coding-standards). */
   @layer components {
-    .sheet-wrapper {
-      /* Paper is 1:1, and print never leaves this branch. A literal 1 on
-         purpose, not the computed one below — ticket 06, "Print parity was
-         measured".
-
-         Dynamic scaling via tan(atan2(a, b)) was removed post-ticket 06; see
-         ADR-0006. Sheets now stay at 210mm × 297mm in all screen modes, with
-         layout relying on breakpoints rather than responsive scaling. */
-      --sheet-scale: 1;
-
-      /* Reserves the visually scaled footprint in normal layout flow, since
-         `transform: scale()` on .sheet doesn't affect its layout box. */
-      width: calc(210mm * var(--sheet-scale));
-      height: calc(297mm * var(--sheet-scale));
-    }
-
     .sheet {
-      width: 210mm;
-      height: 297mm;
+      aspect-ratio: var(--sheet-ar);
+      width: var(--sheet-width);
+      height: auto;
       background: var(--color-main-bg);
-      transform: scale(var(--sheet-scale));
       transform-origin: top left;
     }
 
     .columns {
       display: grid;
       grid-template-areas: 'aside main';
-      grid-template-columns: var(--aside-width) var(--main-width);
+      grid-template-columns: var(--aside-width) 1fr;
       column-gap: var(--column-gap);
       height: 100%;
-      padding-inline: var(--aside-inset-inline) var(--sheet-pad-inline-end);
+      padding-inline: var(--sheet-pad-inline-start) var(--sheet-pad-inline-end);
     }
 
     .aside {
       grid-area: aside;
       display: flex;
       flex-direction: column;
-      /* The panel stops short of the page bottom, and its heading rules run
-         past the text column to the panel's own edge.
-
-         A fixed height, not `fit-content`: the panel is Sheet geometry and
-         must be identical on both Sheets. Sheet 2's content ends well above
-         it — the empty cream below the signature is intended, and a panel
-         that shrank to fit would read as a rendering bug in the PDF. */
+      /* Fixed, never `fit-content` — the panel is Sheet geometry (ADR-0011). */
       height: var(--aside-height);
       break-inside: avoid;
-      /* One of the four inputs to --main-first-heading-gap; see tokens.css. */
-      padding-block-start: var(--aside-pad-block-start);
+      /* The same inset as Main's, so the two columns start level (ADR-0011). */
+      padding-block-start: var(--sheet-pad-block-start);
       padding-inline: var(--aside-pad-inline-start) var(--aside-pad-inline-end);
       background-color: var(--color-aside-bg);
     }
 
     .main {
       grid-area: main;
-      padding-block-start: var(--main-inset-block-start);
+      padding-block-start: var(--sheet-pad-block-start);
     }
 
-    /* Gap above a new section — one value for both columns. The reference
-       hand-places these (40px in the Aside, 85.6px in Main); ticket 17
-       replaced both with the scale's top step. */
+    /* One value for both columns, replacing the reference's two (ADR-0011). */
     .aside :global(.block > .section-heading),
     .main :global(.block > .section-heading) {
       margin-block-start: var(--space-xl);
     }
 
-    /* Needs the column prefix: the rule above is scoped (Astro adds an
-       attribute to `.aside`/`.main`), so an unprefixed override would lose on
-       specificity and the first section would gain a gap. */
+    /* The column prefix is load-bearing specificity (hacks/2026-08-01 §9). */
     .aside :global(.block:first-child > .section-heading),
     .main :global(.block:first-child > .section-heading) {
       margin-block-start: 0;
     }
 
-    /* Main's first heading is aligned to the Aside's rather than spaced from
-       the header — the one gap off the scale, derived in tokens.css. */
-    .main :global(.block--header + .block > .section-heading) {
-      margin-block-start: var(--main-first-heading-gap);
+    /* Main's opening Block answers to the Aside's portrait, so the two columns'
+       first section headings land on one line through --space-xl like every other. */
+    .main :global(.block--header) {
+      min-block-size: var(--photo-size);
     }
 
-    /* Aside only: the rules reach the panel edge, though the text column
-       stops short of it. */
+    /* Aside only: the rules reach the panel edge, the text column does not. */
     .aside :global(.block > .section-heading) {
       margin-inline-end: calc(-1 * var(--aside-pad-inline-end));
     }
 
-    /* -----------------------------------------------------------------------
-       Reading Mode (CONTEXT.md), below 48rem: A4 is abandoned. Every box
-       between the reading column and the Blocks steps out of the flow, so the
-       Blocks of both Sheets become the items of Document.astro's single grid
-       — which is how "the same components reflow" rather than a second
-       rendering of the CV (ADR-0004 anticipated the A4 box being dismantled
-       here). `display: contents` also drops the panel, its inset, the column
-       gap and the A4 footprint in one move, with nothing left to unset.
-       ----------------------------------------------------------------------- */
-    @media screen and (width < 48rem) {
-      .sheet-wrapper,
+    /* Reading Mode: A4 is abandoned, so every box between the reading column and
+       the Blocks steps out of the flow and the Blocks of both Sheets become items
+       of Document.astro's single grid (ADR-0004). */
+    @media screen and (width < 53.5rem) {
       .sheet,
       .columns,
       .aside {
         display: contents;
       }
 
-      /* The Aside's Blocks are read in the Drawer down here (chrome/Drawer).
-         The portrait is the exception: it stays in the flow and opens the
-         compact header, ahead of every other Block. */
+      /* Read in the Drawer down here (ADR-0008); the portrait is the exception. */
       .aside > :global(.block:not(.block--photo)) {
         display: none;
       }
@@ -160,25 +106,31 @@ const carriesPortrait = asideBlocks.some((block) => block.kind === 'photo');
       }
 
       .main {
-        /* `grid-area: main` names a line of the Sheet's own two-column grid,
-           which has just stepped out of the flow: left standing, it places
-           Main in an implicit column of the *reading* grid and drags the
-           column off-centre. */
+        /* Left standing, it would place Main in an implicit column of the
+           reading grid and drag the column off-centre. */
         grid-area: auto;
         padding-block-start: 0;
       }
 
-      /* In reading mode there's only one long page. The heading should keep the default spacing with
-         the elements above, event if they are from a different sheet */
+      /* One long page down here, so the gap holds across the Sheet boundary too. */
       .main :global(.block:first-child > .section-heading) {
         margin-block-start: var(--space-xl);
       }
 
-      /* --main-first-heading-gap exists to align Main's first heading with the
-         Aside's; with no Aside beside it the derived value means nothing (and
-         with Reading Mode's smaller portrait it goes negative). */
-      .main :global(.block--header + .block > .section-heading) {
-        margin-block-start: var(--space-xl);
+      /* With no Aside beside it there is nothing to answer to. */
+      .main :global(.block--header) {
+        min-block-size: auto;
+      }
+    }
+  }
+
+  @layer print {
+    /* `zoom`, not `transform: scale()`: Chrome rasterizes a transformed subtree
+       into an XObject when printing, and the PDF loses every /Font — `zoom`
+       scales at layout time, so the paper stays selectable text. */
+    @media print {
+      .sheet {
+        zoom: calc(210mm / var(--sheet-width));
       }
     }
   }

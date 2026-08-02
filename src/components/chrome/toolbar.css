@@ -1,18 +1,16 @@
-/* The Toolbar (CONTEXT.md: "Toolbar") — the floating cluster of the site's
-   four actions, plus the Drawer's toggle below 48rem. Chrome, never paper:
-   gone in print.
-
-   A plain stylesheet rather than the scoped `<style>` the coding standards ask
-   for, for the same reason drawer.css is one: what it dresses is a `.tsx`
-   island, which Astro's scoping does not reach. It joins the `components`
-   layer so it sits in the same cascade as the paper's own styles (layer order:
-   src/styles/global.css). */
+/* The Toolbar's dressing (ADR-0008). A plain stylesheet, not a scoped `<style>`,
+   because Astro's scoping does not reach a `.tsx` island (coding-standards). */
 
 @layer components {
   .toolbar {
-    /* --toolbar-button-size and the strip height derived from it live in
-       tokens.css: the Colophon reserves this strip's berth in Reading Mode
-       (ticket 19) and cannot be left to remember the number. */
+    /* The base shape is Paper Mode's vertical rail; Reading Mode flips it below
+       (ADR-0008). Sizes are tokens because the Colophon reserves this cluster's
+       berth and cannot be left to remember the numbers (ADR-0013). */
+    position: fixed;
+    inset-inline-start: var(--toolbar-inset);
+    inset-block-start: 50%;
+    translate: 0 -50%;
+    z-index: 1;
     display: flex;
     flex-direction: column;
     gap: var(--space-xs);
@@ -21,47 +19,6 @@
     border-radius: 2px;
     background-color: var(--color-aside-bg);
     box-shadow: 0 1px 6px color-mix(in oklab, var(--color-ink) 18%, transparent);
-  }
-
-  /* Left edge, vertically centred (ticket 07) — over the page's margin on the
-     Paper tiers, except at the bottom of the Medium tier, where an unscaled A4
-     Sheet already fills the viewport (ADR-0006) and there is no margin left to
-     float over. Reading Mode moves it to the bottom; see below. */
-  .toolbar--page {
-    position: fixed;
-    inset-block-start: 50%;
-    inset-inline-start: var(--space-m);
-    z-index: 1;
-    transform: translateY(-50%);
-    /* The delay is the Drawer's slide-out (drawer.css): coming back, this
-       copy waits for the other one to leave, so the two never overlap. */
-    transition: opacity 150ms ease 250ms;
-  }
-
-  .toolbar--page[data-drawer-open] {
-    opacity: 0;
-    transition: opacity 100ms ease;
-  }
-
-  /* reset.css collapses transition *durations* under reduced motion, which
-     leaves the delay above standing — the Toolbar would sit invisible for a
-     quarter second after the Drawer closed. */
-  @media (prefers-reduced-motion: reduce) {
-    .toolbar--page {
-      transition-delay: 0ms;
-    }
-  }
-
-  /* The copy that rides the Drawer — pinned just outside the panel's inline
-     end, so the panel's own transition carries it. ChromeIsland explains why
-     it exists. The dialog is `display: none` in Paper Mode, which is all that
-     keeps this copy off a desktop screen. */
-  .toolbar--drawer {
-    position: absolute;
-    inset-block-start: 50%;
-    inset-inline-start: 100%;
-    margin-inline-start: var(--space-m);
-    transform: translateY(-50%);
   }
 
   .toolbar-button {
@@ -74,24 +31,19 @@
     border-radius: 2px;
     background: none;
     color: var(--color-heading);
-    font-size: 1.125rem;
+    font-size: var(--font-size-button);
     cursor: pointer;
   }
 
-  /* Gated on a real hover: a tap leaves :hover stuck on the control a phone
-     visitor last touched, which reads as a selected state it is not. */
+  /* Gated: a tap otherwise leaves :hover stuck on the control last touched. */
   @media (hover: hover) {
     .toolbar-button:hover {
       background-color: var(--color-photo-circle);
     }
   }
 
-  /* The theme control shows — and is named after — the theme it switches
-     *to*. Both glyphs and both names ship, and the choice between them is
-     made here, off the attribute BaseLayout's inline script writes before the
-     first paint. Driving either from the island instead would leave a
-     returning dark-theme visitor with the light control's icon and, worse,
-     the light control's accessible name until `client:idle` fires. */
+  /* Both glyphs and both names ship; CSS picks, so the control is right before
+     hydration rather than after it (ADR-0003). */
   .toolbar-theme .icon-sun,
   .toolbar-theme .toolbar-theme-to-light {
     display: none;
@@ -107,6 +59,7 @@
     display: block;
   }
 
+  /* Centred and cleared on the two axes the cluster is not using; both flip below. */
   .toolbar-toast {
     position: absolute;
     inset-block-start: 50%;
@@ -119,9 +72,7 @@
     color: var(--color-main-bg);
     font-size: var(--font-size-meta);
     white-space: nowrap;
-    /* Opacity, not `display` or `visibility`: the live region has to stay in
-       the accessibility tree between announcements, or the browser has no
-       region to announce a change in. */
+    /* Opacity, not `display`: a live region must stay in the a11y tree to announce. */
     opacity: 0;
     pointer-events: none;
     transition: opacity 150ms ease;
@@ -131,37 +82,41 @@
     opacity: 1;
   }
 
-  /* The Drawer's copy has no room on that side — it is already the rightmost
-     thing on a phone screen — so its toast opens back across the panel. */
-  .toolbar--drawer .toolbar-toast {
-    inset-inline: auto 100%;
-    margin-inline: 0 var(--space-s);
-  }
-
-  /* Paper Mode has no Drawer, so it has no toggle. */
-  @media screen and (width >= 48rem) {
+  @media screen and (width >= 53.5rem) {
+    /* Paper Mode has no Drawer, so it has no toggle. */
     .toolbar-drawer {
       display: none;
     }
   }
 
-  /* Reading Mode is the one tier where the column reaches the Toolbar's edge,
-     so the strip drops to the bottom rather than pushing the text aside: it
-     covers the lines a reader has already passed instead of the ones under
-     their eye, and the measure stays full width. Both copies move together —
-     the Drawer's still rides the panel's outer edge. */
-  @media screen and (width < 48rem) {
-    .toolbar--page,
-    .toolbar--drawer {
-      inset-block: auto var(--space-m);
-      transform: none;
+  /* Reading Mode turns the cluster on its side against the bottom edge, and is the
+     only tier needing a `scroll-padding` counterpart for WCAG 2.4.11 (ADR-0008,
+     which also records the rail's open overlap defect in Paper Mode). */
+  @media screen and (width < 53.5rem) {
+    .toolbar {
+      inset-block: auto var(--toolbar-inset);
+      flex-direction: row;
+      inset-inline-start: 50%;
+      translate: -50% 0;
+    }
+
+    /* Both axes flip with the cluster. */
+    .toolbar-toast {
+      inset-block: auto 100%;
+      inset-inline-start: 50%;
+      translate: -50% 0;
+      margin-inline-start: 0;
+      margin-block: 0 var(--space-s);
+    }
+
+    :root {
+      scroll-padding-block-end: calc(var(--toolbar-block-size) + 2 * var(--toolbar-inset));
     }
   }
 }
 
 @layer print {
-  /* Chrome is never captured (CONTEXT.md). Fixed-position chrome would
-     otherwise print on the first page. */
+  /* Chrome is never captured (CONTEXT.md). */
   @media print {
     .toolbar {
       display: none;

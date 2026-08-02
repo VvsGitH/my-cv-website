@@ -1,29 +1,24 @@
 import { existsSync } from 'node:fs';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { ui } from '../src/i18n/ui';
-import { drawer, openPainted, pageToolbar, sheet, VIEWPORTS } from './support/page';
+import { drawer, openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
 import { distPathForHref, LOCALES, otherLocale, routeFor } from './support/site';
 
-// Share copies through the async Clipboard API, which silently no-ops on a
-// denied permission — the toast would never appear and the test would read as a
-// broken button rather than a missing grant.
+// The Clipboard API silently no-ops on a denied permission, which would read as
+// a broken button rather than a missing grant.
 test.use({ permissions: ['clipboard-read', 'clipboard-write'] });
 
-/**
- * The Toolbar ships twice — once on the page, once inside the Drawer's dialog
- * (ChromeIsland) — so each action has to be reached through one copy or the
- * other. These are the page's.
- */
+/** There is one Toolbar, and these are its five controls. */
 const actions = (page: Page) => {
-  const toolbar = pageToolbar(page);
+  const strip = toolbar(page);
   return {
-    drawer: toolbar.locator('.toolbar-drawer'),
-    language: toolbar.locator('a[hreflang]'),
-    download: toolbar.locator('a[download]'),
+    drawer: strip.locator('.toolbar-drawer'),
+    language: strip.locator('a[hreflang]'),
+    download: strip.locator('a[download]'),
     // The only Toolbar button with no modifier class of its own.
-    share: toolbar.locator('button.toolbar-button:not(.toolbar-drawer):not(.toolbar-theme)'),
-    theme: toolbar.locator('.toolbar-theme'),
-    toast: toolbar.locator('.toolbar-toast'),
+    share: strip.locator('button.toolbar-button:not(.toolbar-drawer):not(.toolbar-theme)'),
+    theme: strip.locator('.toolbar-theme'),
+    toast: strip.locator('.toolbar-toast'),
   };
 };
 
@@ -44,11 +39,9 @@ for (const locale of LOCALES) {
       await expect(action.language).toHaveAccessibleName(toolbar.language);
       await expect(action.download).toHaveAccessibleName(toolbar.download);
       await expect(action.share).toHaveAccessibleName(toolbar.share);
-      // The theme action names the theme it switches *to*, and both names ship
-      // in the markup — CSS picks between them off `<html data-theme>`.
+      // Both theme names ship; CSS picks between them (ADR-0003).
       await expect(action.theme).toHaveAccessibleName(toolbar.themeToDark);
-      // Four actions on paper; the Drawer's toggle is the fifth, and it belongs
-      // to Reading Mode alone (CONTEXT.md: "Toolbar").
+      // Four on paper, five in Reading Mode (CONTEXT.md).
       await expect(action.drawer).toBeHidden();
     });
 
@@ -56,16 +49,13 @@ for (const locale of LOCALES) {
       const { drawer: drawerStrings, toolbar } = ui[locale];
       const action = actions(page);
 
-      // `title` does produce an accessible name, but it is the last resort in
-      // the accname chain and never surfaces on touch (ticket 19).
+      // `title` names a control, but only as the accname chain's last resort (ADR-0013).
       await expect(action.drawer).toHaveAttribute('aria-label', drawerStrings.open);
       await expect(action.language).toHaveAttribute('aria-label', toolbar.language);
       await expect(action.download).toHaveAttribute('aria-label', toolbar.download);
       await expect(action.share).toHaveAttribute('aria-label', toolbar.share);
 
-      // The theme control is the documented exception: its name has to be
-      // right before hydration, so it comes from the pair of visually-hidden
-      // labels CSS chooses between, and an aria-label would silence them.
+      // The documented exception: an aria-label would silence the sr-only pair (ADR-0003).
       await expect(action.theme).not.toHaveAttribute('aria-label', /./);
     });
 
@@ -77,8 +67,7 @@ for (const locale of LOCALES) {
         await expect(target).toBeFocused();
       }
 
-      // Focus alone is not operability: the two buttons have to fire from the
-      // keyboard too, and each reports back somewhere observable.
+      // Focus alone is not operability — they have to fire, and report back.
       await action.theme.focus();
       await page.keyboard.press('Enter');
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
@@ -126,8 +115,7 @@ for (const locale of LOCALES) {
       await expect(html).toHaveAttribute('data-theme', 'dark');
 
       expect(await backgroundOf(page.locator('body')), 'the page backdrop').not.toBe(before.body);
-      // Spec US17: the CV is a document, and the paper is read off white in
-      // both themes.
+      // The paper stays white in both themes.
       expect(await backgroundOf(paper), 'the Sheet surface').toBe(before.sheet);
       expect(await backgroundOf(panel), 'the Aside panel').toBe(before.aside);
     });
@@ -138,7 +126,7 @@ for (const locale of LOCALES) {
 
       await openPainted(page, routeFor(locale));
 
-      // Applied pre-paint by the inline script in BaseLayout, not on hydration.
+      // Applied pre-paint by BaseLayout's inline script, not on hydration.
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     });
 
@@ -164,50 +152,169 @@ test('offers a different PDF in each Locale', async ({ page }) => {
   const italian = await offered('it');
   const english = await offered('en');
 
-  // Which file holds which Locale's words is pdf.spec's job; this is only that
-  // the two links do not point at one file.
+  // Which file holds which Locale's words is pdf.spec's job.
   expect(italian).not.toBe(english);
 });
 
+/** WCAG 2.2 · 2.4.11, at both tiers. In Paper Mode it is the only thing standing behind it (ADR-0008). */
+const expectNoControlBehindTheToolbar = async (page: Page): Promise<void> => {
+  const targets = await page.locator(':is(a[href], button):visible').all();
+  expect(targets.length, 'the page should have something to tab through').toBeGreaterThan(3);
+
+  const obscured: string[] = [];
+  for (const target of targets) {
+    await target.focus();
+    const verdict = await target.evaluate((element) => {
+      // The Toolbar's own controls are inside the cluster by definition.
+      if (element.closest('.toolbar')) return null;
+
+      const cluster = document.querySelector('.toolbar')!.getBoundingClientRect();
+      const box = element.getBoundingClientRect();
+      const hidden =
+        box.left >= cluster.left &&
+        box.right <= cluster.right &&
+        box.top >= cluster.top &&
+        box.bottom <= cluster.bottom;
+
+      return hidden ? (element.textContent?.trim().slice(0, 40) ?? '(unnamed)') : null;
+    });
+
+    if (verdict) obscured.push(verdict);
+  }
+
+  expect(obscured, 'focusing these scrolled them under the Toolbar').toEqual([]);
+};
+
+/** What `scroll-padding-block-end` has to clear. Reading Mode only (ADR-0008). */
+const toolbarReach = (page: Page): Promise<number> =>
+  toolbar(page).evaluate((element) => innerHeight - element.getBoundingClientRect().top);
+
 test.describe('Focus Not Obscured', () => {
-  // WCAG 2.2 · 2.4.11 (Minimum), against the one tier where the Toolbar floats
-  // over the reading column rather than over a margin (ticket 19).
-  test.use({ viewport: { width: 368, height: VIEWPORTS.reading.height } });
+  test.describe('Reading Mode', () => {
+    test.use({ viewport: { width: 368, height: VIEWPORTS.reading.height } });
 
-  test('never parks a focused control entirely behind the Toolbar', async ({ page }) => {
-    await openPainted(page, routeFor('it'));
+    test('never parks a focused control entirely behind the Toolbar', async ({ page }) => {
+      await openPainted(page, routeFor('it'));
+      await expectNoControlBehindTheToolbar(page);
+    });
 
-    const targets = await page.locator(':is(a[href], button):visible').all();
-    expect(targets.length, 'the page should have something to tab through').toBeGreaterThan(3);
+    // Asserted on its own, because the sweep above would pass without the rule.
+    test('scroll-pads the bottom edge by the whole cluster', async ({ page }) => {
+      await openPainted(page, routeFor('it'));
 
-    const obscured: string[] = [];
-    for (const target of targets) {
-      await target.focus();
-      const verdict = await target.evaluate((element) => {
-        // The Toolbar's own controls live inside the strip by definition.
-        if (element.closest('.toolbar')) return null;
+      const padding = await page
+        .locator('html')
+        .evaluate((element) => getComputedStyle(element).scrollPaddingBottom);
 
-        const strip = document.querySelector('.toolbar--page')!.getBoundingClientRect();
-        const box = element.getBoundingClientRect();
-        const hidden =
-          box.left >= strip.left &&
-          box.right <= strip.right &&
-          box.top >= strip.top &&
-          box.bottom <= strip.bottom;
+      expect(padding).not.toBe('auto');
+      expect(Number.parseFloat(padding)).toBeGreaterThanOrEqual(await toolbarReach(page));
+    });
+  });
 
-        return hidden ? (element.textContent?.trim().slice(0, 40) ?? '(unnamed)') : null;
-      });
+  test.describe('Paper Mode', () => {
+    // The rail is a new obscuring surface (ADR-0008).
+    test.use({ viewport: VIEWPORTS.paper });
 
-      if (verdict) obscured.push(verdict);
-    }
-
-    expect(obscured, 'focusing these scrolled them under the Toolbar').toEqual([]);
+    test('never parks a focused control entirely behind the Toolbar', async ({ page }) => {
+      await openPainted(page, routeFor('it'));
+      await expectNoControlBehindTheToolbar(page);
+    });
   });
 });
 
+/** One cluster, one shape per tier (ADR-0008). */
+test.describe('one cluster per tier', () => {
+  const controlsOf = (page: Page) =>
+    toolbar(page).locator(':scope > .toolbar-button:visible').evaluateAll((controls) =>
+      controls.map((control) => {
+        const box = control.getBoundingClientRect();
+        return { x: Math.round(box.x), y: Math.round(box.y) };
+      }),
+    );
+
+  test('runs its controls in one horizontal row in Reading Mode', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.reading);
+    await openPainted(page, routeFor('it'));
+
+    const row = await controlsOf(page);
+
+    // Five: the four actions plus the Drawer's toggle (CONTEXT.md).
+    expect(row).toHaveLength(5);
+    expect(new Set(row.map((control) => control.y)).size, 'distinct rows').toBe(1);
+    expect(new Set(row.map((control) => control.x)).size, 'distinct columns').toBe(5);
+  });
+
+  test('stacks its controls in one vertical rail in Paper Mode', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.paper);
+    await openPainted(page, routeFor('it'));
+
+    const rail = await controlsOf(page);
+
+    // Four, in one column: Paper Mode has no Drawer, so it has no toggle.
+    expect(rail).toHaveLength(4);
+    expect(new Set(rail.map((control) => control.x)).size, 'distinct columns').toBe(1);
+    expect(new Set(rail.map((control) => control.y)).size, 'distinct rows').toBe(4);
+  });
+
+  test('floats beside the page without moving the paper in Paper Mode', async ({ page }) => {
+    await page.setViewportSize(VIEWPORTS.paper);
+    await openPainted(page, routeFor('it'));
+
+    const rail = (await toolbar(page).boundingBox())!;
+    const viewport = VIEWPORTS.paper;
+
+    // A rail, not a sidebar.
+    expect(rail.width).toBeLessThan(viewport.width / 3);
+    // Against the inline start, centred on the block axis.
+    expect(rail.x, 'against the inline start').toBeLessThan(viewport.width / 4);
+    expect(rail.y + rail.height / 2, 'centred on the viewport').toBeCloseTo(
+      viewport.height / 2,
+      0,
+    );
+
+    // Out of flow, so Sheet 1 starts at its own margin, not the rail's.
+    const paperTop = (await sheet(page, 1).boundingBox())!.y;
+    const withoutToolbar = await page.evaluate(() => {
+      const cluster = document.querySelector<HTMLElement>('.toolbar')!;
+      cluster.style.display = 'none';
+      const top = document.querySelector('.sheet')!.getBoundingClientRect().top;
+      cluster.style.removeProperty('display');
+      return top;
+    });
+
+    expect(paperTop).toBeCloseTo(withoutToolbar, 1);
+  });
+});
+
+/**
+ * Escape, the focus trap and the focus return are the platform's (ADR-0008).
+ * What these cover is what is still this project's: the way out inside the panel,
+ * the CSS scroll lock, the light dismiss, and the Paper Mode guard.
+ */
 test.describe('Drawer', () => {
-  // The Drawer is Reading Mode only; its toggle is display:none above 48rem.
+  // The Drawer is Reading Mode only; its toggle is display:none above 53.5rem.
   test.use({ viewport: VIEWPORTS.reading });
+
+  const toggle = (page: Page): Locator => toolbar(page).locator('.toolbar-drawer');
+  const closeControl = (page: Page): Locator => drawer(page).locator('.drawer-close');
+
+  /** The tab order is the only evidence of inertness: the browser exposes no attribute. */
+  const controlsReachedByTab = async (page: Page, presses: number): Promise<string[]> => {
+    const reached: string[] = [];
+
+    for (let press = 0; press < presses; press += 1) {
+      await page.keyboard.press('Tab');
+      const escapee = await page.evaluate(() => {
+        const active = document.activeElement;
+        if (!active || active === document.body || active.closest('.drawer')) return null;
+        return `${active.tagName.toLowerCase()}.${active.className}`;
+      });
+
+      if (escapee) reached.push(escapee);
+    }
+
+    return reached;
+  };
 
   for (const locale of LOCALES) {
     test(`opens and closes from the keyboard in ${locale}, and hands focus back`, async ({
@@ -216,28 +323,173 @@ test.describe('Drawer', () => {
       await openPainted(page, routeFor(locale));
 
       const strings = ui[locale].drawer;
-      const toggle = pageToolbar(page).locator('.toolbar-drawer');
+      const control = toggle(page);
       const panel = drawer(page);
 
       await expect(panel).toBeHidden();
-      await expect(toggle).toHaveAttribute('aria-haspopup', 'dialog');
-      await expect(toggle).toHaveAccessibleName(strings.open);
+      await expect(control).toHaveAttribute('aria-haspopup', 'dialog');
+      await expect(control).toHaveAccessibleName(strings.open);
 
-      await toggle.focus();
+      await control.focus();
       await page.keyboard.press('Enter');
 
       await expect(panel).toBeVisible();
       await expect(panel).toHaveAccessibleName(strings.name);
-      await expect(toggle).toHaveAccessibleName(strings.close);
+      // The name is computed from a real sr-only `<h2>`, not an `aria-label` (ADR-0008).
+      await expect(panel.locator('.drawer-title')).toHaveText(strings.name);
+      // `autofocus` on the way out, or markup order becomes the focus policy (ADR-0008).
+      await expect(closeControl(page)).toBeFocused();
       // The Aside's Blocks are read here once the paper stops showing them.
       await expect(panel.locator('.block--about')).toBeVisible();
 
-      // Escape, the focus trap and the focus return are the platform's, because
-      // the panel is a native dialog opened with showModal() (ChromeIsland).
       await page.keyboard.press('Escape');
 
       await expect(panel).toBeHidden();
-      await expect(toggle).toBeFocused();
+      await expect(control).toBeFocused();
+    });
+
+    test(`names and closes from the panel's own head in ${locale}`, async ({ page }) => {
+      await openPainted(page, routeFor(locale));
+
+      const strings = ui[locale].drawer;
+
+      await toggle(page).click();
+      await expect(drawer(page)).toBeVisible();
+
+      // Announced, never shown, so the head row is the close control alone (ADR-0008).
+      await expect(drawer(page).locator('.drawer-title')).toHaveText(strings.name);
+      await expect(closeControl(page)).toHaveAccessibleName(strings.close);
+
+      await closeControl(page).click();
+
+      await expect(drawer(page)).toBeHidden();
+      await expect(toggle(page)).toBeFocused();
     });
   }
+
+  test('holds the paper and the Colophon inert while it is open, without an attribute', async ({
+    page,
+  }) => {
+    await openPainted(page, routeFor('it'));
+
+    const html = page.locator('html');
+    // A count of 0 fails loudly if ADR-0007's hand-built machinery ever comes back.
+    const inerted = page.locator('body > [inert]');
+
+    await expect(inerted).toHaveCount(0);
+    await expect(html).not.toHaveCSS('overflow', 'hidden');
+
+    await toggle(page).click();
+    await expect(drawer(page)).toBeVisible();
+
+    await expect(inerted).toHaveCount(0);
+    // The one thing showModal() does not do (hacks/2026-08-01 §3).
+    await expect(html).toHaveCSS('overflow', 'hidden');
+
+    expect(
+      await controlsReachedByTab(page, 12),
+      'Tab reached these from inside the open panel',
+    ).toEqual([]);
+
+    await page.keyboard.press('Escape');
+
+    await expect(drawer(page)).toBeHidden();
+    await expect(html).not.toHaveCSS('overflow', 'hidden');
+  });
+
+  test('does not widen the reading column when it locks the scroll', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+
+    // The property itself: a headless browser may have no gutter to reclaim, which
+    // would let the geometry below pass without the rule being there at all.
+    await expect(page.locator('html')).toHaveCSS('scrollbar-gutter', 'stable');
+
+    const columnWidth = () =>
+      page.locator('.sheets').evaluate((element) => element.getBoundingClientRect().width);
+    const before = await columnWidth();
+
+    await toggle(page).click();
+    await expect(drawer(page)).toBeVisible();
+
+    // Without the reserved gutter the lock re-wraps every line behind the panel.
+    expect(await columnWidth(), 'the column behind the open panel').toBe(before);
+
+    await page.keyboard.press('Escape');
+    await expect(drawer(page)).toBeHidden();
+    expect(await columnWidth(), 'the column once the panel has gone').toBe(before);
+  });
+
+  test('holds the Toolbar inert behind the open panel', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+
+    await toggle(page).click();
+    await expect(drawer(page)).toBeVisible();
+
+    // The exact inversion of ADR-0007's headline property, and ADR-0008's whole price.
+    expect(await controlsReachedByTab(page, 12), 'Tab reached the Toolbar').toEqual([]);
+
+    // A click aimed at a control reaches the backdrop, and reads as a dismissal.
+    await actions(page).theme.click({ force: true });
+
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+    await expect(drawer(page)).toBeHidden();
+    await expect(toggle(page)).toBeFocused();
+  });
+
+  test('closes on a click beside the panel', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+
+    await toggle(page).click();
+    await expect(drawer(page)).toBeVisible();
+
+    // Absolute coordinates: `::backdrop` hit-tests to the dialog, and has no element.
+    const beside = await drawer(page).evaluate((panel) => panel.getBoundingClientRect().right + 30);
+    await page.mouse.click(beside, 400);
+
+    await expect(drawer(page)).toBeHidden();
+    await expect(toggle(page)).toBeFocused();
+  });
+
+  test('draws the backdrop behind the open panel', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+
+    await toggle(page).click();
+    await expect(drawer(page)).toBeVisible();
+
+    // The tint itself, not merely "not transparent": an engine that did not inherit
+    // the custom property into `::backdrop` would drop the declaration, leaving a
+    // backdrop that is still hit-testable and only colourless.
+    const { fill, tint } = await drawer(page).evaluate((panel) => {
+      const probe = document.createElement('span');
+      const ink = getComputedStyle(document.documentElement).getPropertyValue('--color-ink');
+      probe.style.backgroundColor = `color-mix(in oklab, ${ink} 45%, transparent)`;
+      document.body.append(probe);
+      const tinted = getComputedStyle(probe).backgroundColor;
+      probe.remove();
+
+      return { fill: getComputedStyle(panel, '::backdrop').backgroundColor, tint: tinted };
+    });
+
+    expect(fill).not.toBe('rgba(0, 0, 0, 0)');
+    expect(fill).toBe(tint);
+  });
+
+  test('closes itself when the window grows into Paper Mode', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+
+    await toggle(page).click();
+    await expect(drawer(page)).toBeVisible();
+
+    await page.setViewportSize(VIEWPORTS.paper);
+
+    // Guards against a permanently dead page (hacks/2026-08-01 §4).
+    await expect(drawer(page)).toBeHidden();
+    await expect(drawer(page)).not.toHaveAttribute('open', /.*/);
+    await expect(page.locator('html')).not.toHaveCSS('overflow', 'hidden');
+
+    // Scrollable and focusable again, which is what "not blocked" means.
+    const theme = actions(page).theme;
+    await theme.click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+  });
 });

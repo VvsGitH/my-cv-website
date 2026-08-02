@@ -2,12 +2,12 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { cv } from '../src/content';
 import type { Locale } from '../src/content/types';
 import { ui } from '../src/i18n/ui';
-import { openPainted, pageToolbar, sheet, VIEWPORTS } from './support/page';
+import { openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
 import { readPdf, withoutWhitespace } from './support/pdf';
 import { distPathForHref, LOCALES, otherLocale, routeFor } from './support/site';
 
 /**
- * The Colophon (CONTEXT.md) — what the site says about itself, ticket 19.
+ * The Colophon (CONTEXT.md) — what the site says about itself (ADR-0013).
  *
  * `contentinfo` is the locator throughout rather than a class: a `<footer>`
  * maps to that role only while it is outside `<main>`, so finding it by role
@@ -87,7 +87,7 @@ for (const locale of LOCALES) {
     });
 
     test('signs the site off in the owner’s name', async ({ page }) => {
-      // The year comes from the build and moves on its own (ticket 19), so it
+      // The year comes from the build and moves on its own (ADR-0013), so it
       // is deliberately not asserted — only the notice and whose it is.
       await expect(colophon(page)).toContainText('©');
       await expect(colophon(page)).toContainText(headerOf(locale).name);
@@ -130,7 +130,7 @@ for (const locale of LOCALES) {
       expect(light.fontSize, 'the Colophon should not be set below 12px').toBeGreaterThanOrEqual(12);
       expect(light.ratio, 'the Colophon against the light page').toBeGreaterThanOrEqual(4.5);
 
-      await pageToolbar(page).locator('.toolbar-theme').click();
+      await toolbar(page).locator('.toolbar-theme').click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
       const dark = await readability(page);
@@ -138,7 +138,7 @@ for (const locale of LOCALES) {
     });
 
     test('keeps its words out of the PDF', async ({ page }) => {
-      const href = await pageToolbar(page).locator('a[download]').getAttribute('href');
+      const href = await toolbar(page).locator('a[download]').getAttribute('href');
       const report = await readPdf(distPathForHref(href!));
 
       const words = [
@@ -183,10 +183,10 @@ test.describe('Reading Mode', () => {
   });
 
   test('leaves the Toolbar its berth at the foot of the scroll', async ({ page }) => {
-    await expect(pageToolbar(page)).toBeVisible();
+    await expect(toolbar(page)).toBeVisible();
 
     const covered = await page.evaluate(() => {
-      const strip = document.querySelector('.toolbar--page')!.getBoundingClientRect();
+      const strip = document.querySelector('.toolbar')!.getBoundingClientRect();
       return [...document.querySelectorAll('footer :is(p, li)')]
         .filter((element) => {
           const box = element.getBoundingClientRect();

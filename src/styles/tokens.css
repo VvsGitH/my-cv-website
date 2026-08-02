@@ -1,10 +1,5 @@
 :root {
-  /* =========================================================================
-   Colors from spec.md's Design tokens table, converted sRGB hex -> OKLCH
-   (round-tripped to confirm an exact match before committing to these
-   values). Sheets stay white paper in both themes — only the background
-   behind the Sheets switches (`--color-dark-bg`, applied in reset.css). 
-   ========================================================================= */
+  /* --- Colors. Only --color-dark-bg varies by theme; Sheets stay white paper. --- */
 
   --color-heading: oklch(33.22% 0.0228 264.2); /* #303642 */
   --color-text: oklch(40% 0.0051 301.29); /* #48474a */
@@ -15,157 +10,121 @@
   --color-main-bg: oklch(100% 0 89.88); /* #ffffff */
   --color-dark-bg: oklch(25.84% 0.0295 259.07); /* #1b2432 */
 
-  /* Unfilled part of a Languages proficiency bar. Absent from spec.md's
-     table — sampled off CV_page2.png during ticket 05 (the filled part is
-     --color-muted). */
+  /* Sampled off CV_page2.png (ADR-0014); the filled part is --color-muted. */
   --color-bar-track: oklch(79.06% 0.0518 267.66); /* #b1c0e1 */
 
   /* Signature ink — the reference signs in blue ballpoint. */
   --color-signature: oklch(45% 0.09 265);
 
-  /* =========================================================================
-   Type scale. The display sizes below — name, heading, subtitle,
-   subheading, meta — are still read out of the reference PDF's own text
-   operators (ticket 05), not estimated from the screenshots. The body size
-   is not: ticket 17 raised it from the PDF's 10.67px to a round 11px and
-   fixed the prose leading at 1.4 in the components, because the reference
-   draws its prose inside forms carrying their own ~2.78 scale and the
-   awkward number that fell out of that is not worth preserving. `skill`
-   and `level` are still the PDF's.
+  /* --- Type scale. Designed rather than measured: the reference's own sizes were
+     transcribed first (ADR-0014) and have since been replaced by one round scale,
+     which ADR-0011 now governs alongside the spacing. --- */
 
-   Sizes are px at 96dpi in the source, expressed here in rem at the
-   standard 16px root so they still respect user font scaling. 
-   ========================================================================= */
+  --font-size-name: 2.5rem;
+  --font-size-subtitle: 1.25rem;
+  --font-size-heading: 1.5rem;
+  --font-size-subheading: 1rem;
+  --font-size-meta: 0.875rem; /* employer / period / institution */
+  --font-size-body: 0.75rem; /* all the remaining text */
 
-  --font-size-name: 2.3331rem; /* 37.33px / 28pt */
-  --font-size-heading: 1.4163rem; /* 22.66px / 17pt */
-  --font-size-subtitle: 1rem; /* 16px / 12pt */
-  --font-size-subheading: 0.8331rem; /* 13.33px / 10pt */
-  --font-size-meta: 0.75rem; /* 12px — employer / period / institution */
-  --font-size-body: 0.6875rem; /* 11px — prose, bullets (designed, see above) */
-  --font-size-skill: 0.5925rem; /* 9.48px — Tech Skills items */
-  --font-size-level: 0.5831rem; /* 9.33px — Languages proficiency labels */
-
-  /* Leading for prose set at --font-size-body: summaries and bullets,
-     wherever they appear. One value document-wide (ticket 17) — the
-     reference's per-section leadings were an artefact of how it was
-     assembled, not a distinction worth keeping. */
+  /* One value document-wide (ADR-0011). */
   --prose-leading: 1.4;
-
-  /* The reference justifies its two runs of continuous prose — About Me and
-     the Privacy statement. A token because Reading Mode has to take it back:
-     justification needs a wider measure than the Drawer gives it. */
+  /* A token because Reading Mode takes it back — justification needs a wider measure. */
   --prose-align: justify;
 
-  /* =========================================================================
-   Sheet geometry, measured off the reference PDF in CSS px at 96dpi
-   (A4 = 794 x 1123px), expressed in rem. The Aside is a panel inset from
-   the page edges, not a full-bleed column. 
-   ========================================================================= */
+  /* --- Sheet geometry. On screen the Sheet is an 840px box held in A4's ratio;
+     millimetres reach only the print layer, where Sheet.astro zooms it back to
+     210mm. The Aside is an inset panel, not a full-bleed column. --- */
 
-  --aside-inset-inline: 1.1063rem; /* 17.7px from the Sheet's left edge */
-  --aside-width: 16.6rem; /* 265.6px */
-  --aside-height: 68.9438rem; /* 1103.1px — stops short of the bottom */
-  --aside-pad-inline-start: 1.2563rem; /* 20.1px -> text starts at 37.8px */
-  --aside-pad-inline-end: 1.1688rem; /* 18.7px; heading rules span it */
-  --aside-pad-block-start: 2.3625rem; /* 37.8px above the photo */
-  --photo-size: 11.025rem; /* 176.4px disc */
-  --column-gap: 2.4063rem; /* 38.5px between panel edge and Main */
-  --main-width: 27.2375rem; /* 435.8px */
-  --main-inset-block-start: 2.525rem; /* 40.4px -> name ink lands at y=42 */
-  --sheet-pad-inline-end: 2.2813rem; /* 36.5px right margin */
+  --sheet-ar: 210 / 297; /* A4 page: 210mm / 297mm */
+  --sheet-width: 840px; /* multiple of 210 */
 
-  /* =========================================================================
-   The spacing scale. Five values, and every gap between units
-   of CV content is one of them — in both columns, in every Block. They are
-   nominal margins: half-leading means the optical gap lands ~2px larger,
-   which is accepted rather than hand-corrected (the alternative is a magic
-   number per pairing, which is the Canva situation this scale replaced).
-   =========================================================================*/
+  --sheet-pad-inline-start: 1rem;
+  --sheet-pad-inline-end: calc(var(--sheet-pad-inline-start) * 2);
+  --sheet-pad-block-start: 2.5rem;
+  --sheet-pad-block-end: 1rem; /* the cream the Aside leaves at the panel's foot */
+  --column-gap: 1.5rem; /* between panel edge and Main */
 
-  --space-xl: 2.5rem; /* above any section heading */
+  --aside-width: 16.5rem;
+  /* The `%` resolves in the consumer, `.aside`, against its grid area — read it
+     there, not here. Fixed on both Sheets, and the band it leaves on Sheet 2 is
+     intended (ADR-0011). */
+  --aside-height: calc(100% - var(--sheet-pad-block-end));
+  --aside-pad-inline-start: var(--sheet-pad-inline-start);
+  --aside-pad-inline-end: var(--sheet-pad-inline-start); /* heading rules span it */
+
+  --photo-size: 11rem;
+  --bullet-list-pad-start: 0.75rem;
+  --skill-bar-height: 0.3125rem;
+
+  /* --- The spacing scale (ADR-0011). Nominal margins: every gap between units of
+     CV content is one of these five, in both columns. --- */
+
+  --space-xl: 2rem; /* above any section heading */
   --space-l: 1.5rem; /* header title -> contacts, and nowhere else */
   --space-m: 0.875rem; /* between units: heading -> content, Group -> Group */
   --space-s: 0.375rem; /* within a unit: title -> meta -> summary -> bullets */
   --space-xs: 0.25rem; /* within a unit: small gap between related text */
 
-  /* =========================================================================
-   The Toolbar's geometry, and the reading column's. Both are shared rather
-   than local to the component that draws them, because the Colophon has to
-   line up with the column and keep clear of the strip (ticket 19) — a
-   remembered measurement drifts out of sync in silence.
+  /* --- Chrome geometry. Shared rather than local because the Colophon has to keep
+     clear of the Toolbar and line up with the column (ADR-0008, ADR-0013). --- */
 
-   A pointer can hit 36px; a thumb wants 44, so Reading Mode — the touch tier
-   — grows the control below.
-   ========================================================================= */
+  /* Chrome type, not paper type — one size for every Toolbar and Drawer glyph. */
+  --font-size-button: 1.125rem;
 
   --toolbar-button-size: 2.25rem;
   --toolbar-border-size: 1px;
-  /* The strip's full height: five controls, four inner gaps and two of
-     padding, and the borders. */
+  /* The berth from the viewport edge; three things read it. */
+  --toolbar-inset: var(--space-m);
+  /* The Reading Mode row only, and it does not encode the control count (ADR-0008). */
   --toolbar-block-size: calc(
-    5 * var(--toolbar-button-size) + 6 * var(--space-xs) + 2 * var(--toolbar-border-size)
+    var(--toolbar-button-size) + 2 * var(--space-xs) + 2 * var(--toolbar-border-size)
   );
 
-  /* Reading Mode's measure — as wide as the text should run, and no narrower
-     than the narrowest screen this site targets. */
+  /* The panel is the reading column less the backdrop it must leave beside it.
+     Derived rather than written down, because a literal went stale. */
+  --drawer-backdrop-min: 4rem;
+  --drawer-width: min(calc(var(--reading-column-min) - var(--drawer-backdrop-min)), 76vw);
+  --drawer-slide: 250ms;
+
+  /* Reading Mode's measure, and the floor on the supported viewport width — the
+     two move together (tests/responsive.spec.ts asserts it). */
   --reading-column-min: 23rem;
   --reading-column-max: 34rem;
-
-  /* The only gap outside the --space-* scale. Its job is to align Main's
-     first section-heading with the Aside's, and its value is whatever does
-     that — four other measurements, none of them free to move:
-
-     --aside-pad-block-start
-     + --photo-size
-     + --space-xl, the Aside's first heading gap
-     - --main-inset-block-start
-     - --header-height  the header Block's own rendered height
-
-     The header is the the block article.block.block--header: it includes the main title, 
-     the subtitle and the contacts; it's content, not geometry.
-     Re-derive it when something changes. Measure it, dont't assume it. Ticket 17 */
-  --header-height: 165.97px;
-  --main-first-heading-gap: calc(
-    var(--aside-pad-block-start) + var(--photo-size) + var(--space-xl) -
-      var(--main-inset-block-start) - var(--header-height)
-  );
 }
 
-/* =============================================================================
-   Reading Mode (CONTEXT.md), below 48rem. The CV stops being paper here, so
-   the type stops being paper type: prose goes to a normal 1rem reading size,
-   and the display sizes set against it come down to sit with it. Section
-   headings keep the reference's 22.66px — the one display size that already
-   reads at phone width. Everything above is a transcription of an A4
-   document; everything here is chosen for a phone.
+/* Reading Mode (CONTEXT.md): the CV stops being paper, so the type stops being
+   paper type. Everything above transcribes an A4 document; everything here is
+   chosen for a phone.
 
-   The three tiers are keyed off two boundaries, and these are them: Reading
-   Mode below 48rem, two Sheets side by side from 80rem (ticket 06). Both are
-   in rem so they follow the reader's own font size.
+   The two tier boundaries live here and in Document.astro: 53.5rem (856px) clears
+   one Sheet, 107.5rem (1720px) clears two. Neither may fall below the paper's own
+   --sheet-width of 840px, or the page scrolls sideways (ADR-0006).
 
-   `screen and` is load-bearing on every Reading Mode query in this codebase:
-   print media must never see these values, or the PDF stops being the desktop
-   rendering (ticket 06's acceptance).
-   ============================================================================= */
+   `screen and` is load-bearing on every Reading Mode query here (coding-standards). */
 
-@media screen and (width < 48rem) {
+@media screen and (width < 53.5rem) {
   :root {
-    --font-size-name: 1.75rem;
-    --font-size-subtitle: 1rem;
-    --font-size-heading: 1.25rem;
-    --font-size-subheading: 1rem;
-    --font-size-meta: 0.875rem;
-    --font-size-body: 0.875rem;
-    --font-size-skill: 0.875rem;
-    --font-size-level: 0.75rem;
+    /* Name, subtitle and button carry their paper values down here unchanged. */
+    --font-size-heading: 1.75rem;
+    --font-size-subheading: 1.25rem;
+    --font-size-meta: 1.125rem;
+    --font-size-body: 1rem;
     --prose-leading: 1.55;
     --prose-align: start;
 
-    /* The portrait leads the compact header rather than filling a panel. */
-    --photo-size: 6.5rem;
+    /* Three steps of the scale open up for the phone. */
+    --space-s: 0.5rem;
+    --space-m: 1.5rem;
+    --space-l: 1.5rem;
+    --space-xl: 3rem;
 
-    /* The touch tier: --toolbar-block-size follows on its own. */
+    /* The portrait leads the compact header rather than filling a panel. */
+    --photo-size: 10rem;
+
+    /* The touch tier. Only the control grows — the formula above still holds. */
     --toolbar-button-size: 2.75rem;
+    /* The one tier on the bottom edge, where a notched phone puts the home indicator. */
+    --toolbar-inset: calc(0.875rem + env(safe-area-inset-bottom, 0px));
   }
 }

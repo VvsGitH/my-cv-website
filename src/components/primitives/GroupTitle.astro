@@ -1,12 +1,5 @@
 ---
-/**
- * The title line of a Group (CONTEXT.md: "Group") — the job role, the project
- * name, the qualification. All three are set identically in the reference.
- *
- * `srOnly` marks a Continuation: a Group split across the Sheet boundary
- * repeats its title so the resumed material still has a heading in the
- * outline, but the title is not printed a second time.
- */
+/** A Group's title line (CONTEXT.md). `srOnly` marks a Continuation (ADR-0005). */
 interface Props {
   text: string;
   srOnly?: boolean;

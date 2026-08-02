@@ -1,12 +1,11 @@
 import type { CvContent } from './types';
 
 /**
- * Italian CV content — a first-draft translation of `en.ts` (ticket 11).
+ * Italian CV content — net-new text, not a transcription, because the source CV
+ * is English.
  *
- * The source CV is English, so this text is net-new rather than transcribed.
  * The owner owns the final professional wording. **Four** decisions need his
  * judgement, each tagged with an `OWNER` comment beside the text it governs.
- * Ticket 11 records the reasoning; grepping the tag returns exactly four.
  *
  * Register: first person, professional, matching the English. Product names,
  * company names, technologies, certificate titles and the thesis title are
@@ -148,10 +147,8 @@ export const it: CvContent = {
           bullets: [
             'Sviluppo attivo e manutenzione delle piattaforme news di punta di RCS: **Corriere della Sera** (fino a **40k utenti concorrenti**) e **Gazzetta dello Sport**, con forte attenzione a **stabilità**, **performance** ed esperienza utente.',
             '**Subject matter expert** per il componente video-manager, con coordinamento del team di manutenzione e refactoring continui e puntuali.',
-            // KEEP TIGHT (1 of 3): phrased shorter than en.ts to hold 2 lines.
-            // The literal reading — "coordinamento dello sviluppo e
-            // responsabilità sui compromessi tra…" — wraps to 3 and overflows
-            // Sheet 1 Main. Measurements in ticket 11.
+            // KEEP TIGHT (1 of 3): shorter than en.ts to hold 2 lines. The literal
+            // reading wraps to 3 and overflows Sheet 1 Main (ADR-0002).
             '**Lead frontend developer** per la nuova homepage e il restyling in corso di Gazzetta, coordinando sviluppo e trade-off tra stabilità e performance.',
             'Lavoro su un’**architettura micro-frontend ibrida basata sull’islands pattern**, con componenti scritti sia in **vanilla JS/TS sia in React**, bilanciando integrazione del legacy e sviluppo moderno.',
             'Ho guidato la **modernizzazione incrementale di codebase legacy**: adozione progressiva di **TypeScript e JSDoc** su più repository, introduzione dello **unit testing con Jest** e di linee guida di testing per tutto il team — incluse le best practice per gli **strumenti di coding assistito da AI**.',
@@ -372,9 +369,7 @@ export const it: CvContent = {
           title: 'Laurea triennale in Ingegneria Informatica e dell’Automazione',
           meta: ['Politecnico di Bari, Bari, Italia'],
           period: '2014.08 - 2018.10',
-          // The grade line is body prose, not `meta`: `meta` renders plain
-          // text in the display face, so `**110/110**` would print its
-          // asterisks. See ticket 16.
+          // Body prose, not `meta` — `meta` is plain text, so the markers would print (ADR-0005).
           summary: [
             'Voto: **110/110** | Livello EQF: **6**',
             // Thesis title is already Italian in the source — left verbatim.

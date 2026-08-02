@@ -1,6 +1,5 @@
-/* Weight/role mapping read out of the reference PDF's own font resources
-   during ticket 05 (ticket 02 had inferred it from the screenshots and got
-   Now and Garet the wrong way round). What the source actually uses:
+/* Weight/role mapping, read out of the reference PDF's own font resources
+   (ADR-0014). What the source actually uses:
 
      Now-Bold      -> the name
      Now-Regular   -> the "Professional software developer" subtitle
@@ -70,9 +69,8 @@
   font-display: block;
 }
 
-/* The owner's script face for the signature approximation (spec US29),
-   self-hosted so headless Chromium renders it deterministically in CI's
-   PDF capture — see ticket 13. */
+/* The signature's script face — an approximation, never a scan, and self-hosted
+   so headless Chromium renders it deterministically (ADR-0012). */
 @font-face {
   font-family: 'Primera Signature';
   src: url('../assets/fonts/primera-signature/PrimeraSignature.woff2') format('woff2');

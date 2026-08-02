@@ -3,7 +3,7 @@
 Prescriptive rules for this project. Each section links to the primary-source research it distills:
 [Astro](research/astro-coding-standards.md) · [Preact](research/preact-best-practices.md) · [Modern CSS](research/modern-css-best-practices.md).
 
-Versions in use: Astro 7.1.3, Preact 10.29.7 (+ `@preact/signals` 2.10), TypeScript, Node ≥22.12.
+Versions in use: Astro 7.1.3, Preact 10.29.7 (+ `@preact/signals` 2.10), TypeScript, Node ≥22.12. **Preact stays on 10**: 11 is beta and outside `@astrojs/preact@6`'s peer range (ADR-0003).
 
 ## Foundational principles
 
@@ -36,7 +36,7 @@ Versions in use: Astro 7.1.3, Preact 10.29.7 (+ `@preact/signals` 2.10), TypeScr
 
 ## Preact islands
 
-Preact is a hydrated client island (Toolbar, Drawer), not the framework — ADR-0003. See the [decision table](research/preact-best-practices.md#2-which-preact-10-apis-apply-to-this-projects-island--decision-table). `compat` is off, so import hooks from `preact/hooks` and treat the `preact/compat` surface as non-existent.
+Preact is two hydrated client islands — the Toolbar and the Drawer (ADR-0003, amended by ADR-0007 and ADR-0008) — not the framework. See the [decision table](research/preact-best-practices.md#2-which-preact-10-apis-apply-to-this-projects-island--decision-table). `compat` is off, so import hooks from `preact/hooks` and treat the `preact/compat` surface as non-existent.
 
 **Do not use** (compat-only, or no payoff here):
 - `forwardRef`, `createPortal`, `memo`, `PureComponent`, `Suspense`, `lazy`, `startTransition`, `useDeferredValue`, `useSyncExternalStore` — all `preact/compat`, unavailable here. `useId` and `toChildArray` **are** in core; use them freely.
@@ -51,17 +51,21 @@ Preact is a hydrated client island (Toolbar, Drawer), not the framework — ADR-
 - An inline ref callback that returns no cleanup is called **twice** per re-render (once with `null`). Return a cleanup, or make the callback stable.
 - `onChange` here is the **native** `change` event, not React's input-time synthetic one — use `onInput` for text-ish inputs.
 - Reset state with `key`, not an Effect. List keys: stable and unique; never array index when order changes.
-- `useId` for any id that crosses the SSR/hydration boundary (the Drawer's `aria-controls`), never for keys.
+- `useId` for any id that crosses the SSR/hydration boundary, never for keys. Nothing needs one yet. The Drawer's panel does point at an id — the `<h2>` its `aria-labelledby` names (ADR-0008) — but it is the literal `"drawer-title"`: `Chrome.astro` renders exactly one Drawer, so a singleton's id is deterministic by construction, and that is one fewer moving part than a generated id whose collision domain spans two independently-rendered islands. Reach for `useId` when a component can appear twice.
 - `class` and `className` both work — pick one and be consistent. Astro's `class:list` is `.astro`-only; inside a `.tsx` build the string in JS.
+- **`useSignalEffect` re-runs before Preact commits to the DOM.** If the effect needs the committed node, use a plain `useEffect` over the rendered value instead — a hidden element swallows `focus()` in silence, with no error to find.
+- **A listener registered inside an open/close effect is dead for the first frame**, because the effect runs after the paint. Register on mount and read the signal when it fires. Found by a test that pressed Escape promptly, which is also how an impatient reader behaves.
+- **`src/i18n/ui.ts` is handed whole to an island as a prop**, so everything in it is serialized into both pages' HTML. Page-level strings go in the sibling `meta.ts`, not in `ui.ts`.
 
 **State** — signals are the island's one state API ([why](research/preact-best-practices.md#45-verdict-on-the-prescriptive-rule-signals-for-shared-usestate-for-local)):
-- `signal()` at module scope for state that more than one component reads (theme, Drawer open); `useSignal()`/`useComputed()` inside a component for state that lives and dies there. A module-level signal is shared by every instance of a component — the point for the former, a bug for the latter.
+- `signal()` at module scope for state that more than one component reads (the Drawer's open state: the Toolbar opens it, and the Drawer writes it back from the `<dialog>`'s `close` event — the one funnel every way out passes through); `useSignal()`/`useComputed()` inside a component for state that lives and dies there. A module-level signal is shared by every instance of a component — the point for the former, a bug for the latter.
 - Assign a **new** value: a signal does not update when assigned a value equal to its current one, so mutating an object in place and re-assigning the same reference is a no-op.
 - A module-level `effect()` is created once at module scope, with its cleanup — never inside a component body. Signals are lazy outside the component tree: a `computed` nobody reads never recomputes.
 - Rendering a signal directly in JSX updates the text node without re-rendering the component; prefer it where it reads naturally.
-- This departs from Astro's documented answer for state shared *between* islands (Nano Stores). With a single island the question is moot, and signals ship with the integration anyway.
+- **One sanctioned exception to the rule above:** `linkCopied` is a module-level signal despite living in a single Toolbar. Moving it into the component would push its 2s revert timer into a `useRef` with a cleanup, for an island that never unmounts — more machinery for identical behaviour. Do not "clean it up".
+- This departs from Astro's documented answer for state shared *between* islands (Nano Stores), and does so deliberately (ADR-0007): both islands import `components/chrome/state.ts`, so Vite emits it once as a chunk they share and the signal is one object at runtime. That is a build-output fact, not a language guarantee — **check it against `dist/_astro/` when the island count or the bundler config changes**, and keep an E2E test that drives one island from the other.
 
-**Hydration directive:** `client:idle` for the Toolbar, with the theme applied pre-paint by an `is:inline` script outside the island (Astro's own tutorial pattern). **Not** `client:media` — only the Drawer toggle is breakpoint-dependent, and the other four controls would never hydrate on desktop. **Not** `client:only` — the Toolbar would be absent from the static HTML and pop in.
+**Hydration directive:** `client:idle` for both, with the theme applied pre-paint by an `is:inline` script outside them (Astro's own tutorial pattern). **Not** `client:media` — only the Drawer toggle is breakpoint-dependent, and the Toolbar's other four controls would never hydrate on desktop. **Not** `client:only` — the Toolbar would be absent from the static HTML and pop in, and the Drawer's Blocks with it.
 
 ## TypeScript
 
@@ -76,7 +80,12 @@ Preact is a hydrated client island (Toolbar, Drawer), not the framework — ADR-
 
 Authored as Astro scoped `<style>`, no framework. See [Baseline table](research/modern-css-best-practices.md#9-baseline-availability-summary) before using newer features.
 
-**One exception, and only this one:** an island's own markup lives in a `.tsx`, which Astro's scoping does not reach. Dress it from a plain stylesheet colocated with the island (`components/chrome/drawer.css`), wrapped in `@layer components` so it lands in the same cascade as the paper. Nothing else earns a global stylesheet.
+**Two exceptions, and only these two:** an island's own markup lives in a `.tsx`, which Astro's scoping does not reach — dress it from a plain stylesheet colocated with the island (`components/chrome/drawer.css`), wrapped in `@layer components` so it lands in the same cascade as the paper. And `src/styles/icons.css`, which pairs a font resource with the glyph classes that use it and has no single owning component. Nothing else earns a global stylesheet.
+
+**Three cascade traps, each of which fails silently:**
+- The bare `@layer reset, base, components, print;` statement must come **before** the `@import` lines. Placed after them, the production CSS minifier hoists it in a way that reorders the effective layer precedence — and the failure is **minifier-only**, so dev looks correct and the built site does not.
+- **An Astro scoped `<style>` must be wrapped in `@layer components`.** Unlayered, it permanently beats every layered rule, including `print`.
+- **Alignment properties must sit inside `@media screen`.** `justify-items: center` applies in block layout in Chrome, so left unqualified it survived the print layer's `display: block` and moved every printed glyph by 0.156px. The same goes for the whole Reading Mode block: `screen and` is load-bearing on every one of those queries, or the PDF stops being the desktop rendering.
 
 - **Units by role:** `mm` only for the A4 sheet / `@page`; `rem`/`em`/`ch` for all type and reflow. Never size `font-size` in absolute units.
 - **Paged media:** `@page { size: A4; margin: 0 }`. The two Sheet components own all layout.
@@ -84,24 +93,28 @@ Authored as Astro scoped `<style>`, no framework. See [Baseline table](research/
 - **Print fidelity:** `print-color-adjust: exact` **plus** `-webkit-print-color-adjust: exact` on colored surfaces; keep screen/print rendering identical.
 - **Layout:** Grid with `grid-template-areas` for the Aside/Main sheet (redefine areas at the breakpoint for Reading Mode); Flexbox for 1-D runs; `gap` over child margins.
 - **Responsive trigger:** viewport/print → media query; element's own space → `@container`; presence/state of descendants → `:has()`.
-  - **Not `@container` above a page break.** `container-type: inline-size` brings layout containment, and a layout-contained box is monolithic for fragmentation — over the two Sheets it would swallow the `break-before: page` that makes the CV two pages. Size from the viewport there instead (ticket 06).
+  - **Not `@container` above a page break.** `container-type: inline-size` brings layout containment, and a layout-contained box is monolithic for fragmentation — over the two Sheets it would swallow the `break-before: page` that makes the CV two pages. Size from the viewport there instead.
   - **`:has()` cannot cross an Astro scope.** The compiler leaves `:global()` untouched inside it, and the browser then drops the whole rule as an unknown pseudo-class, silently. Test the built CSS, or key off an attribute the component sets itself.
 - **Theming:** `color-scheme: light dark` on `:root`, tokens as custom properties in `oklch()`, `light-dark()` for per-property pairs (keep a `prefers-color-scheme` fallback since it's only newly available). `@property` only if you animate a custom property.
 - **Architecture:** cascade layers (`@layer reset, base, components, print`) instead of specificity fights; native nesting (`&` mandatory for compound selectors); logical properties (`margin-inline`, `padding-block`) for the bilingual content; `:where()` for zero-specificity resets.
 
 ## Fonts
 
+ADR-0012 owns the pipeline. The rules that follow from it:
+
 - Self-host, `@font-face`. Prefer one variable font to cut requests.
 - **Never `font-display: optional`** (determinism hazard for PDF capture) — use `block`/`swap` and gate capture on `document.fonts.ready`. Add `size-adjust` on the fallback to keep line breaks stable.
+- **Raw source faces live in `docs/assets/`, which is git-ignored; the generated `.woff2` live in `src/assets/`, which is committed.** `npm run fonts:subset` is manual and out-of-band — CI never runs it and never reads `docs/assets/`. Adding a face means running the subsetter and committing its output, or the build fails on a clean clone.
 
 ## Accessibility
 
 - Style focus with `:focus-visible`; never remove an outline without a replacement.
-- Collapse transitions under `@media (prefers-reduced-motion: reduce)`.
+- Collapse transitions under `@media (prefers-reduced-motion: reduce)`. **`reset.css` collapses transition *durations*, not *delays*** — a `transition-delay` survives it and has to be zeroed separately.
 - Every `<Image>` needs meaningful `alt`. Respect user font scaling (type in `rem`/`em`).
 
 ## Tooling
 
+- **GitHub Action versions:** take the newest major that has had a patch release and a few weeks of soak. Never the majors released days ago and never patched.
 - VS Code + the official Astro extension.
 - Format with `prettier-plugin-astro`. `eslint-plugin-astro` optional.
 - Keep local images in `src/` and render with `astro:assets` `<Image />` (`alt` mandatory); `public/` only for files that must keep a stable URL.

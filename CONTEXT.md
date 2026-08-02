@@ -5,7 +5,7 @@ A single-purpose site that presents Vito Paparella Santorsola's CV as sheets of 
 ## Language
 
 **Sheet**:
-One A4 page of the CV (210×297mm). The CV is two Sheets. A Sheet has fixed physical dimensions and is the unit that maps 1:1 to a page in the generated PDF.
+One A4 page of the CV. The CV is two Sheets. A Sheet has fixed dimensions in A4's 210/297 ratio — an 840px box on screen, taken back to a physical 210×297mm in the print layer — and is the unit that maps 1:1 to a page in the generated PDF.
 _Avoid_: page (ambiguous with browser/site page), card
 
 **Aside**:
@@ -41,11 +41,11 @@ The mobile presentation where the same content reflows into a single readable co
 _Avoid_: mobile view, responsive view
 
 **Drawer**:
-The left slide-in panel, in Reading Mode only, that holds the Aside content behind a toggle.
+The left slide-in panel, in Reading Mode only, that holds the Aside content behind a toggle. A modal `<dialog>` (ADR-0008), opened from the Toolbar and closed from its own head row — which carries the control that dismisses it at its inline end, beside the panel's name as a heading that is announced rather than shown.
 _Avoid_: sidebar, menu
 
 **Toolbar**:
-The floating control cluster carrying the four actions — language, download, share, theme — plus the Drawer's toggle in Reading Mode. A vertical strip against the left edge, centred on the viewport; in Reading Mode it rides the Drawer's outer edge while the panel is open (ticket 07). The site's only fixed chrome.
+The floating control cluster carrying the four actions — language, download, share, theme — plus the Drawer's toggle in Reading Mode. One shape per tier (ADR-0008): a vertical rail against the inline start in Paper Mode, centred on the viewport, and a horizontal row against the bottom edge in Reading Mode, where the column reaches the rail's own edge. Its container carries the chrome at both. The site's only fixed chrome; it goes inert behind an open Drawer.
 _Avoid_: header, navbar, controls
 
 **Colophon**:

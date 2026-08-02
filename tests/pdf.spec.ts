@@ -10,7 +10,7 @@ import { distPathForHref, LOCALES, ORIGIN, otherLocale, routeFor } from './suppo
 const A4 = { width: 595.28, height: 841.89 };
 const TOLERANCE = 1;
 
-/** The faces that can still be named — ticket 12, "Fonts embedded". */
+/** The faces that can still be named; the rest are Type3 (ADR-0009, ADR-0010). */
 const CV_FACES = ['Lato-Regular', 'Lato-Bold', 'Lato-Italic', 'icomoon', 'Primera_Signature'];
 
 /** A Continuation's heading is a screen-reader-only copy (ADR-0005), so it is
@@ -29,7 +29,7 @@ for (const locale of LOCALES) {
     test.beforeAll(async ({ browser }) => {
       const page = await browser.newPage({ baseURL: ORIGIN });
       await openPainted(page, routeFor(locale));
-      const href = await page.locator('.toolbar--page a[download]').getAttribute('href');
+      const href = await page.locator('.toolbar a[download]').getAttribute('href');
       await page.close();
 
       path = distPathForHref(href!);

@@ -130,7 +130,7 @@ width: max(20rem, 85vw);
 
 **Impact on spec**: Ticket 06 did not specify exact Drawer dimensions, only that it should be "as wide as a phone can spare". This change aligns better with that intent.
 
-**Superseded**: the width is now `min(19rem, 76vw)`, and the cap is derived rather than written down. The Toolbar no longer rides the panel's outer edge at all — see ADR-0008 and the `--drawer-width` derivation in `tokens.css`.
+**Superseded**: the width is now derived rather than written down. The Toolbar no longer rides the panel's outer edge at all — see ADR-0008 and the `--drawer-width` derivation in `tokens.css`.
 
 ---
 

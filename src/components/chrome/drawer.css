@@ -76,11 +76,19 @@
   /* The panel's own way out (ADR-0008). The sr-only `<h2>` beside it is out of
      flow, so the close control is this row's only item. */
   .drawer-head {
+    /* Above the body, so the shadow falls over the content it separates rather
+       than under the first line of it. */
+    position: relative;
+    z-index: 1;
     display: flex;
     align-items: center;
     gap: var(--space-m);
-    padding-block: var(--space-s) var(--space-m);
+    padding-block: var(--space-s) var(--space-xs);
     padding-inline: var(--space-l) var(--space-s);
+    /* Downward only: a negative spread pulls the blur back off the other edges.
+       Mixed on --color-heading like the Toolbar's, and so on the light ink the
+       panel pins above (ADR-0015). */
+    box-shadow: 0 2px 5px -3px color-mix(in oklab, var(--color-heading) 45%, transparent);
   }
 
   .drawer-close {
@@ -126,6 +134,11 @@
   /* Sheet.astro's Aside gap, restated here because its scope does not reach the panel. */
   .drawer-body .block + .block > .section-heading {
     margin-block-start: var(--space-xl);
+  }
+
+  /* Create a distance between the first text and the header box-shadow */
+  .drawer-body .block:first-child {
+    margin-block-start: var(--space-m);
   }
 
   /* The scroll lock `showModal()` does not apply (ADR-0008, hacks/2026-08-01 §3). */

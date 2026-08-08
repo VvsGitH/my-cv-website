@@ -105,7 +105,7 @@
   /* The panel is the reading column less the backdrop it must leave beside it.
      Derived rather than written down, because a literal went stale. */
   --drawer-backdrop-min: 4rem;
-  --drawer-width: min(calc(var(--reading-column-min) - var(--drawer-backdrop-min)), 76vw);
+  --drawer-width: min(calc(var(--reading-column-min) - var(--drawer-backdrop-min)), var(--reading-column-max));
   --drawer-slide: 250ms;
 
   /* Reading Mode's measure, and the floor on the supported viewport width — the

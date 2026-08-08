@@ -279,7 +279,6 @@ export const it: CvContent = {
       statement:
         'Autorizzo il trattamento dei miei dati personali ai sensi del D.lgs. 101/2018 e dell’art. 13 GDPR (Regolamento UE 2016/679) ai fini della ricerca e selezione del personale.',
       place: 'Bari',
-      date: '2026.04.19',
       signature: 'Vito Paparella Santorsola',
     },
 

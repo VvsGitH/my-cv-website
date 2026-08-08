@@ -241,7 +241,6 @@ export const en: CvContent = {
       statement:
         'I authorize the processing of my personal data pursuant to Legislative Decree 2018/101 and art. 13 GDPR (EU Regulation 2016/679) for the purposes of personnel research and selection.',
       place: 'Bari',
-      date: '2026.04.19',
       signature: 'Vito Paparella Santorsola',
     },
 

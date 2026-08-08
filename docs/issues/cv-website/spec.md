@@ -67,7 +67,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 ### Content map (from the reference CV)
 - **Sheet 1 — Aside:** profile photo (circular), About Me, Tech Skills (Programming Languages, Frontend, Backend, Mobile, Development Tools).
 - **Sheet 1 — Main:** header (name, "Professional software developer", Location/Phone/Email/LinkedIn), Experience (Senior Software Developer @ RCS; Software Developer, Trainee @ CyberSecurity), start of Selected Projects (B2B Environment).
-- **Sheet 2 — Aside:** Soft Skills, Languages (with proficiency bars), Certifications, Other Info, Privacy statement + "Bari, `<date>`" + signature.
+- **Sheet 2 — Aside:** Soft Skills, Languages (with proficiency bars), Certifications, Other Info, Privacy statement + "Bari, `<date>`" + signature. The date is not editorial: `PrivacyBlock.astro` writes the build date, `YYYY.MM.DD`, the same in both Locales.
 - **Sheet 2 — Main:** Selected Projects continued (RUOP, Beyond Knowledge, VEDO/ABC, Dam Dossier), Education.
 
 ### Design tokens
@@ -147,7 +147,7 @@ Pixel-perfect fidelity is **not** asserted automatically — it is verified manu
 - **Profile photo** → landed at `docs/assets/images/CV_Image.png`, self-hosted at `src/assets/images/profile.png`, rendered circular over the photo disc.
 - Fonts — provided in `docs/assets/fonts/`, including the signature script face at `docs/assets/fonts/primera-signature/` (ADR-0012).
 - **GitHub username** for the final Pages URL (`<username>.github.io/my-cv-website/`).
-- Signature: rendered with the self-hosted **Primera Signature** script web-font (no image), "Bari, `<date>`" line kept.
+- Signature: rendered with the self-hosted **Primera Signature** script web-font (no image), "Bari, `<date>`" line kept — the date filled in by the build, not by hand.
 
 ### Implementation history
 

@@ -73,15 +73,17 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 ### Design tokens
 | Token | Value | Use |
 |---|---|---|
-| `--color-heading` | `#303642` | Name, section headings |
-| `--color-text` | `#48474a` | Body copy |
-| `--color-muted` | `#737373` | Dates, meta |
-| `--color-ink` | `#262828` | Near-black accents |
-| `--color-aside-bg` | `#fef9e0` | Aside cream panel |
-| `--color-photo-circle` | `#efdf9e` | Pale-yellow disc behind photo |
-| `--color-main-bg` | `#ffffff` | Main column / Sheet base |
-| `--color-dark-bg` | `#1b2432` | Background behind Sheets in dark theme only |
+| `--color-heading` | Name, section headings |
+| `--color-text` | Body copy |
+| `--color-muted` | proficiency-bar fill, focus ring |
+| `--color-signature` | Signature script on the privacy statement |
+| `--color-aside-bg` | Aside cream panel |
+| `--color-accent` | Disc behind the photo, Toolbar border and button hover, OG card subtitle |
+| `--color-main-bg` | Main column / Sheet base |
+| `--color-dark-bg` | Background behind Sheets in dark theme only |
 
+- The four inks all sit on hue 264 and differ only in lightness and chroma; the two paper surfaces sit on hue ~97. Cool ink on warm paper is the palette's one idea, and new colours should pick a side rather than a third hue.
+- The proficiency bars have no track colour of their own: the track is `--color-muted` at 20% over the Aside's cream, so a bar's two halves cannot drift apart. 20% is the ratio, not a taste — it holds the fill at 3.51:1 against the track, where 30% left only 3.08:1 and the sampled `#b1c0e1` it replaced failed 1.4.11 outright at 2.60:1.
 - Type scale (from the PDF): name ~28pt · section headings ~17pt · sub-headings ~10pt · body ~8pt. Ticket 17 will re-set the body sizes and leading as a designed scale rather than a transcription; once it lands, the display sizes above still come from the PDF and the body sizes no longer do. Until then this line describes the shipped state.
 - Fonts: **Garet** (Heavy → name/headings, Book → lighter display), **Now**, **Lato** (body), **Primera Signature** (script, signature only). Source files in `docs/assets/fonts/` (`Garet-*` has woff2; `Lato-*`/`PrimeraSignature-*` are ttf-only, `Now*` is otf-only → generate woff2). Match exact weight usage against the screenshots.
 - Colored backgrounds (Aside cream, photo disc, proficiency bars) must survive into the PDF: `printBackground: true` + `-webkit-print-color-adjust: exact` / `print-color-adjust: exact`.

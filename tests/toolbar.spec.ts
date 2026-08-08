@@ -461,8 +461,8 @@ test.describe('Drawer', () => {
     // backdrop that is still hit-testable and only colourless.
     const { fill, tint } = await drawer(page).evaluate((panel) => {
       const probe = document.createElement('span');
-      const ink = getComputedStyle(document.documentElement).getPropertyValue('--color-ink');
-      probe.style.backgroundColor = `color-mix(in oklab, ${ink} 45%, transparent)`;
+      const heading = getComputedStyle(document.documentElement).getPropertyValue('--color-heading');
+      probe.style.backgroundColor = `color-mix(in oklab, ${heading} 45%, transparent)`;
       document.body.append(probe);
       const tinted = getComputedStyle(probe).backgroundColor;
       probe.remove();

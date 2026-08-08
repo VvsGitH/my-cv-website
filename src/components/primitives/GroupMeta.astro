@@ -1,7 +1,7 @@
 ---
 /**
  * The line(s) under a Group's title — employer / institution on the left,
- * the period right-aligned and muted, both in the display face. Only a Group
+ * the period right-aligned, both in the display face. Only a Group
  * that opens carries this; a Continuation never repeats it.
  */
 interface Props {
@@ -28,16 +28,12 @@ const { lines, period } = Astro.props;
       font-family: var(--font-display);
       font-weight: var(--font-weight-display);
       font-size: var(--font-size-meta);
-      line-height: 1.15;
-    }
-
-    .lines {
       color: var(--color-heading);
+      line-height: 1.15;
     }
 
     .period {
       flex: none;
-      color: var(--color-muted);
     }
 
     @media screen and (width < 53.5rem) {

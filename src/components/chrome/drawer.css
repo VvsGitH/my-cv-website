@@ -46,7 +46,7 @@
 
   /* No literal fallback: it would mask the failure the backdrop test exists to catch. */
   .drawer::backdrop {
-    background-color: color-mix(in oklab, var(--color-ink) 45%, transparent);
+    background-color: color-mix(in oklab, var(--color-heading) 45%, transparent);
     opacity: 0;
     transition:
       opacity var(--drawer-slide) ease,

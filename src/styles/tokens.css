@@ -1,20 +1,14 @@
 :root {
   /* --- Colors. Only --color-dark-bg varies by theme; Sheets stay white paper. --- */
 
-  --color-heading: oklch(33.22% 0.0228 264.2); /* #303642 */
-  --color-text: oklch(40% 0.0051 301.29); /* #48474a */
-  --color-muted: oklch(55.55% 0 89.88); /* #737373 */
-  --color-ink: oklch(27.48% 0.0029 196.99); /* #262828 */
+  --color-heading: oklch(25% 0.0228 264); /* #1c222d */
+  --color-text: oklch(40% 0.012 264); /* #414854 */
+  --color-muted: oklch(55% 0.008 264); /* #6b727f */
+  --color-signature: oklch(40% 0.0955 265); /* #2e457b */
+  --color-accent: oklch(90.15% 0.0848 95.96); /* #efdf9e */
   --color-aside-bg: oklch(97.94% 0.0331 97.68); /* #fef9e0 */
-  --color-photo-circle: oklch(90.15% 0.0848 95.96); /* #efdf9e */
   --color-main-bg: oklch(100% 0 89.88); /* #ffffff */
   --color-dark-bg: oklch(25.84% 0.0295 259.07); /* #1b2432 */
-
-  /* Sampled off CV_page2.png (ADR-0014); the filled part is --color-muted. */
-  --color-bar-track: oklch(79.06% 0.0518 267.66); /* #b1c0e1 */
-
-  /* Signature ink — the reference signs in blue ballpoint. */
-  --color-signature: oklch(45% 0.09 265);
 
   /* --- Type scale. Designed rather than measured: the reference's own sizes were
      transcribed first (ADR-0014) and have since been replaced by one round scale,

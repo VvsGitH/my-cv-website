@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { ui } from '../src/i18n/ui';
+import { inkOn } from './support/contrast';
 import { drawer, openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
 import { distPathForHref, LOCALES, otherLocale, routeFor } from './support/site';
 
@@ -24,6 +25,9 @@ const actions = (page: Page) => {
 
 const backgroundOf = (locator: Locator): Promise<string> =>
   locator.evaluate((element) => getComputedStyle(element).backgroundColor);
+
+const inkOf = (locator: Locator): Promise<string> =>
+  locator.evaluate((element) => getComputedStyle(element).color);
 
 
 for (const locale of LOCALES) {
@@ -99,7 +103,7 @@ for (const locale of LOCALES) {
       ).toBe(true);
     });
 
-    test('repaints the page behind the paper, and not the paper', async ({ page }) => {
+    test('repaints the page and the paper, and never the cream Aside', async ({ page }) => {
       const html = page.locator('html');
       const paper = sheet(page, 1);
       const panel = paper.locator('.aside');
@@ -109,15 +113,43 @@ for (const locale of LOCALES) {
         body: await backgroundOf(page.locator('body')),
         sheet: await backgroundOf(paper),
         aside: await backgroundOf(panel),
+        asideInk: await inkOf(panel.locator('p').first()),
       };
+
+      // The page and the paper are two surfaces, and they were never the same
+      // colour to begin with — the backdrop is grey under the white Sheet.
+      expect(before.body, 'the page and the paper are separate surfaces').not.toBe(before.sheet);
 
       await actions(page).theme.click();
       await expect(html).toHaveAttribute('data-theme', 'dark');
 
       expect(await backgroundOf(page.locator('body')), 'the page backdrop').not.toBe(before.body);
-      // The paper stays white in both themes.
-      expect(await backgroundOf(paper), 'the Sheet surface').toBe(before.sheet);
+      // The theme reaches the paper (ADR-0015)...
+      expect(await backgroundOf(paper), 'the Sheet surface').not.toBe(before.sheet);
+      // ...but stops at the cream, which would otherwise take white ink.
       expect(await backgroundOf(panel), 'the Aside panel').toBe(before.aside);
+      expect(await inkOf(panel.locator('p').first()), 'the Aside ink').toBe(before.asideInk);
+    });
+
+    test('keeps the Aside legible on its cream in the dark theme', async ({ page }) => {
+      await actions(page).theme.click();
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+      // The one failure this whole architecture exists to prevent: an ink that
+      // followed the theme would be white on #fef9e0, at about 1.05:1.
+      const { ratio } = await inkOn(page, '.aside p', '.aside');
+      expect(ratio, 'the Aside ink against its own panel').toBeGreaterThanOrEqual(4.5);
+    });
+
+    test('keeps the Main column legible on the dark paper', async ({ page }) => {
+      await actions(page).theme.click();
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+      const body = await inkOn(page, '.main .block--mainSection p', '.sheet');
+      expect(body.ratio, 'body copy against the dark paper').toBeGreaterThanOrEqual(4.5);
+
+      const heading = await inkOn(page, '.main h2', '.sheet');
+      expect(heading.ratio, 'a section heading against the dark paper').toBeGreaterThanOrEqual(4.5);
     });
 
     test('remembers the chosen theme across a reload', async ({ page }) => {

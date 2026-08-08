@@ -3,6 +3,12 @@
 
 @layer components {
   .drawer {
+    /* The panel carries the Aside's cream into Reading Mode, so it carries the
+       Aside's ink with it — light ramp in both themes (ADR-0015). */
+    --color-heading: var(--color-heading-light);
+    --color-text: var(--color-text-light);
+    --color-muted: var(--color-muted-light);
+
     position: fixed;
     inset-block: 0;
     inset-inline-start: 0;
@@ -44,9 +50,12 @@
     }
   }
 
-  /* No literal fallback: it would mask the failure the backdrop test exists to catch. */
+  /* No literal fallback: it would mask the failure the backdrop test exists to catch.
+     The light ink by name, not the panel's inherited one: a scrim over the whole
+     viewport must darken in both themes, and `::backdrop` inheriting from its
+     originating element is too new to rest a dismissable overlay on. */
   .drawer::backdrop {
-    background-color: color-mix(in oklab, var(--color-heading) 45%, transparent);
+    background-color: color-mix(in oklab, var(--color-heading-light) 45%, transparent);
     opacity: 0;
     transition:
       opacity var(--drawer-slide) ease,

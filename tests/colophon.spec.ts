@@ -2,6 +2,7 @@ import { expect, test, type Locator, type Page } from '@playwright/test';
 import { cv } from '../src/content';
 import type { Locale } from '../src/content/types';
 import { ui } from '../src/i18n/ui';
+import { inkOn } from './support/contrast';
 import { openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
 import { readPdf, withoutWhitespace } from './support/pdf';
 import { distPathForHref, LOCALES, otherLocale, routeFor } from './support/site';
@@ -26,50 +27,8 @@ const hrefsIn = (locator: Locator): Promise<string[]> =>
     links.map((link) => link.getAttribute('href') ?? ''),
   );
 
-type Srgb = [number, number, number];
-
-/** WCAG 2.x relative luminance. */
-function luminance([red, green, blue]: Srgb): number {
-  const channel = (value: number): number => {
-    const ratio = value / 255;
-    return ratio <= 0.03928 ? ratio / 12.92 : ((ratio + 0.055) / 1.055) ** 2.4;
-  };
-  return 0.2126 * channel(red) + 0.7152 * channel(green) + 0.0722 * channel(blue);
-}
-
-const contrastRatio = (foreground: Srgb, background: Srgb): number => {
-  const [light, dark] = [luminance(foreground), luminance(background)].sort((a, b) => b - a);
-  return (light! + 0.05) / (dark! + 0.05);
-};
-
 /** The Colophon's ink against the page it is printed on, in the current theme. */
-async function readability(page: Page): Promise<{ ratio: number; fontSize: number }> {
-  const measured = await page.evaluate(() => {
-    // The tokens are authored in oklch() and `getComputedStyle` hands that
-    // back untouched, so the colours are rasterised rather than parsed.
-    const context = document.createElement('canvas').getContext('2d')!;
-    const srgb = (value: string): [number, number, number] => {
-      context.clearRect(0, 0, 1, 1);
-      context.fillStyle = value;
-      context.fillRect(0, 0, 1, 1);
-      const [red, green, blue] = context.getImageData(0, 0, 1, 1).data;
-      return [red!, green!, blue!];
-    };
-
-    const block = document.querySelector('footer')!;
-    const style = getComputedStyle(block);
-    return {
-      color: srgb(style.color),
-      background: srgb(getComputedStyle(document.body).backgroundColor),
-      fontSize: parseFloat(style.fontSize),
-    };
-  });
-
-  return {
-    ratio: contrastRatio(measured.color, measured.background),
-    fontSize: measured.fontSize,
-  };
-}
+const readability = (page: Page) => inkOn(page, 'footer', 'body');
 
 for (const locale of LOCALES) {
   test.describe(locale, () => {

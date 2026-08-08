@@ -24,25 +24,10 @@
   font-weight: var(--font-weight-body);
   font-size: var(--font-size-body);
   color: var(--color-text);
-  /* Plain fallback first, for browsers without `light-dark()`. */
-  background-color: var(--color-main-bg);
-  background-color: light-dark(var(--color-main-bg), var(--color-dark-bg));
-}
-
-@media (prefers-color-scheme: dark) {
-  :where(body) {
-    background-color: var(--color-dark-bg);
-  }
-}
-
-/* The theme's whole surface area: the background behind the Sheets, nothing else.
-   The rules above are the no-JS case; `data-theme` is the Toolbar's explicit choice. */
-:where(html[data-theme='light']) body {
-  background-color: var(--color-main-bg);
-}
-
-:where(html[data-theme='dark']) body {
-  background-color: var(--color-dark-bg);
+  /* The page behind the Sheets, which is no longer the same colour as the paper
+     in either theme. Both tokens carry their own theme (tokens.css), so nothing
+     here has to know which one is showing. */
+  background-color: var(--color-page-bg);
 }
 
 :where(h1, h2, h3, h4, h5, h6, p, figure, blockquote, dl, dd) {

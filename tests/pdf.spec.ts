@@ -1,10 +1,10 @@
 import { existsSync } from 'node:fs';
-import { expect, test } from '@playwright/test';
+import { expect, test, type Page } from '@playwright/test';
 import { cv } from '../src/content';
 import type { Locale } from '../src/content/types';
 import { openPainted } from './support/page';
 import { readPdf, withoutWhitespace, type PdfReport } from './support/pdf';
-import { distPathForHref, LOCALES, ORIGIN, otherLocale, routeFor } from './support/site';
+import { BASE, distPathForHref, LOCALES, ORIGIN, otherLocale, routeFor } from './support/site';
 
 /** A4 in PostScript points, with the slack `render-captures.mjs` documents. */
 const A4 = { width: 595.28, height: 841.89 };
@@ -95,3 +95,71 @@ for (const locale of LOCALES) {
     });
   });
 }
+
+/**
+ * The theme is a screen affordance, and everyone gets the identical PDF (US13).
+ * `render-captures.mjs` prints a page it never themed, so this asserts the thing
+ * that makes that safe rather than the file it produced: with `dark` chosen and
+ * `print` emulated, every surface computes back to the light ramp because the
+ * whole ladder in tokens.css sits inside `@media screen` (ADR-0015).
+ */
+test.describe('print', () => {
+  test('is the light theme even when the visitor chose dark', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+    const light = await surfaces(page);
+
+    await page.locator('.toolbar-theme').click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    const dark = await surfaces(page);
+    expect(dark.sheet, 'the Sheet should have gone dark on screen').not.toBe(light.sheet);
+
+    await page.emulateMedia({ media: 'print' });
+    const printed = await surfaces(page);
+
+    // `data-theme` is still `dark`; the media query is what disarms it.
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    expect(printed.sheet, 'the printed Sheet').toBe(light.sheet);
+    // The page behind the Sheets is the one surface print overrides outright:
+    // even light it is grey, and paper must not sit on grey (global.css).
+    expect(printed.body, 'the printed page behind the Sheets').toBe(light.sheet);
+    expect(light.body, 'the backdrop is its own colour on screen').not.toBe(light.sheet);
+  });
+});
+
+/**
+ * The link-preview card is a route that gets screenshotted (ADR-0009), so the
+ * machine taking the picture brings a `prefers-color-scheme` of its own. The
+ * card paints its own dark ground; the Sheet on it must still be white paper.
+ */
+test.describe('the OG card', () => {
+  test.use({ colorScheme: 'dark' });
+
+  for (const locale of LOCALES) {
+    test(`is unthemed on a dark machine (${locale})`, async ({ page }) => {
+      // The OS says dark, so the CV route opens dark; ask it for the light
+      // paper through the Toolbar rather than naming an oklch() literal here.
+      await openPainted(page, routeFor(locale));
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+      await page.locator('.toolbar-theme').click();
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+      const paper = (await surfaces(page)).sheet;
+
+      await openPainted(page, `${BASE}og/${locale}/`);
+      await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
+
+      const card = await page.evaluate(() => ({
+        ground: getComputedStyle(document.querySelector('.card')!).backgroundColor,
+        sheet: getComputedStyle(document.querySelector('.sheet')!).backgroundColor,
+      }));
+
+      expect(card.sheet, 'the Sheet on the card').toBe(paper);
+      expect(card.ground, 'the card’s own ground').not.toBe(card.sheet);
+    });
+  }
+});
+
+const surfaces = (page: Page) =>
+  page.evaluate(() => ({
+    body: getComputedStyle(document.body).backgroundColor,
+    sheet: getComputedStyle(document.querySelector('.sheet')!).backgroundColor,
+  }));

@@ -55,9 +55,8 @@ const { content } = Astro.props;
        measure. The Sheets' own boxes are dismantled in Sheet.astro, so the
        items in this grid are the Blocks themselves.
 
-       The surface stays white in both themes for the same reason the paper
-       does (spec US17): the CV is a document, and --color-text is set to be
-       read off white. */
+       The surface is the paper's own colour, so Reading Mode takes the theme
+       from the Sheets it dismantled rather than inventing one (ADR-0015). */
     @media screen and (width < 53.5rem) {
       .sheets {
         grid-template-columns: minmax(0, 1fr);

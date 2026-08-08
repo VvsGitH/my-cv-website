@@ -8,13 +8,23 @@ interface Props {
 }
 
 const { block } = Astro.props;
+
+// From the build, not the page load — as with the Colophon's © (ADR-0013). Dotted
+// and zero-padded like certifications and periods: a date that keeps its shape
+// across Locales, so the two renderings of the statement cannot drift apart.
+const now = new Date();
+const date = [
+  now.getFullYear(),
+  String(now.getMonth() + 1).padStart(2, '0'),
+  String(now.getDate()).padStart(2, '0'),
+].join('.');
 ---
 
 <SectionHeading text={block.heading} />
 <p class="statement">
   <Rich text={block.statement} />
 </p>
-<p class="place-date">{block.place}, {block.date}</p>
+<p class="place-date">{block.place}, {date}</p>
 <p class="signature" aria-hidden="true">{block.signature}</p>
 
 <style>

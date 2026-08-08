@@ -132,3 +132,20 @@ test('says the same things in different words in each Locale', async ({ page }) 
   // The CV is one person's in both Locales, so the name is not translated.
   expect(italian.name).toBe(english.name);
 });
+
+test('dates the Privacy statement at build time, identically in both Locales', async ({ page }) => {
+  const placeDateOf = async (locale: Locale) => {
+    await openPainted(page, routeFor(locale));
+    // Scoped to the Sheet: Chrome renders the Aside Blocks a second time.
+    return (await sheet(page, 2).locator('.block--privacy .place-date').innerText()).trim();
+  };
+
+  const italian = await placeDateOf('it');
+  const english = await placeDateOf('en');
+
+  // Not today's date spelled out here: the point is the shape the build writes.
+  expect(italian).toMatch(/^Bari, \d{4}\.\d{2}\.\d{2}$/);
+  // One build, one date — the two Locales cannot drift apart the way two
+  // hand-written strings could.
+  expect(english).toBe(italian);
+});

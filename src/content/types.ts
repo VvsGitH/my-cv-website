@@ -119,8 +119,8 @@ export interface CertificationsBlock extends SectionBlock {
 export interface PrivacyBlock extends SectionBlock {
   kind: 'privacy';
   statement: RichText;
+  /** No date lives here — PrivacyBlock.astro dates the statement at build time. */
   place: string;
-  date: string;
   /** Set in a script font — never a scan of the real signature (ADR-0012). */
   signature: string;
 }

@@ -23,7 +23,11 @@ if (!header) {
 ---
 
 <!doctype html>
-<html lang={locale} data-theme="dark">
+<!-- Pinned light, and never the theme: the card paints its own dark ground below,
+  and the Sheet inside it has to stay white paper (ADR-0015). Explicit rather
+  than absent, so the headless browser that screenshots this cannot bring a
+  `prefers-color-scheme` of its own. -->
+<html lang={locale} data-theme="light">
   <head>
     <meta charset="utf-8" />
     <title>{header.name} — link preview ({locale})</title>
@@ -59,7 +63,9 @@ if (!header) {
          Sheet's scale below is a ratio of two of these, and CSS cannot divide
          one length by another. */
       --card-pad-block: 48px;
-      --card-ink: var(--color-main-bg);
+      /* Named off the dark ramp, not off the light surface it happens to match:
+         the card is a dark ground wherever it is embedded. */
+      --card-ink: var(--color-heading-dark);
 
       display: flex;
       align-items: center;
@@ -68,7 +74,7 @@ if (!header) {
       height: var(--card-height);
       padding-block: var(--card-pad-block);
       padding-inline: 4rem;
-      background-color: var(--color-dark-bg);
+      background-color: var(--color-main-bg-dark);
     }
 
     .intro {
@@ -92,7 +98,7 @@ if (!header) {
       font-weight: var(--font-weight-subtitle);
       font-size: 1.5rem;
       letter-spacing: 0.055em;
-      color: var(--color-photo-circle);
+      color: var(--color-accent);
     }
 
     .paper {

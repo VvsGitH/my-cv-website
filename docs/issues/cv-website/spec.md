@@ -32,7 +32,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 14. As a visitor, I want to copy the page URL with one tap and see a brief confirmation, so that I can share the CV easily.
 15. As a visitor sharing the link on LinkedIn/WhatsApp, I want it to unfurl with the CV's title, description, and a preview of the first Sheet, so that the shared link looks credible.
 16. As a visitor who prefers a darker screen, I want a theme toggle that dims the background behind the Sheets to dark blue, so that it's easier on the eyes.
-17. As a visitor toggling the theme, I want the Sheets themselves to stay white paper, so that the CV still reads like a printed document.
+17. As a visitor toggling the theme, I want the paper to darken with the page but the cream Aside to stay exactly as it is, so that the CV still reads like the same document in either light.
 18. As a returning visitor, I want my theme choice remembered, so that I don't reset it every visit.
 19. As a keyboard or screen-reader user, I want the Toolbar and Drawer to be operable and labeled, so that I can use the site without a mouse.
 20. As Vito (the owner), I want the CV content in files separate from the layout, so that I can edit wording without touching components.
@@ -67,21 +67,25 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 ### Content map (from the reference CV)
 - **Sheet 1 — Aside:** profile photo (circular), About Me, Tech Skills (Programming Languages, Frontend, Backend, Mobile, Development Tools).
 - **Sheet 1 — Main:** header (name, "Professional software developer", Location/Phone/Email/LinkedIn), Experience (Senior Software Developer @ RCS; Software Developer, Trainee @ CyberSecurity), start of Selected Projects (B2B Environment).
-- **Sheet 2 — Aside:** Soft Skills, Languages (with proficiency bars), Certifications, Other Info, Privacy statement + "Bari, `<date>`" + signature.
+- **Sheet 2 — Aside:** Soft Skills, Languages (with proficiency bars), Certifications, Other Info, Privacy statement + "Bari, `<date>`" + signature. The date is not editorial: `PrivacyBlock.astro` writes the build date, `YYYY.MM.DD`, the same in both Locales.
 - **Sheet 2 — Main:** Selected Projects continued (RUOP, Beyond Knowledge, VEDO/ABC, Dam Dossier), Education.
 
 ### Design tokens
 | Token | Value | Use |
 |---|---|---|
-| `--color-heading` | `#303642` | Name, section headings |
-| `--color-text` | `#48474a` | Body copy |
-| `--color-muted` | `#737373` | Dates, meta |
-| `--color-ink` | `#262828` | Near-black accents |
-| `--color-aside-bg` | `#fef9e0` | Aside cream panel |
-| `--color-photo-circle` | `#efdf9e` | Pale-yellow disc behind photo |
-| `--color-main-bg` | `#ffffff` | Main column / Sheet base |
-| `--color-dark-bg` | `#1b2432` | Background behind Sheets in dark theme only |
+| `--color-heading` | Name, section headings |
+| `--color-text` | Body copy |
+| `--color-muted` | proficiency-bar fill, focus ring |
+| `--color-signature` | Signature script on the privacy statement |
+| `--color-aside-bg` | Aside cream panel |
+| `--color-accent` | Disc behind the photo, Toolbar border and button hover, OG card subtitle |
+| `--color-main-bg` | Main column / Sheet base |
+| `--color-page-bg` | The page behind the Sheets — a surface of its own, never the paper's colour |
 
+- Five of those tokens are themed and carry a `-light` / `-dark` pair behind them (`--color-page-bg`, `--color-main-bg`, `--color-heading`, `--color-text`, `--color-muted`); the pairs are raw material and no component names one. Three are not themed at all — `--color-signature`, `--color-accent` and `--color-aside-bg` all live on the cream Aside, which is the same surface in both themes and takes the light inks back locally (ADR-0015).
+- The inks all sit on hue 264 and differ only in lightness and chroma; the paper surfaces sit on hue ~97 in light and on hue 259 in dark. Cool ink on warm paper is the palette's one idea, and new colours should pick a side rather than a third hue.
+- The dark theme inverts the stack: light puts white paper on a grey page (`#ffffff` on `#eaebef`), dark puts navy paper on a lighter blue page (`#1b2432` on `#2b3747`). Either way the step is ~1.13:1 — enough to draw the Sheet's edge, which is why the Sheets carry no border and no shadow.
+- The proficiency bars have no track colour of their own: the track is `--color-muted` at 20% over the Aside's cream, so a bar's two halves cannot drift apart. 20% is the ratio, not a taste — it holds the fill at 3.51:1 against the track, where 30% left only 3.08:1 and the sampled `#b1c0e1` it replaced failed 1.4.11 outright at 2.60:1.
 - Type scale (from the PDF): name ~28pt · section headings ~17pt · sub-headings ~10pt · body ~8pt. Ticket 17 will re-set the body sizes and leading as a designed scale rather than a transcription; once it lands, the display sizes above still come from the PDF and the body sizes no longer do. Until then this line describes the shipped state.
 - Fonts: **Garet** (Heavy → name/headings, Book → lighter display), **Now**, **Lato** (body), **Primera Signature** (script, signature only). Source files in `docs/assets/fonts/` (`Garet-*` has woff2; `Lato-*`/`PrimeraSignature-*` are ttf-only, `Now*` is otf-only → generate woff2). Match exact weight usage against the screenshots.
 - Colored backgrounds (Aside cream, photo disc, proficiency bars) must survive into the PDF: `printBackground: true` + `-webkit-print-color-adjust: exact` / `print-color-adjust: exact`.
@@ -97,7 +101,7 @@ Floating cluster, four actions, plus a fifth control — the Drawer's toggle —
 1. **Language** — toggle EN/IT (navigates to the equivalent route in the other Locale).
 2. **Download** — serves the current Locale's pre-rendered PDF.
 3. **Share** — copies the current page URL to the clipboard, with a brief confirmation.
-4. **Theme** — light/dark toggle; dark mode changes **only** the background behind the Sheets to dark blue. Sheets stay white paper in both themes; the PDF is unaffected. Persist choice in `localStorage`, applied pre-hydration to avoid flash.
+4. **Theme** — light/dark toggle. Dark repaints the page behind the Sheets *and* the paper itself, in that order of depth: the page goes to a mid blue, the Sheet to the darker navy under it, and the inks go from near-black to near-white with them (ADR-0015). What the theme never touches is the cream — the Aside, the Drawer that carries it into Reading Mode, and the Toolbar keep their panel and their dark ink in both themes. The PDF and the OG card are unaffected, because the whole ladder lives inside `@media screen`. Persist choice in `localStorage`, applied pre-hydration to avoid flash.
 
 ### Content model
 - **TypeScript data modules**, one set per Locale, against a shared typed schema. Each Block carries `sheet`, `column`, and its ordering; the compiler rejects invalid `sheet`/`column` values.
@@ -143,7 +147,7 @@ Pixel-perfect fidelity is **not** asserted automatically — it is verified manu
 - **Profile photo** → landed at `docs/assets/images/CV_Image.png`, self-hosted at `src/assets/images/profile.png`, rendered circular over the photo disc.
 - Fonts — provided in `docs/assets/fonts/`, including the signature script face at `docs/assets/fonts/primera-signature/` (ADR-0012).
 - **GitHub username** for the final Pages URL (`<username>.github.io/my-cv-website/`).
-- Signature: rendered with the self-hosted **Primera Signature** script web-font (no image), "Bari, `<date>`" line kept.
+- Signature: rendered with the self-hosted **Primera Signature** script web-font (no image), "Bari, `<date>`" line kept — the date filled in by the build, not by hand.
 
 ### Implementation history
 

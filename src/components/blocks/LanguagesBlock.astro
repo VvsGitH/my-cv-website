@@ -58,7 +58,7 @@ const { block } = Astro.props;
       background-image: linear-gradient(
         to right,
         var(--color-muted) var(--fill),
-        var(--color-bar-track) var(--fill)
+        color-mix(in oklab, var(--color-muted) 20%, transparent) var(--fill)
       );
     }
   }

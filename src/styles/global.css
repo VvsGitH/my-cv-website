@@ -11,9 +11,13 @@
     margin: 0;
   }
 
-  /* Dark mode is a screen affordance; the PDF is unaffected. Here rather than in
-     reset.css, which is imported into `reset` — a `@layer print` block inside it
-     would nest as `reset.print` and lose to `components`. */
+  /* Dark mode is a screen affordance; the PDF is unaffected — tokens.css keeps
+     the whole theme ladder inside `@media screen`, so here every colour is
+     already the light one. What remains is that `body` normally paints the page
+     behind the Sheets, and even light that is a grey the paper must not sit on.
+     Here rather than in reset.css, which is imported into `reset` — a
+     `@layer print` block inside it would nest as `reset.print` and lose to
+     `components`. */
   @media print {
     body {
       background-color: var(--color-main-bg);

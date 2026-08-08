@@ -9,7 +9,7 @@ One A4 page of the CV. The CV is two Sheets. A Sheet has fixed dimensions in A4'
 _Avoid_: page (ambiguous with browser/site page), card
 
 **Aside**:
-The narrower left column of a Sheet, rendered on a cream panel — holds About Me, Tech Skills, Soft Skills, Languages, Certifications, Other Info, Privacy.
+The narrower left column of a Sheet, rendered on a cream panel — holds About Me, Tech Skills, Soft Skills, Languages, Certifications, Other Info, Privacy. The panel is the same cream in both themes, and takes its dark ink with it (ADR-0015); when the paper darkens around it, the Aside is what does not move.
 _Avoid_: sidebar (reserved for its mobile form, the Drawer), left column
 
 **Main**:

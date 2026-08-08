@@ -55,10 +55,6 @@ const year = new Date().getFullYear();
 <style>
   @layer components {
     .colophon {
-      /* On the page background, so its ink is the other theme's surface. */
-      --colophon-ink: var(--color-ink);
-      --colophon-ink-dark: var(--color-main-bg);
-
       max-width: 200ch;
       display: flex;
       justify-content: center;
@@ -70,26 +66,10 @@ const year = new Date().getFullYear();
       font-size: var(--font-size-body);
       text-align: center;
       line-height: 1.6;
-      /* The same three steps reset.css takes for the background this has to
-         stay legible against: a plain value for a browser without
-         light-dark(), the pair for a visitor without JS, and the `data-theme`
-         overrides for the Toolbar's explicit choice. */
-      color: var(--colophon-ink);
-      color: light-dark(var(--colophon-ink), var(--colophon-ink-dark));
-    }
-
-    @media (prefers-color-scheme: dark) {
-      .colophon {
-        color: var(--colophon-ink-dark);
-      }
-    }
-
-    :global(html[data-theme='light']) .colophon {
-      color: var(--colophon-ink);
-    }
-
-    :global(html[data-theme='dark']) .colophon {
-      color: var(--colophon-ink-dark);
+      /* It stands on the page background, not on paper — and now that the two
+         move together, the ink it needs is just the heading (ADR-0015). The
+         ladder this used to carry lives in tokens.css. */
+      color: var(--color-heading);
     }
 
     .colophon > * {

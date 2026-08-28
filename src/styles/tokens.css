@@ -161,6 +161,29 @@
   }
 }
 
+/* --- The reveal. A theme swap is a View Transition, and the UA's default crossfade
+   would dissolve the wave into a fade, so it is turned off and replaced by a circle
+   growing out of the control in `state.ts` (ADR-0016).
+
+   Layering the new snapshot over the old is what makes one animation serve both
+   directions: nothing ever contracts, the incoming theme simply uncovers the outgoing
+   one. No `screen and` needed, unlike the ladder above — a transition cannot start
+   during a print or a headless capture. --- */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+}
+
 /* Reading Mode (CONTEXT.md): the CV stops being paper, so the type stops being
    paper type. Everything above transcribes an A4 document; everything here is
    chosen for a phone.

@@ -188,6 +188,48 @@ test('offers a different PDF in each Locale', async ({ page }) => {
   expect(italian).not.toBe(english);
 });
 
+/** The circular reveal, and the one condition that must call it off (ADR-0016). */
+test.describe('theme reveal', () => {
+  /** Recorded rather than timed: whether the swap went through a View Transition at all. */
+  const watchReveal = async (page: Page): Promise<void> => {
+    await page.addInitScript(() => {
+      const start = document.startViewTransition.bind(document);
+      Object.defineProperty(window, 'revealed', { value: false, writable: true });
+      document.startViewTransition = (callback) => {
+        (window as unknown as { revealed: boolean }).revealed = true;
+        return start(callback);
+      };
+    });
+  };
+
+  const revealed = (page: Page): Promise<boolean> =>
+    page.evaluate(() => (window as unknown as { revealed: boolean }).revealed);
+
+  test('reveals the new theme instead of cutting to it', async ({ page }) => {
+    await watchReveal(page);
+    await openPainted(page, routeFor('it'));
+
+    await actions(page).theme.click();
+
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    expect(await revealed(page), 'the swap should run inside a View Transition').toBe(true);
+  });
+
+  // The gate has to live in `state.ts`: reset.css collapses transition durations but
+  // reaches neither the snapshot pseudo-elements nor `animate()` (coding-standards).
+  // `emulateMedia`, not `test.use({ reducedMotion })` â€” the latter does not reach
+  // `matchMedia` here, so it would assert the gate against a query that is never true.
+  test('cuts straight to the new theme under reduced motion', async ({ page }) => {
+    await watchReveal(page);
+    await page.emulateMedia({ reducedMotion: 'reduce' });
+    await openPainted(page, routeFor('it'));
+
+    await actions(page).theme.click();
+
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+    expect(await revealed(page), 'no View Transition should have started').toBe(false);
+  });
+});
 /** WCAG 2.2 · 2.4.11, at both tiers. In Paper Mode it is the only thing standing behind it (ADR-0008). */
 const expectNoControlBehindTheToolbar = async (page: Page): Promise<void> => {
   const targets = await page.locator(':is(a[href], button):visible').all();

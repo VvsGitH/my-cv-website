@@ -10,65 +10,95 @@ interface Props {
 const { content } = Astro.props;
 ---
 
-<div class="sheets">
-  <Sheet content={content} sheet={1} />
-  <Sheet content={content} sheet={2} />
+<!-- The container the paper measures itself against. Block-level, so `cqw` inside
+  resolves to the width actually available — which `100vw` does not, because it
+  counts the scrollbar and would put the Sheet back over the edge it just fitted. -->
+<div class="paper">
+  <div class="sheets">
+    <Sheet content={content} sheet={1} />
+    <Sheet content={content} sheet={2} />
+  </div>
 </div>
 
 <style>
   @layer components {
+    /* The width the fit measures itself against. Load-bearing, and measured: a
+       `cqw` with no query container above it falls back to the small viewport,
+       which counts the classic scrollbar that the content box does not. In a real
+       browser window at 390px — 15px of scrollbar — `100cqw` reports 390 while
+       `.paper` is 375, so the Sheet comes out 342px wide inside a 327px box and
+       eats half the gutter either side. Headless Chromium cannot see it: its
+       scrollbars are overlay and take no space, so every assertion in the suite
+       passes with this rule deleted. */
+    .paper {
+      container-type: inline-size;
+    }
+
     .sheets {
-      /* Screen gutters, not paper geometry — and also the arithmetic behind the
-         two-up boundary below, which is why they are named rather than repeated.
-         Zeroed for print in the layer below. */
+      /* Screen gutters, not paper geometry — and the whole of the arithmetic
+         below: they set both the width the paper is fitted to and, with the gap,
+         the width at which the pair stops sharing a line. Named rather than
+         repeated, and zeroed for print in the layer below. */
       --sheets-gap: 1.5rem;
-      --sheets-pad: 1.5rem;
+      --sheets-pad: 0.5rem;
 
       gap: var(--sheets-gap);
-      padding: var(--sheets-pad);
+      padding: var(--sheets-gap) var(--sheets-pad);
+
+      /* A wrapping line, not a grid with a breakpoint: the pair goes side by side
+         exactly when there is room for it — 1704px of paper inside the two
+         gutters, so 1752px of viewport — and the wide tier stops being a number
+         somebody has to keep in step with the paper's own width. It was the one
+         boundary written down, and it is now emergent.
+
+         Declared for both media and taken back in `print` below rather than
+         fenced behind `@media screen`: the paper's printed geometry is then
+         stated in one place, instead of being whatever survived a guard. The
+         cost is that the print layer has to name what it cancels. */
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
     }
 
-    /* Arranging the Sheets is a screen concern, and every alignment declaration
-       stays inside `screen` for a measured reason (coding-standards).
+    /* Paper Mode below the paper's own width: the Sheet is scaled to fit rather
+      than allowed over the edge, which is what ADR-0006 §2 removed and ADR-0017
+      puts back — for the one case it removed it for, and by the mechanism that
+      makes it safe. `zoom` scales at layout time, so nothing is left behind;
+      `transform` would cost the PDF its fonts (Sheet.astro).
 
-       Grid, not a wrapping flex line: a track count cannot move under a
-       sub-pixel rounding the way a flex line can. */
-    @media screen {
-      .sheets {
-        display: grid;
-        grid-template-columns: max-content;
-        justify-content: center;
-      }
-    }
-
-    /* Wide: two Sheets side by side. 107.5rem clears the pair's 1704px — the
-       boundary is reasoned about in tokens.css beside its Reading Mode twin.
-       It clears the paper, not the gutter: at 1720px the pair overruns this
-       grid's content box by 16px a side, which its own --sheets-pad absorbs. */
-    @media screen and (width >= 107.5rem) {
-      .sheets {
-        grid-template-columns: repeat(2, max-content);
-      }
+      `min(1, …)` is the whole guarantee ADR-0006 wanted: the paper is fitted
+      down, never up, so every width at or above 888px renders as it did. */
+    .sheets :global(.sheet) {
+      zoom: min(1, calc((100cqw - 2 * var(--sheets-pad)) / var(--sheet-width)));
     }
 
     /* Reading Mode: one column of Blocks on a white surface, at a comfortable
-       measure. The Sheets' own boxes are dismantled in Sheet.astro, so the
-       items in this grid are the Blocks themselves.
+       measure. The Sheets' own boxes are dismantled in Sheet.astro, so the items
+       in this grid are the Blocks themselves — from both Sheets and both columns,
+       sequenced by the `order` that component sets.
 
        The surface is the paper's own colour, so Reading Mode takes the theme
-       from the Sheets it dismantled rather than inventing one (ADR-0015). */
-    @media screen and (width < 53.5rem) {
+       from the Sheets it dismantled rather than inventing one (ADR-0015).
+
+       `min-width` is dropped: the Mode is now reachable at any width, so it has
+       to survive a 320px phone rather than assume 23rem of room. */
+    :global(html[data-mode='reading']) {
       .sheets {
-        grid-template-columns: minmax(0, 1fr);
+        flex-direction: column;
         gap: 0;
         max-width: var(--reading-column-max);
-        min-width: var(--reading-column-min);
         margin-inline: auto;
         /* Outside the spacing scale on purpose: this is the gap between the paper
            and the Chrome below it, not one between units of CV content (ADR-0011). */
         margin-block-end: var(--space-xl);
-        padding: var(--space-xl) var(--space-l);
+        /* No block padding: every Block carries the gap above it instead, because
+           `order` makes `:first-child` meaningless (Sheet.astro). */
+        padding: 0 var(--space-l) var(--space-xl);
         background-color: var(--color-main-bg);
+      }
+
+      .sheets :global(.sheet) {
+        zoom: 1;
       }
     }
   }
@@ -79,10 +109,20 @@ const { content } = Astro.props;
        Sheets themselves are untouched, so print output equals the screen
        rendering (ADR-0001). */
     @media print {
+      .paper {
+        /* Not cosmetic: `container-type` brings layout containment, and a
+           layout-contained box is monolithic for fragmentation — over both Sheets
+           it can swallow the `break-before: page` below, which is the whole of what
+           makes the CV two pages (coding-standards). The fit it serves is a screen
+           concern; here the print layer's own `zoom` sizes the paper. */
+        container-type: normal;
+      }
+
       .sheets {
         display: block;
         gap: 0;
         padding: 0;
+        justify-content: normal;
       }
 
       .sheets > * + * {

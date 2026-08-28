@@ -4,7 +4,7 @@ Status: shipped
 
 This is the product spec — what the site is for, and what it deliberately does not do. It is the only surviving document from the implementation phase; the tickets that carried it out have been deleted, and every decision worth keeping now lives in `docs/adr/`.
 
-The reference design is the existing CV (`docs/assets/CV_page1.png`, `CV_page2.png`, and the source `docs/assets/CV_Vito_Paparella_Santorsola_2026_06.pdf`) and is reproduced pixel-perfect — **except for spacing and body leading, where the scale is authoritative and the reference is not (ADR-0011)**. Everything else — geometry, colour, faces, display type sizes — matches the reference exactly; ADR-0014 records how it was measured and which of its flaws are preserved on purpose. See `CONTEXT.md` for the ubiquitous language (Sheet, Aside, Main, Block, Group, Continuation, Explicit Paging, Paper Mode, Reading Mode, Drawer, Toolbar, Colophon, Chrome, Locale) and `docs/adr/` for the load-bearing decisions. Background research: `docs/research/pdf-web-stack.md`.
+The reference design is the existing CV (`docs/assets/CV_page1.png`, `CV_page2.png`, and the source `docs/assets/CV_Vito_Paparella_Santorsola_2026_06.pdf`) and is reproduced pixel-perfect — **except for spacing and body leading, where the scale is authoritative and the reference is not (ADR-0011)**. Everything else — geometry, colour, faces, display type sizes — matches the reference exactly; ADR-0014 records how it was measured and which of its flaws are preserved on purpose. See `CONTEXT.md` for the ubiquitous language (Sheet, Aside, Main, Block, Group, Continuation, Explicit Paging, Mode, Paper Mode, Reading Mode, Toolbar, Colophon, Chrome, Locale) and `docs/adr/` for the load-bearing decisions. Background research: `docs/research/pdf-web-stack.md`.
 
 ## Problem Statement
 
@@ -12,16 +12,19 @@ Vito's CV exists only as a static PDF made in Canva. He can't share it as a live
 
 ## Solution
 
-A minimal website whose only job is to present the CV as sheets of paper and to download it as a PDF. It shows the CV as two A4 **Sheets** — two side by side on wide screens, stacked on medium screens, and reflowed into a comfortable single-column **Reading Mode** with a slide-in **Drawer** on phones. A floating **Toolbar** offers four actions: switch language (Italian default / English), download the PDF, share (copy URL), and toggle a light/dark background. The downloadable PDF is pre-rendered at build time from the exact same page, one file per **Locale**, so it is byte-stable and pixel-identical to the desktop rendering. Below the paper sits the **Colophon**, the one piece of Chrome in normal flow: five small statements the *site* makes about itself — copyright, the data regime the page falls under, the other Locale, the owner's channels, and the accessibility standard it is composed to. Nothing else frames the paper, and nothing the Colophon says reaches the PDF (ADR-0013).
+A minimal website whose only job is to present the CV as sheets of paper and to download it as a PDF. It shows the CV as two A4 **Sheets** — two side by side on wide screens, stacked on medium screens, and one Sheet scaled to fit the device on a phone. That is **Paper Mode**, and it is what a first visit gets at every width. A reader who would rather read than look switches to **Reading Mode**, where the same content reflows into one column at reading type; the choice is theirs and it is remembered (ADR-0017). A floating **Toolbar** offers five actions: switch Mode, switch language (Italian default / English), download the PDF, share (copy URL), and toggle a light/dark background. The downloadable PDF is pre-rendered at build time from the exact same page, one file per **Locale**, so it is byte-stable and pixel-identical to the desktop rendering. Below the paper sits the **Colophon**, the one piece of Chrome in normal flow: five small statements the *site* makes about itself — copyright, the data regime the page falls under, the other Locale, the owner's channels, and the accessibility standard it is composed to. Nothing else frames the paper, and nothing the Colophon says reaches the PDF (ADR-0013).
 
 ## User Stories
 
 1. As a recruiter, I want to open the site and immediately see the CV as recognizable paper sheets, so that it feels as polished as the original document.
 2. As a visitor on a large screen, I want to see both Sheets side by side, so that I can take in the whole CV at a glance.
 3. As a visitor on a tablet, I want the Sheets stacked one per row at readable size, so that I don't have to pinch-zoom.
-4. As a visitor on a phone, I want the CV reflowed into a single readable column at normal text size, so that I can read it without zooming.
-5. As a phone visitor, I want the Aside content (skills, languages, certifications) tucked into a slide-in Drawer, so that the main experience stays the focus but the details are one tap away.
-6. As a phone visitor, I want a compact header (photo, name, title, contacts) at the top of the reading flow, so that I know whose CV this is straight away.
+4. As a visitor on a phone, I want the whole A4 sheet fitted to my screen by default, so that I see the document I was sent rather than a web page about it.
+5. As any visitor, I want a control that reflows the CV into a single readable column at normal text size, so that I can read it without zooming — on a phone, and on a large screen if I prefer it that way.
+6. As a visitor, I want my choice of Mode remembered, so that I do not reset it on every visit or when I switch language.
+7. As a reader in the single column, I want the profile, skills, languages and certifications in the flow with everything else, so that nothing is hidden behind a control and nothing needs JavaScript to reach.
+8. As the owner, I want to declare the reading order separately from the paper's paging, so that the column reads as a CV rather than as two sheets read column by column.
+9. As a phone visitor, I want a compact header (photo, name, title, contacts) at the top of the reading flow, so that I know whose CV this is straight away.
 7. As an Italian-speaking visitor, I want the site to load in Italian by default, so that I read it in my language without any action.
 8. As an English-speaking visitor, I want a one-tap switch to English, so that I can read the CV in English.
 9. As a visitor, I want the language switch to keep me on the CV (just in the other language), so that I don't lose my place.
@@ -34,7 +37,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 16. As a visitor who prefers a darker screen, I want a theme toggle that dims the background behind the Sheets to dark blue, so that it's easier on the eyes.
 17. As a visitor toggling the theme, I want the paper to darken with the page but the cream Aside to stay exactly as it is, so that the CV still reads like the same document in either light.
 18. As a returning visitor, I want my theme choice remembered, so that I don't reset it every visit.
-19. As a keyboard or screen-reader user, I want the Toolbar and Drawer to be operable and labeled, so that I can use the site without a mouse.
+19. As a keyboard or screen-reader user, I want every Toolbar control to be operable and labeled, so that I can use the site without a mouse.
 20. As Vito (the owner), I want the CV content in files separate from the layout, so that I can edit wording without touching components.
 21. As the owner, I want each content Block to declare which Sheet and column it belongs to, so that the layout is predictable and I stay in control of paging.
 22. As the owner, I want the build to reject an invalid Sheet/column assignment, so that I catch layout mistakes before they ship.
@@ -54,7 +57,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 ## Implementation Decisions
 
 ### Stack
-- **Astro** (static output) + **two Preact islands**, the Toolbar and the Drawer — see ADR-0003, as amended by ADR-0007 and ADR-0008. One component tree is the single source of truth for both the live page and the PDF-captured page.
+- **Astro** (static output) + **one Preact island**, the Toolbar — see ADR-0003, as amended by ADR-0007, ADR-0008 and ADR-0017, which deleted the second. One component tree is the single source of truth for both the live page and the PDF-captured page.
 - **Playwright** headless Chromium for the build-time PDF — see ADR-0001.
 - Deployed static to **GitHub Pages** via **GitHub Actions**, at the default `github.io` URL under base `/my-cv-website/`.
 
@@ -90,21 +93,28 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 - Fonts: **Garet** (Heavy → name/headings, Book → lighter display), **Now**, **Lato** (body), **Primera Signature** (script, signature only). Source files in `docs/assets/fonts/` (`Garet-*` has woff2; `Lato-*`/`PrimeraSignature-*` are ttf-only, `Now*` is otf-only → generate woff2). Match exact weight usage against the screenshots.
 - Colored backgrounds (Aside cream, photo disc, proficiency bars) must survive into the PDF: `printBackground: true` + `-webkit-print-color-adjust: exact` / `print-color-adjust: exact`.
 
-### Responsive — three tiers
-- **Wide (≥1720px): Paper Mode** — two Sheets side by side, with page padding/gap (the "grid of pages").
-- **Medium (856px–1720px): Paper Mode** — Sheets stacked one per row, rigid A4 proportions and never resized to fit. The Sheet is the same 840px box in A4's 210/297 ratio at every width in this tier: ADR-0006 dropped the scale-to-width in favour of fidelity, which is also why the tier starts at 856px — a boundary below the paper's own 840px puts a horizontal scrollbar on screen. Never rescaled by viewport either: one rendering is the reference rendering, and resizing is the browser's zoom to offer. Physical millimetres apply to the PDF, not the screen. The owner confirmed this reading.
-- **Narrow (<856px): Reading Mode** — the same component reflows to single-column, normal-size reading view; Aside content moves into a left slide-in Drawer (hamburger toggle); Main is the primary scroll; a compact header sits at the top. A4 is dropped here.
-- Paper styles must be identical under `screen` and `print` media (or capture with `emulateMedia({ media: 'screen' })`) so the PDF equals the desktop rendering. Reading Mode styles must not affect Paper Mode/print output.
+### Two Modes, and what is left of the tiers
+The Mode is the reader's choice and is never inferred from the viewport (ADR-0017). What the viewport still decides is how much paper fits, and what shape the Toolbar takes.
+
+**Paper Mode** — the default at every width. Neither of its two thresholds is declared: the Sheets sit on a wrapping flex line and each Sheet fits itself, so both fall out of the paper's own 840px and the 1.5rem gutters.
+- **From 1752px** — two Sheets side by side, with page padding/gap (the "grid of pages"). That is 2 × 840px plus the gap and both gutters, and it is where the line stops wrapping.
+- **888px–1752px** — Sheets stacked one per row at the full 840px box in A4's 210/297 ratio. One rendering is the reference rendering; resizing is the browser's zoom to offer.
+- **Below 888px** — one Sheet, `zoom`ed to the width left inside the gutter. ADR-0006 dropped scale-to-fit in favour of fidelity; ADR-0017 puts back the half of it a phone needs, capped at `min(1, …)` so the paper is never scaled *up*. Physical millimetres still apply to the PDF, not the screen.
+
+**Reading Mode** — chosen from the Toolbar, at any width: the same components reflow to a single column at reading type, bounded to a 34rem measure and centred. Aside and Main Blocks interleave by `readOrder`; nothing is hidden and nothing is rendered twice. A4 is dropped here. On a phone this is also the site's answer to WCAG 2.2 · 1.4.4.
+
+- Paper styles must be identical under `screen` and `print` media so the PDF equals the desktop rendering. Reading Mode styles must not reach print: the print layer takes the paper back explicitly, because the Mode is remembered and a reader may print from it.
 
 ### Toolbar
-Floating cluster, four actions, plus a fifth control — the Drawer's toggle — in Reading Mode only. It takes one shape per tier: a vertical rail against the inline start in Paper Mode, a horizontal row against the bottom edge in Reading Mode (ADR-0008). The four actions:
+Floating cluster, five actions at every tier. It takes one shape per tier — a vertical rail against the inline start where there is room beside the paper, a horizontal row against the bottom edge on the narrow tier (ADR-0008); the shape is a width, the Mode it offers is not. The five actions:
+0. **Mode** — Paper/Reading toggle. Persisted in `localStorage` and applied pre-paint, like the theme.
 1. **Language** — toggle EN/IT (navigates to the equivalent route in the other Locale).
 2. **Download** — serves the current Locale's pre-rendered PDF.
 3. **Share** — copies the current page URL to the clipboard, with a brief confirmation.
-4. **Theme** — light/dark toggle. Dark repaints the page behind the Sheets *and* the paper itself, in that order of depth: the page goes to a mid blue, the Sheet to the darker navy under it, and the inks go from near-black to near-white with them (ADR-0015). What the theme never touches is the cream — the Aside, the Drawer that carries it into Reading Mode, and the Toolbar keep their panel and their dark ink in both themes. The PDF and the OG card are unaffected, because the whole ladder lives inside `@media screen`. Persist choice in `localStorage`, applied pre-hydration to avoid flash.
+4. **Theme** — light/dark toggle. Dark repaints the page behind the Sheets *and* the paper itself, in that order of depth: the page goes to a mid blue, the Sheet to the darker navy under it, and the inks go from near-black to near-white with them (ADR-0015). What the theme never touches is the cream — the Aside's panel in Paper Mode, and the Toolbar at every tier, keep their surface and their dark ink in both themes. In Reading Mode there is no panel, so the Aside's ink rejoins the theme with everything else (ADR-0017). The PDF and the OG card are unaffected, because the whole ladder lives inside `@media screen`. Persist choice in `localStorage`, applied pre-hydration to avoid flash.
 
 ### Content model
-- **TypeScript data modules**, one set per Locale, against a shared typed schema. Each Block carries `sheet`, `column`, and its ordering; the compiler rejects invalid `sheet`/`column` values.
+- **TypeScript data modules**, one set per Locale, against a shared typed schema. Each Block carries `paperSheet`, `paperColumn` and `readOrder` — one position per Mode. The compiler rejects invalid Sheet/column values, and the build rejects a `readOrder` that is not a permutation of `1..n`, or a Continuation that does not read immediately after the Block it resumes.
 - Content fully separate from layout components.
 - Italian content is net-new (source CV is English) — a faithful translation is drafted for the owner to refine; the owner owns the final professional wording. Italian text runs ~10–15% longer, so per-Locale paging may differ.
 
@@ -125,9 +135,10 @@ Floating cluster, four actions, plus a fifth control — the Drawer's toggle —
 
 - **Content & structure:** load `/` (IT) and `/en/`; assert the expected Blocks render in the correct Sheet and column, and that Italian vs English text differs where expected.
 - **Toolbar behavior:** language toggle navigates to the equivalent route in the other Locale; theme toggle changes the background behind the Sheets while the Sheet surface stays white; share writes the current URL to the clipboard; download links to the correct per-Locale PDF filename.
-- **Responsive tiers:** with viewport emulation, assert two-Sheets-side-by-side at ≥1720px, stacked at 856px–1720px, and Reading Mode + operable Drawer below 856px. Assert too that no supported width scrolls sideways, 375px (the narrowest supported viewport) upward.
+- **Responsive tiers:** with viewport emulation, assert two Sheets side by side from 1752px, stacked and unscaled from 888px, and whole-but-fitted paper below it. Both thresholds are computed from the paper and the gutters in the test rather than written down, because no stylesheet holds them either. Assert too that no supported width scrolls sideways, 375px upward — which is the sharpest guard on the fit.
+- **The Mode:** the Toolbar control flips `data-mode`; the choice survives a reload and a language switch; the reading column runs the Blocks in `readOrder` with the Aside among them; a print from Reading Mode is still paper.
 - **PDF validity:** each generated PDF is exactly 2 A4 pages, has the CV fonts embedded, and contains expected key strings (name, section headings, a sample bullet) for its Locale.
-- **Accessibility smoke:** Toolbar and Drawer are keyboard-operable and labeled.
+- **Accessibility smoke:** every Toolbar control is keyboard-operable and labeled.
 
 Pixel-perfect fidelity is **not** asserted automatically — it is verified manually against `CV_page1.png` / `CV_page2.png` (see Out of Scope).
 

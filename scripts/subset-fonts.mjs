@@ -18,17 +18,17 @@ const TEXT = BASIC_LATIN + LATIN1_ACCENTS + LATIN_EXTENDED_A + PUNCTUATION;
 
 // The Toolbar's icons, as the private-use codepoints IcoMoon assigned them —
 // numeric, because the characters themselves are invisible in an editor. The
-// full set is 491 glyphs and 105 kB; eight are used. Adding a ninth means
+// full set is 491 glyphs and 105 kB; seven are used. Adding an eighth means
 // adding its codepoint here and a rule to src/styles/icons.css; the
 // name -> codepoint mapping is docs/assets/fonts/icons/selection.json.
 const ICONS = [
+  0xe91f, // book — offers Reading Mode
+  0xe922, // file-text — offers Paper Mode
   0xe960, // download
-  0xe9bd, // menu
   0xe9ca, // earth
   0xe9cb, // link
   0xe9d4, // sun
   0xe9d5, // contrast
-  0xea0f, // cross
   0xea10, // checkmark
 ]
   .map((codepoint) => String.fromCodePoint(codepoint))

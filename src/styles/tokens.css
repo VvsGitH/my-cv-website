@@ -24,6 +24,15 @@
   --color-muted-light: oklch(55% 0.008 264); /* #6b727f */
   --color-muted-dark: oklch(66% 0.008 264); /* #8f95a1 */
 
+  /* The Aside's three inks. On paper the panel is cream in both themes and takes
+     the light ramp with it (ADR-0015); in Reading Mode there is no panel, so they
+     follow the page like every other ink (ADR-0017). Indirected here rather than
+     restated in `Sheet.astro`, which would have to rebuild the whole theme ladder
+     to say it. */
+  --color-aside-heading: var(--color-heading-light);
+  --color-aside-text: var(--color-text-light);
+  --color-aside-muted: var(--color-muted-light);
+
   /* Theme-invariant, and the palette's whole warm side. */
   --color-signature: oklch(40% 0.0955 265); /* #2e457b */
   --color-accent: oklch(90.15% 0.0848 95.96); /* #efdf9e */
@@ -90,7 +99,7 @@
   /* --- Chrome geometry. Shared rather than local because the Colophon has to keep
      clear of the Toolbar and line up with the column (ADR-0008, ADR-0013). --- */
 
-  /* Chrome type, not paper type — one size for every Toolbar and Drawer glyph. */
+  /* Chrome type, not paper type — one size for every Toolbar glyph. */
   --font-size-button: 1.125rem;
 
   --toolbar-button-size: 2.25rem;
@@ -102,14 +111,10 @@
     var(--toolbar-button-size) + 2 * var(--space-xs) + 2 * var(--toolbar-border-size)
   );
 
-  /* The panel is the reading column less the backdrop it must leave beside it.
-     Derived rather than written down, because a literal went stale. */
-  --drawer-backdrop-min: 4rem;
-  --drawer-width: min(calc(var(--reading-column-min) - var(--drawer-backdrop-min)), var(--reading-column-max));
-  --drawer-slide: 250ms;
-
-  /* Reading Mode's measure, and the floor on the supported viewport width — the
-     two move together (tests/responsive.spec.ts asserts it). */
+  /* Reading Mode's measure. No longer a floor on the supported viewport width:
+     the Mode is chosen rather than triggered, so a narrow phone gets Paper Mode
+     unless it asks otherwise, and these only bound the column once it does
+     (ADR-0017). */
   --reading-column-min: 23rem;
   --reading-column-max: 34rem;
 }
@@ -161,36 +166,71 @@
   }
 }
 
+/* --- The reveal. A theme swap is a View Transition, and the UA's default crossfade
+   would dissolve the wave into a fade, so it is turned off and replaced by a circle
+   growing out of the control in `state.ts` (ADR-0016).
+
+   Layering the new snapshot over the old is what makes one animation serve both
+   directions: nothing ever contracts, the incoming theme simply uncovers the outgoing
+   one. No `screen and` needed, unlike the ladder above — a transition cannot start
+   during a print or a headless capture. --- */
+
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+
+::view-transition-old(root) {
+  z-index: 0;
+}
+
+::view-transition-new(root) {
+  z-index: 1;
+}
+
 /* Reading Mode (CONTEXT.md): the CV stops being paper, so the type stops being
-   paper type. Everything above transcribes an A4 document; everything here is
-   chosen for a phone.
+   paper type. Everything above transcribes an A4 document; everything below is
+   chosen for reading that document on a screen.
 
-   The two tier boundaries live here and in Document.astro: 53.5rem (856px) clears
-   one Sheet, 107.5rem (1720px) clears two. Neither may fall below the paper's own
-   --sheet-width of 840px, or the page scrolls sideways (ADR-0006).
+   It is an attribute, not a width (ADR-0017). `<html data-mode>` is the Mode's
+   only source of truth, set pre-paint by BaseLayout's inline script and flipped by
+   the Toolbar — the same arrangement as the theme, for the same reason (ADR-0003):
+   no `@media` can be asked what the reader chose. No `screen and` guard is needed
+   on it either, and none is wanted: the print layer overrides the geometry
+   directly, so a reader who prints from Reading Mode still gets paper. */
 
-   `screen and` is load-bearing on every Reading Mode query here (coding-standards). */
+html[data-mode='reading'] {
+  /* Name, subtitle and button carry their paper values down here unchanged. */
+  --font-size-heading: 1.75rem;
+  --font-size-subheading: 1.25rem;
+  --font-size-meta: 1.125rem;
+  --font-size-body: 1rem;
+  --prose-leading: 1.55;
+  --prose-align: start;
 
+  /* Three steps of the scale open up for the reading column. */
+  --space-s: 0.5rem;
+  --space-m: 1.5rem;
+  --space-l: 1.5rem;
+  --space-xl: 3rem;
+
+  /* The portrait leads the compact header rather than filling a panel. */
+  --photo-size: 10rem;
+
+  /* No cream panel down here, so the Aside's inks rejoin the theme. Pointing at
+     the semantic tokens rather than at a ramp is what lets one rebinding serve
+     both themes, and it resolves here on :root where the ladder has already run. */
+  --color-aside-heading: var(--color-heading);
+  --color-aside-text: var(--color-text);
+  --color-aside-muted: var(--color-muted);
+}
+
+/* The Chrome's own tier, and the one thing down here that stays a width: a touch
+   target is a property of the device, never of the Mode the reader picked. */
 @media screen and (width < 53.5rem) {
   :root {
-    /* Name, subtitle and button carry their paper values down here unchanged. */
-    --font-size-heading: 1.75rem;
-    --font-size-subheading: 1.25rem;
-    --font-size-meta: 1.125rem;
-    --font-size-body: 1rem;
-    --prose-leading: 1.55;
-    --prose-align: start;
-
-    /* Three steps of the scale open up for the phone. */
-    --space-s: 0.5rem;
-    --space-m: 1.5rem;
-    --space-l: 1.5rem;
-    --space-xl: 3rem;
-
-    /* The portrait leads the compact header rather than filling a panel. */
-    --photo-size: 10rem;
-
-    /* The touch tier. Only the control grows — the formula above still holds. */
+    /* Only the control grows — the --toolbar-block-size formula still holds. */
     --toolbar-button-size: 2.75rem;
     /* The one tier on the bottom edge, where a notched phone puts the home indicator. */
     --toolbar-inset: calc(0.875rem + env(safe-area-inset-bottom, 0px));

@@ -55,20 +55,20 @@ const { block } = Astro.props;
 
     /* Same value, but it cannot merge into a single `.group` rule the way
        `SkillsBlock` does: a Continuation's heading is `.is-sr-only` and so
-       out of flow, and the Group resuming under it must sit flush at the top
-       of the column.
+       out of flow, and on paper the Group resuming under it must sit flush at
+       the top of the column it opens.
        `:global` because `.section-heading` comes from its own component and
        carries a different scope hash. */
     :global(.section-heading:not(.is-sr-only)) + .group {
       margin-block-start: var(--space-m);
     }
 
-    /* In reading mode there's only one long page. The group should keep the default spacing with
-         the elements above, event if they are from a different sheet */
-    @media screen and (width < 53.5rem) {
-      .group:first-of-type {
-        margin-block-start: var(--space-m);
-      }
+    /* Reading Mode has no column to open, so a Continuation resumes mid-run and
+       takes the ordinary gap between Groups — which is the whole of what makes
+       the two halves read as one section down here (ADR-0017). The Mode, not a
+       width: it is the reflow that removes the column, never the viewport. */
+    :global(html[data-mode='reading']) .group:first-of-type {
+      margin-block-start: var(--space-m);
     }
   }
 </style>

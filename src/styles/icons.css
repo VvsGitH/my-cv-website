@@ -34,11 +34,14 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
+.icon-book:before {
+  content: '\e91f';
+}
+.icon-file-text:before {
+  content: '\e922';
+}
 .icon-download:before {
   content: '\e960';
-}
-.icon-menu:before {
-  content: '\e9bd';
 }
 .icon-earth:before {
   content: '\e9ca';
@@ -51,9 +54,6 @@
 }
 .icon-contrast:before {
   content: '\e9d5';
-}
-.icon-cross:before {
-  content: '\ea0f';
 }
 .icon-checkmark:before {
   content: '\ea10';

@@ -4,8 +4,10 @@ import type { Column, Locale, SheetNumber } from '../src/content/types';
 import { openPainted, renderedKinds, sheet, slackBelowLastBlock, VIEWPORTS } from './support/page';
 import { LOCALES, routeFor } from './support/site';
 
-// Declared rather than inherited from the config: below 53.5rem the Asides leave
-// the paper, so the number every measurement here rests on is load-bearing.
+// Declared rather than inherited from the config. It is no longer a Mode that
+// rests on it — Paper Mode is the default at every width (ADR-0017) — but the
+// Sheet zooms to fit below ~856px, and a measurement of scaled paper is a
+// measurement of nothing. `paper` is wide enough that the zoom resolves to 1.
 test.use({ viewport: VIEWPORTS.paper });
 
 const SHEETS: SheetNumber[] = [1, 2];
@@ -15,7 +17,9 @@ const COLUMNS: Column[] = ['aside', 'main'];
 const blocksInDocumentOrder = (locale: Locale) =>
   SHEETS.flatMap((number) =>
     COLUMNS.flatMap((column) =>
-      cv[locale].blocks.filter((block) => block.sheet === number && block.column === column),
+      cv[locale].blocks.filter(
+        (block) => block.paperSheet === number && block.paperColumn === column,
+      ),
     ),
   );
 
@@ -37,7 +41,7 @@ for (const locale of LOCALES) {
       for (const number of SHEETS) {
         for (const column of COLUMNS) {
           const expected = cv[locale].blocks
-            .filter((block) => block.sheet === number && block.column === column)
+            .filter((block) => block.paperSheet === number && block.paperColumn === column)
             .map((block) => block.kind);
 
           expect(
@@ -136,7 +140,6 @@ test('says the same things in different words in each Locale', async ({ page }) 
 test('dates the Privacy statement at build time, identically in both Locales', async ({ page }) => {
   const placeDateOf = async (locale: Locale) => {
     await openPainted(page, routeFor(locale));
-    // Scoped to the Sheet: Chrome renders the Aside Blocks a second time.
     return (await sheet(page, 2).locator('.block--privacy .place-date').innerText()).trim();
   };
 

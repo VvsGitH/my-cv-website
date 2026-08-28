@@ -26,21 +26,33 @@ export async function openPainted(page: Page, route: string): Promise<void> {
   await expect(page.locator('astro-island[ssr]')).toHaveCount(0);
 }
 
-/** One viewport per tier. `paper` is also the capture viewport (ADR-0009). */
+/**
+ * One viewport per case. `paper` is also the capture viewport (ADR-0009).
+ * `reading` is a phone-sized viewport, not a Mode — since ADR-0017 the Mode is
+ * chosen, and a phone gets Paper Mode there until something calls `readingMode`.
+ *
+ * `twoUp` is the exact width at which the pair stops wrapping: 2 × 840px of
+ * paper, the 24px between them and the 8px gutter either side. No stylesheet
+ * writes that number down any more — the flex line finds it — so this is the
+ * assertion that it is where the arithmetic says it is.
+ */
 export const VIEWPORTS = {
   reading: { width: 375, height: 812 },
   stacked: { width: 1024, height: 1400 },
-  twoUp: { width: 1720, height: 1200 },
+  twoUp: { width: 2 * 840 + 24 + 2 * 8, height: 1200 },
   paper: { width: 1280, height: 1600 },
 } as const;
+
+/** Puts the page in Reading Mode the way a reader does — through the control. */
+export async function readingMode(page: Page): Promise<void> {
+  await toolbar(page).locator('.toolbar-mode').click();
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'reading');
+}
 
 export const sheet = (page: Page, number: SheetNumber): Locator =>
   page.locator('.sheet').nth(number - 1);
 
 export const toolbar = (page: Page): Locator => page.locator('.toolbar');
-
-/** The panel — a `<dialog>` opened with `showModal()` (ADR-0008). */
-export const drawer = (page: Page): Locator => page.locator('.drawer');
 
 /** The kind of every Block rendered into one column, in document order. */
 export async function renderedKinds(

@@ -10,7 +10,9 @@ interface Props {
 
 const { content, sheet } = Astro.props;
 const blocksIn = (column: Column) =>
-  content.blocks.filter((block) => block.sheet === sheet && block.column === column);
+  content.blocks.filter(
+    block => block.paperSheet === sheet && block.paperColumn === column
+  );
 
 const asideBlocks = blocksIn('aside');
 ---
@@ -18,9 +20,9 @@ const asideBlocks = blocksIn('aside');
 <div class="sheet">
   <div class="columns">
     <aside class="aside">
-      {asideBlocks.map((block) => <Block block={block} />)}
+      {asideBlocks.map(block => <Block block={block} />)}
     </aside>
-    <div class="main">{blocksIn('main').map((block) => <Block block={block} />)}</div>
+    <div class="main">{blocksIn('main').map(block => <Block block={block} />)}</div>
   </div>
 </div>
 
@@ -31,6 +33,7 @@ const asideBlocks = blocksIn('aside');
       aspect-ratio: var(--sheet-ar);
       width: var(--sheet-width);
       height: auto;
+      flex: none; /* consistent size in flex container */
       background: var(--color-main-bg);
       transform-origin: top left;
     }
@@ -46,13 +49,15 @@ const asideBlocks = blocksIn('aside');
 
     .aside {
       /* The cream panel is the same surface in both themes, so its ink is the
-         same too — taken from the light ramp directly rather than left to the
-         theme, which would print white text on cream (ADR-0015). Custom
-         properties inherit down the DOM, so this also survives Reading Mode's
-         `display: contents` below. */
-      --color-heading: var(--color-heading-light);
-      --color-text: var(--color-text-light);
-      --color-muted: var(--color-muted-light);
+         same too — not left to the theme, which would print white text on cream
+         (ADR-0015). Named through `--color-aside-*` rather than off the light
+         ramp directly, because the pin has to lift in Reading Mode where there
+         is no panel; `tokens.css` is where the two cases are stated. Custom
+         properties inherit down the DOM, so both survive the `display: contents`
+         below. */
+      --color-heading: var(--color-aside-heading);
+      --color-text: var(--color-aside-text);
+      --color-muted: var(--color-aside-muted);
 
       grid-area: aside;
       display: flex;
@@ -94,36 +99,53 @@ const asideBlocks = blocksIn('aside');
       margin-inline-end: calc(-1 * var(--aside-pad-inline-end));
     }
 
-    /* Reading Mode: A4 is abandoned, so every box between the reading column and
-       the Blocks steps out of the flow and the Blocks of both Sheets become items
-       of Document.astro's single grid (ADR-0004). */
-    @media screen and (width < 53.5rem) {
+    /* Reading Mode (ADR-0017): A4 is abandoned, so every box between the reading
+       column and the Blocks steps out of the flow, and the Blocks of both Sheets
+       and both columns become items of Document.astro's single grid (ADR-0004).
+       Nothing is hidden and nothing is rendered twice — the Aside reads here now,
+       and `--read-order` is what sequences it against Main. */
+    :global(html[data-mode='reading']) {
       .sheet,
       .columns,
-      .aside {
+      .aside,
+      .main {
         display: contents;
       }
 
-      /* Read in the Drawer down here (ADR-0008); the portrait is the exception. */
-      .aside > :global(.block:not(.block--photo)) {
-        display: none;
+      /* Content order is the paper's; `order` is the reading column's (ADR-0017).
+         The Blocks are items of `.sheets` by the time this reaches them. */
+      .aside > :global(.block),
+      .main > :global(.block) {
+        order: var(--read-order);
+        /* The gap above each Block, rather than above each heading. Spacing cannot
+           be keyed off `:first-child` under `order` — the DOM-first Block is not
+           the visually-first one — so every Block carries its own, and `.sheets`
+           drops its block padding to match. The head of the column then measures
+           --space-xl whichever Block sorts there. */
+        margin-block-start: var(--space-xl);
+      }
+
+      /* A Continuation resumes its parent rather than opening a section, and
+         `readOrder` puts it immediately after it, so it takes the gap between
+         Groups instead — MainSectionBlock's `.group:first-of-type` supplies it. */
+      .aside > :global(.block[data-continues]),
+      .main > :global(.block[data-continues]) {
+        margin-block-start: 0;
+      }
+
+      /* The gap lives on the Block now, so the heading must not add a second one. */
+      .aside :global(.block > .section-heading),
+      .main :global(.block > .section-heading) {
+        margin-block-start: 0;
+      }
+
+      /* The rule bled into the panel's padding; there is no panel to bleed into. */
+      .aside :global(.block > .section-heading) {
+        margin-inline-end: 0;
       }
 
       .aside > :global(.block--photo) {
         justify-self: center;
-        margin-block-end: var(--space-xl);
-      }
-
-      .main {
-        /* Left standing, it would place Main in an implicit column of the
-           reading grid and drag the column off-centre. */
-        grid-area: auto;
-        padding-block-start: 0;
-      }
-
-      /* One long page down here, so the gap holds across the Sheet boundary too. */
-      .main :global(.block:first-child > .section-heading) {
-        margin-block-start: var(--space-xl);
       }
 
       /* With no Aside beside it there is nothing to answer to. */
@@ -140,6 +162,31 @@ const asideBlocks = blocksIn('aside');
     @media print {
       .sheet {
         zoom: calc(210mm / var(--sheet-width));
+      }
+
+      /* The Mode is remembered, so a reader can be in Reading Mode when they
+         print. Taken back rather than assumed: a leak here would still produce
+         two A4 pages and `assertTwoA4Pages()` would pass in silence (ADR-0009). */
+      .sheet {
+        display: block;
+      }
+
+      .columns {
+        display: grid;
+      }
+
+      .aside {
+        display: flex;
+      }
+
+      .main {
+        display: block;
+      }
+
+      .aside > :global(.block),
+      .main > :global(.block) {
+        order: 0;
+        margin-block-start: 0;
       }
     }
   }

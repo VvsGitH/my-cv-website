@@ -1,12 +1,21 @@
 import { expect, test, type Page } from '@playwright/test';
-import { drawer, openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
+import { openPainted, sheet, VIEWPORTS } from './support/page';
 import { routeFor } from './support/site';
 
 /**
- * The three tiers of CONTEXT.md, at the boundaries the paper's own width
- * settles: 53.5rem (856px) clears one 840px Sheet, 107.5rem (1720px) clears two
- * and the gap between them. ADR-0006 is why they are read off the paper at all
- * — it removed the scale-to-fit, so a Sheet is a literal A4 box.
+ * Paper Mode at every width — which since ADR-0017 is every width, because the
+ * Mode is chosen rather than triggered. Neither of the two tier boundaries is
+ * written down any more, and each was replaced by something continuous:
+ *
+ * - the 53.5rem one by the fit, so below the paper's own width the Sheet zooms
+ *   down rather than running over the edge (the half of ADR-0006 §2 that
+ *   ADR-0017 puts back);
+ * - the 107.5rem one by a wrapping flex line, so the pair shares a row exactly
+ *   when there is room for it rather than when a number says so.
+ *
+ * Both are therefore asserted from the paper's own arithmetic here, never
+ * against a literal a stylesheet also holds — there is no longer one to drift
+ * from. Reading Mode is tested in `mode.spec.ts`, where it is now reached.
  */
 
 /** The screen box: --sheet-width, in A4's 210/297 ratio. mm only reach print. */
@@ -77,34 +86,101 @@ test.describe('Paper Mode, stacked', () => {
 
     await expect(sheet(page, 1).locator('.aside')).toBeVisible();
     await expect(sheet(page, 1).locator('.main')).toBeVisible();
-    await expect(drawer(page)).toBeHidden();
+    // The panel that used to hold the Aside on a phone is gone entirely (ADR-0017).
+    await expect(page.locator('.drawer')).toHaveCount(0);
   });
 });
 
-test('changes tier exactly on its boundaries, and not a pixel earlier', async ({ page }) => {
+test('wraps the pair the pixel before it fits, and not one earlier', async ({ page }) => {
   await openPainted(page, routeFor('it'));
-  const paper = sheet(page, 1);
+  const { width } = VIEWPORTS.twoUp;
 
-  await page.setViewportSize({ width: 855, height: 1200 });
-  await expect(paper.locator('.aside > .block--about'), 'at 855px, Reading Mode').toBeHidden();
+  await page.setViewportSize({ width: width - 1, height: 1200 });
+  expect(await rowCount(page), `at ${width - 1}px the Sheets should still stack`).toBe(2);
 
-  await page.setViewportSize({ width: 856, height: 1200 });
-  await expect(paper.locator('.aside > .block--about'), 'at 856px, Paper Mode').toBeVisible();
-
-  await page.setViewportSize({ width: 1719, height: 1200 });
-  expect(await rowCount(page), 'at 1719px the Sheets should still stack').toBe(2);
-
-  await page.setViewportSize({ width: 1720, height: 1200 });
-  expect(await rowCount(page), 'at 1720px the Sheets should share a row').toBe(1);
+  await page.setViewportSize({ width, height: 1200 });
+  expect(await rowCount(page), `at ${width}px the Sheets should share a row`).toBe(1);
 });
 
 /**
- * A sideways scrollbar is a bug at every width, not only at the two boundaries
- * (ADR-0006), so this sweeps rather than samples: both boundaries and the pixel
- * under each, the narrowest supported viewport, and common devices between.
+ * What the 53.5rem boundary used to hide: below it a Sheet plus its gutter is
+ * wider than the viewport. It is fitted now instead of dismantled, so the paper
+ * stays whole — both columns on it — at a phone width.
+ */
+test('shows whole paper at a phone width, fitted rather than dismantled', async ({ page }) => {
+  await openPainted(page, routeFor('it'));
+  await page.setViewportSize(VIEWPORTS.reading);
+
+  const paper = sheet(page, 1);
+  await expect(paper.locator('.aside > .block--about'), 'the Aside is on the paper').toBeVisible();
+
+  const [first] = await sheetBoxes(page);
+  // A real box, in A4's ratio, narrower than the viewport it was fitted to.
+  expect(first!.width).toBeGreaterThan(0);
+  expect(first!.width).toBeLessThan(VIEWPORTS.reading.width);
+  expect(first!.height / first!.width).toBeCloseTo(297 / 210, 1);
+});
+
+/**
+ * `min(1, …)` is the guarantee ADR-0006 wanted and ADR-0017 keeps: the paper is
+ * fitted down, never up. Once there is room for 840px plus both gutters — 888px
+ * — the fit is inert and every wider tier measures exactly as it did before.
+ */
+test('stops fitting the moment the paper fits, and never scales it up', async ({ page }) => {
+  await openPainted(page, routeFor('it'));
+
+  await page.setViewportSize({ width: 887, height: 1200 });
+  const [fitted] = await sheetBoxes(page);
+  expect(fitted!.width, 'at 887px the paper is still being fitted').toBeLessThan(A4.width);
+
+  await page.setViewportSize({ width: 888, height: 1200 });
+  expectRealA4((await sheetBoxes(page))[0]!, 'at 888px Sheet 1');
+
+  await page.setViewportSize(VIEWPORTS.twoUp);
+  expectRealA4((await sheetBoxes(page))[0]!, `at ${VIEWPORTS.twoUp.width}px Sheet 1`);
+});
+
+/**
+ * The one assertion in this file that names a property instead of measuring a box,
+ * and it says so because the measurement is not available here: the fit reads
+ * `100cqw`, which falls back to the small viewport when no query container stands
+ * above it — and the small viewport counts the classic scrollbar that `.paper`'s
+ * content box does not. Measured in a real browser window at 390px with a 15px
+ * scrollbar, the fallback reports 390 against `.paper`'s 375 and the Sheet comes
+ * out 15px over its box, eating half the gutter either side. Headless Chromium
+ * has overlay scrollbars that take no space, so both widths agree here and every
+ * geometric assertion below passes with the container deleted.
+ *
+ * The print half is asserted too: `container-type` brings layout containment, and
+ * a layout-contained box is monolithic for fragmentation, which is a hazard to the
+ * `break-before: page` that makes the CV two pages.
+ */
+test('keeps a query container over the paper on screen, and none in print', async ({ page }) => {
+  await openPainted(page, routeFor('it'));
+
+  const containerType = () =>
+    page.locator('.paper').evaluate((element) => getComputedStyle(element).containerType);
+
+  expect(await containerType(), 'on screen the fit needs something to measure').toBe('inline-size');
+
+  await page.emulateMedia({ media: 'print' });
+  expect(await containerType(), 'in print the containment must not reach the page break').toBe(
+    'normal',
+  );
+});
+
+/**
+ * A sideways scrollbar is a bug at every width (ADR-0006), so this sweeps rather
+ * than samples. It is the sharpest single guard on the fit above, because Paper
+ * Mode is now the default at the narrow widths that used to be Reading Mode's:
+ * everything under 888px is real A4 paper being scaled to fit, and any
+ * arithmetic error there shows up here as an overflow. The two widths where the
+ * flex line wraps are swept too — that is the other place the gutters are
+ * spent, and the one the fit does not cover.
  */
 const NO_OVERFLOW_WIDTHS = [
-  375, 390, 414, 500, 600, 700, 780, 855, 856, 857, 900, 1024, 1280, 1440, 1719, 1720, 1721, 1920,
+  375, 390, 414, 500, 600, 700, 780, 855, 887, 888, 889, 900, 1024, 1280, 1440,
+  VIEWPORTS.twoUp.width - 1, VIEWPORTS.twoUp.width, VIEWPORTS.twoUp.width + 1, 1920, 2560,
 ];
 
 test('never scrolls sideways, at any supported width', async ({ page }) => {
@@ -123,44 +199,4 @@ test('never scrolls sideways, at any supported width', async ({ page }) => {
   }
 
   expect(overflowing, 'these widths scroll sideways').toEqual([]);
-});
-
-test.describe('Reading Mode', () => {
-  test.use({ viewport: VIEWPORTS.reading });
-
-  test.beforeEach(async ({ page }) => {
-    await openPainted(page, routeFor('it'));
-  });
-
-  test('dismantles the A4 box and reflows into one column', async ({ page }) => {
-    // Every box between the reading column and the Blocks is `display: contents`
-    // down here, so the Sheet has no geometry of its own to measure.
-    const [first] = await sheetBoxes(page);
-    expect(first!.width, 'the Sheet should have no box in Reading Mode').toBe(0);
-
-    const readingColumn = await page.locator('.sheets').boundingBox();
-    expect(readingColumn!.width).toBeLessThanOrEqual(VIEWPORTS.reading.width);
-
-    // The portrait is excluded because it is centred on purpose; every other
-    // Block runs the full measure of the reading column.
-    const lefts = await page
-      .locator('.sheets .block:visible:not(.block--photo)')
-      .evaluateAll((blocks) => blocks.map((block) => Math.round(block.getBoundingClientRect().x)));
-
-    expect(lefts.length, 'Blocks from both Sheets should reflow into the column').toBeGreaterThan(1);
-    expect(new Set(lefts).size, 'every Block should share one column').toBe(1);
-  });
-
-  test('reads the Aside in the Drawer, and opens with the portrait', async ({ page }) => {
-    const paper = sheet(page, 1);
-
-    await expect(paper.locator('.aside > .block--photo')).toBeVisible();
-    await expect(paper.locator('.aside > .block--about')).toBeHidden();
-
-    const photo = await paper.locator('.aside > .block--photo').boundingBox();
-    const header = await paper.locator('.main > .block--header').boundingBox();
-    expect(photo!.y, 'the portrait opens the compact header').toBeLessThan(header!.y);
-
-    await expect(toolbar(page).locator('.toolbar-drawer')).toBeVisible();
-  });
 });

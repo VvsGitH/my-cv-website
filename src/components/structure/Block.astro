@@ -16,9 +16,18 @@ interface Props {
 }
 
 const { block } = Astro.props;
+
+// Reading Mode reflows with `order` rather than a second render, so the rank
+// travels to CSS as a custom property (ADR-0017). `data-continues` is what lets
+// the same stylesheet close the gap above a Continuation.
+const continues = 'continues' in block && block.continues ? '' : undefined;
 ---
 
-<article class:list={['block', `block--${block.kind}`]}>
+<article
+  class:list={['block', `block--${block.kind}`]}
+  style={`--read-order: ${block.readOrder}`}
+  data-continues={continues}
+>
   {block.kind === 'photo' && <PhotoBlock block={block} />}
   {block.kind === 'header' && <HeaderBlock block={block} />}
   {block.kind === 'about' && <AboutBlock block={block} />}

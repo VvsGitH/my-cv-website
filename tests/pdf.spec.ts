@@ -127,6 +127,42 @@ test.describe('print', () => {
 });
 
 /**
+ * The Mode is remembered, so a reader can be in Reading Mode when they reach for
+ * their own printer — and unlike the build's capture, that page carries whatever
+ * `localStorage` held. The print layer has to take the paper back on its own
+ * (ADR-0017); a leak would still produce two A4 pages, so nothing downstream
+ * would catch it (ADR-0009).
+ */
+test('prints as paper even from Reading Mode', async ({ page }) => {
+  await openPainted(page, routeFor('it'));
+  await page.locator('.toolbar-mode').click();
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'reading');
+
+  const dismantled = await page
+    .locator('.sheet')
+    .first()
+    .evaluate((element) => getComputedStyle(element).display);
+  expect(dismantled, 'Reading Mode should dismantle the Sheet on screen').toBe('contents');
+
+  await page.emulateMedia({ media: 'print' });
+
+  const printed = await page.locator('.sheet').first().evaluate((element) => ({
+    sheet: getComputedStyle(element).display,
+    columns: getComputedStyle(element.querySelector('.columns')!).display,
+    aside: getComputedStyle(element.querySelector('.aside')!).display,
+    main: getComputedStyle(element.querySelector('.main')!).display,
+    width: element.getBoundingClientRect().width,
+  }));
+
+  expect(printed.sheet, 'the Sheet is a box again').toBe('block');
+  expect(printed.columns).toBe('grid');
+  expect(printed.aside).toBe('flex');
+  expect(printed.main).toBe('block');
+  // Real paper, not a reflowed column: `zoom` has taken the box back to 210mm.
+  expect(printed.width).toBeGreaterThan(0);
+});
+
+/**
  * The link-preview card is a route that gets screenshotted (ADR-0009), so the
  * machine taking the picture brings a `prefers-color-scheme` of its own. The
  * card paints its own dark ground; the Sheet on it must still be white paper.

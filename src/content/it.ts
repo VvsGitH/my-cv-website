@@ -30,8 +30,9 @@ export const it: CvContent = {
     // ── Sheet 1 · Aside ──────────────────────────────────────────────────
     {
       kind: 'photo',
-      sheet: 1,
-      column: 'aside',
+      paperSheet: 1,
+      paperColumn: 'aside',
+      readOrder: 1,
       // Not blanked like the prose below: an empty `alt` reads as
       // "decorative" to a screen reader, which fails silently rather than
       // visibly. The name is the same in both Locales anyway.
@@ -39,8 +40,9 @@ export const it: CvContent = {
     },
     {
       kind: 'about',
-      sheet: 1,
-      column: 'aside',
+      paperSheet: 1,
+      paperColumn: 'aside',
+      readOrder: 3,
       heading: 'Chi sono',
       paragraphs: [
         'Senior software developer con 5 anni di esperienza tra società di consulenza e aziende di prodotto, su applicazioni di larga scala (da strumenti enterprise interni a piattaforme news ad alto traffico con oltre 40k utenti concorrenti). Ho guidato piccoli team, seguito la crescita di sviluppatori junior e collaborato a stretto contatto con product manager, designer e stakeholder non tecnici per tradurre le esigenze di business in soluzioni tecniche pragmatiche. Tengo a un codice manutenibile e ben testato, e sono sinceramente curioso del perché di ciò che costruisco.',
@@ -48,8 +50,9 @@ export const it: CvContent = {
     },
     {
       kind: 'skills',
-      sheet: 1,
-      column: 'aside',
+      paperSheet: 1,
+      paperColumn: 'aside',
+      readOrder: 7,
       heading: 'Tecnologie',
       groups: [
         {
@@ -115,8 +118,9 @@ export const it: CvContent = {
     // ── Sheet 1 · Main ───────────────────────────────────────────────────
     {
       kind: 'header',
-      sheet: 1,
-      column: 'main',
+      paperSheet: 1,
+      paperColumn: 'main',
+      readOrder: 2,
       name: 'Vito Paparella Santorsola',
       title: 'Senior Software Developer',
       contacts: [
@@ -135,8 +139,9 @@ export const it: CvContent = {
     },
     {
       kind: 'mainSection',
-      sheet: 1,
-      column: 'main',
+      paperSheet: 1,
+      paperColumn: 'main',
+      readOrder: 4,
       heading: 'Esperienza',
       groups: [
         {
@@ -177,8 +182,9 @@ export const it: CvContent = {
     },
     {
       kind: 'mainSection',
-      sheet: 1,
-      column: 'main',
+      paperSheet: 1,
+      paperColumn: 'main',
+      readOrder: 5,
       heading: 'Progetti selezionati',
       groups: [
         {
@@ -208,8 +214,9 @@ export const it: CvContent = {
     // ── Sheet 2 · Aside ──────────────────────────────────────────────────
     {
       kind: 'bullets',
-      sheet: 2,
-      column: 'aside',
+      paperSheet: 2,
+      paperColumn: 'aside',
+      readOrder: 8,
       heading: 'Soft skills',
       // OWNER: "Growth mindset", "Leadership" and "Problem solving" are
       // established loanwords in Italian professional usage — kept.
@@ -227,8 +234,9 @@ export const it: CvContent = {
     },
     {
       kind: 'languages',
-      sheet: 2,
-      column: 'aside',
+      paperSheet: 2,
+      paperColumn: 'aside',
+      readOrder: 11,
       heading: 'Lingue',
       entries: [
         { name: 'Italiano', level: 'Madrelingua', proficiency: 1 },
@@ -237,8 +245,9 @@ export const it: CvContent = {
     },
     {
       kind: 'certifications',
-      sheet: 2,
-      column: 'aside',
+      paperSheet: 2,
+      paperColumn: 'aside',
+      readOrder: 10,
       heading: 'Certificazioni',
       // Both titles are official course/certificate names — proper nouns,
       // left untranslated.
@@ -259,8 +268,9 @@ export const it: CvContent = {
     },
     {
       kind: 'bullets',
-      sheet: 2,
-      column: 'aside',
+      paperSheet: 2,
+      paperColumn: 'aside',
+      readOrder: 12,
       heading: 'Altre info',
       items: [
         'Patente di guida: B.',
@@ -271,8 +281,9 @@ export const it: CvContent = {
     },
     {
       kind: 'privacy',
-      sheet: 2,
-      column: 'aside',
+      paperSheet: 2,
+      paperColumn: 'aside',
+      readOrder: 13,
       heading: 'Privacy',
       // The canonical Italian formula, not a literal translation: the English
       // is itself a rendering of this standard clause.
@@ -285,12 +296,14 @@ export const it: CvContent = {
     // ── Sheet 2 · Main ───────────────────────────────────────────────────
     {
       kind: 'mainSection',
-      sheet: 2,
-      column: 'main',
+      paperSheet: 2,
+      paperColumn: 'main',
+      readOrder: 6,
       // A Continuation (ADR-0005): the heading is a marked copy of Sheet 1's,
-      // rendered for screen readers only. Five unrelated Aside headings sit
-      // between the two halves in reading order, so the marker is what tells
-      // a screen reader user "this resumes" rather than "I went backwards".
+      // rendered for screen readers only. On paper the two halves are a column
+      // apart; in Reading Mode `readOrder` puts this one immediately after the
+      // half it resumes, which the build asserts (ADR-0017). The marker is read
+      // in both cases, and in neither does a sighted reader see a second rule.
       heading: 'Progetti selezionati (continua)',
       continues: true,
       groups: [
@@ -357,8 +370,9 @@ export const it: CvContent = {
     },
     {
       kind: 'mainSection',
-      sheet: 2,
-      column: 'main',
+      paperSheet: 2,
+      paperColumn: 'main',
+      readOrder: 9,
       heading: 'Formazione',
       groups: [
         {

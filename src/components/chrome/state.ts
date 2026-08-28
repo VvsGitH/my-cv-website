@@ -3,8 +3,9 @@ import type { TargetedMouseEvent } from 'preact';
 
 /** Every initialiser here must be a constant — they run during prerender too (coding-standards). */
 
-/** Mirrors BaseLayout's inline script — change the key in both. */
+/** Both mirror BaseLayout's inline script — change a key in both places. */
 const THEME_STORAGE_KEY = 'cv-theme';
+const MODE_STORAGE_KEY = 'cv-mode';
 
 const COPIED_FEEDBACK_MS = 2000;
 
@@ -12,9 +13,7 @@ const THEME_REVEAL_MS = 620;
 const THEME_REVEAL_EASING = 'cubic-bezier(0.22, 1, 0.36, 1)';
 
 export type Theme = 'light' | 'dark';
-
-/** The one piece of state crossing the two islands (ADR-0007, ADR-0008). */
-export const drawerOpen = signal(false);
+export type Mode = 'paper' | 'reading';
 
 /** Module-level despite the single instance — a sanctioned exception (coding-standards). */
 export const linkCopied = signal(false);
@@ -67,6 +66,24 @@ export function toggleTheme(event: TargetedMouseEvent<HTMLButtonElement>): void 
     // A second toggle skipping the first one rejects `ready`, and is not a failure.
     .ready.then(() => revealFrom(origin))
     .catch(() => {});
+}
+
+/**
+ * `<html data-mode>` is the Mode's only source of truth, exactly as the theme's is
+ * — no signal mirrors it, and the Toolbar's control is switched by CSS rather than
+ * re-rendered (ADR-0003, ADR-0017). Paper is the default at every width, so the
+ * flip needs no width to consult.
+ */
+export function toggleMode(): void {
+  const next: Mode = document.documentElement.dataset['mode'] === 'reading' ? 'paper' : 'reading';
+
+  document.documentElement.dataset['mode'] = next;
+
+  try {
+    localStorage.setItem(MODE_STORAGE_KEY, next);
+  } catch {
+    // Private modes throw on write; the Mode still applies for this visit.
+  }
 }
 
 let copiedTimer: ReturnType<typeof setTimeout> | undefined;

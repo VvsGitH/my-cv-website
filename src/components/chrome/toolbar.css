@@ -51,7 +51,8 @@
   }
 
   /* Both glyphs and both names ship; CSS picks, so the control is right before
-     hydration rather than after it (ADR-0003). */
+     hydration rather than after it (ADR-0003). The Mode's control works the same
+     way for the same reason, off `[data-mode]` instead (ADR-0017). */
   .toolbar-theme .icon-sun,
   .toolbar-theme .toolbar-theme-to-light {
     display: none;
@@ -64,6 +65,24 @@
 
   [data-theme='dark'] .toolbar-theme .icon-sun,
   [data-theme='dark'] .toolbar-theme .toolbar-theme-to-light {
+    display: block;
+  }
+
+  /* Paper Mode is the default, so the base state is "offers Reading Mode". With
+     JS off there is no `[data-mode]` at all and this is what remains — honest,
+     because the control cannot work then either. */
+  .toolbar-mode .icon-file-text,
+  .toolbar-mode .toolbar-mode-to-paper {
+    display: none;
+  }
+
+  [data-mode='reading'] .toolbar-mode .icon-book,
+  [data-mode='reading'] .toolbar-mode .toolbar-mode-to-reading {
+    display: none;
+  }
+
+  [data-mode='reading'] .toolbar-mode .icon-file-text,
+  [data-mode='reading'] .toolbar-mode .toolbar-mode-to-paper {
     display: block;
   }
 
@@ -90,16 +109,12 @@
     opacity: 1;
   }
 
-  @media screen and (width >= 53.5rem) {
-    /* Paper Mode has no Drawer, so it has no toggle. */
-    .toolbar-drawer {
-      display: none;
-    }
-  }
+  /* The narrow tier turns the cluster on its side against the bottom edge, and is
+     the only one needing a `scroll-padding` counterpart for WCAG 2.4.11 (ADR-0008,
+     which also records the rail's open overlap defect on the wide tiers).
 
-  /* Reading Mode turns the cluster on its side against the bottom edge, and is the
-     only tier needing a `scroll-padding` counterpart for WCAG 2.4.11 (ADR-0008,
-     which also records the rail's open overlap defect in Paper Mode). */
+     A width, not the Mode (ADR-0017): the cluster answers to the device it is
+     being touched on, not to what the reader chose to look at. */
   @media screen and (width < 53.5rem) {
     .toolbar {
       inset-block: auto var(--toolbar-inset);

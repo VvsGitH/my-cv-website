@@ -36,7 +36,7 @@ const { lines, period } = Astro.props;
       flex: none;
     }
 
-    @media screen and (width < 53.5rem) {
+    :global(html[data-mode='reading']) {
       .group-meta {
         flex-direction: column;
       }

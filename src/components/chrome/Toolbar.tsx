@@ -1,6 +1,6 @@
 import type { Locale } from '../../content/types';
-import type { DrawerStrings, ToolbarStrings } from '../../i18n/ui';
-import { copyLink, drawerOpen, linkCopied, toggleTheme } from './state';
+import type { ToolbarStrings } from '../../i18n/ui';
+import { copyLink, linkCopied, toggleMode, toggleTheme } from './state';
 import './toolbar.css';
 
 /** Where the Toolbar's two link actions point, for this page's Locale. */
@@ -12,29 +12,32 @@ export interface ToolbarLinks {
 }
 
 /**
- * The Toolbar (CONTEXT.md). ADR-0007 (two islands), ADR-0008 (its two shapes,
- * no `aria-expanded`, no `role="toolbar"`), ADR-0003 (why the theme control is
- * named by a pair of sr-only labels rather than an `aria-label`).
+ * The Toolbar (CONTEXT.md) — the site's only island since the Drawer went
+ * (ADR-0017). ADR-0008 (its two shapes, no `role="toolbar"`), ADR-0003 (why the
+ * theme control is named by a pair of sr-only labels rather than an `aria-label`,
+ * which the Mode control now follows).
  */
 interface Props {
   toolbar: ToolbarStrings;
-  /** Only `open` is read here: the toggle no longer morphs (ADR-0008). */
-  drawer: DrawerStrings;
   links: ToolbarLinks;
 }
 
-export default function Toolbar({ toolbar, drawer, links }: Props) {
+export default function Toolbar({ toolbar, links }: Props) {
   return (
     <div class="toolbar">
+      {/* Five controls at every tier now. On a phone this one is also the answer
+          to WCAG 2.2 · 1.4.4: Paper Mode fits A4 to the device, and this is the
+          way to type sized for reading rather than for the paper (ADR-0017). */}
       <button
         type="button"
-        class="toolbar-button toolbar-drawer"
-        title={drawer.open}
-        aria-label={drawer.open}
-        aria-haspopup="dialog"
-        onClick={() => (drawerOpen.value = true)}
+        title={toolbar.modeChange}
+        class="toolbar-button toolbar-mode"
+        onClick={toggleMode}
       >
-        <span class="icon-menu" aria-hidden="true"></span>
+        <span class="icon-file-text" aria-hidden="true"></span>
+        <span class="icon-book" aria-hidden="true"></span>
+        <span class="is-sr-only toolbar-mode-to-reading">{toolbar.modeToReading}</span>
+        <span class="is-sr-only toolbar-mode-to-paper">{toolbar.modeToPaper}</span>
       </button>
 
       <a

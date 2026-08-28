@@ -4,13 +4,6 @@ import type { Locale } from '../content/types';
  * The Chrome's own words, never CV content. Serialized whole into island props,
  * so page-level strings belong in `meta.ts` (coding-standards).
  */
-export interface DrawerStrings {
-  /** Announced, never shown (ADR-0008). */
-  name: string;
-  open: string;
-  close: string;
-}
-
 /** Every control is icon-only, so each of these *is* its accessible name. */
 export interface ToolbarStrings {
   /** Names the language switched *to*, not the one on screen. */
@@ -22,6 +15,10 @@ export interface ToolbarStrings {
   themeChange: string;
   themeToDark: string;
   themeToLight: string;
+  /** The Mode's pair, on the theme's model and for the same reason (ADR-0017). */
+  modeChange: string;
+  modeToReading: string;
+  modeToPaper: string;
 }
 
 /** The Colophon's own words; the © line and the channels are derived (ADR-0013). */
@@ -35,18 +32,12 @@ export interface ColophonStrings {
 }
 
 export interface UiStrings {
-  drawer: DrawerStrings;
   toolbar: ToolbarStrings;
   colophon: ColophonStrings;
 }
 
 export const ui: Record<Locale, UiStrings> = {
   it: {
-    drawer: {
-      name: 'Profilo e competenze',
-      open: 'Apri profilo e competenze',
-      close: 'Chiudi profilo e competenze',
-    },
     toolbar: {
       language: 'Leggi in inglese',
       download: 'Scarica il CV in PDF',
@@ -55,6 +46,9 @@ export const ui: Record<Locale, UiStrings> = {
       themeChange: 'Cambia il tema',
       themeToDark: 'Attiva il tema scuro',
       themeToLight: 'Attiva il tema chiaro',
+      modeChange: 'Cambia visualizzazione',
+      modeToReading: 'Passa alla lettura a colonna singola',
+      modeToPaper: 'Torna al foglio A4',
     },
     colophon: {
       name: 'Informazioni sul sito',
@@ -67,11 +61,6 @@ export const ui: Record<Locale, UiStrings> = {
     },
   },
   en: {
-    drawer: {
-      name: 'Profile and skills',
-      open: 'Open profile and skills',
-      close: 'Close profile and skills',
-    },
     toolbar: {
       language: 'Read in Italian',
       download: 'Download the CV as a PDF',
@@ -80,6 +69,9 @@ export const ui: Record<Locale, UiStrings> = {
       themeChange: 'Switch theme',
       themeToDark: 'Switch to the dark theme',
       themeToLight: 'Switch to the light theme',
+      modeChange: 'Switch view',
+      modeToReading: 'Switch to single-column reading',
+      modeToPaper: 'Back to the A4 sheet',
     },
     colophon: {
       name: 'About this site',

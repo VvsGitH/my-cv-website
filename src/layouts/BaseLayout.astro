@@ -56,21 +56,29 @@ const ogImage = new URL(`${import.meta.env.BASE_URL}og-${locale}.png`, Astro.sit
     <meta property="og:image:alt" content={strings.ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Inline and blocking, so the theme is on <html> before the first paint.
-      The key mirrors chrome/state.ts — change it in both. -->
+    <!-- Inline and blocking, so the theme and the Mode are both on <html> before
+      the first paint. The keys mirror chrome/state.ts — change them in both.
+
+      The two defaults differ on purpose. Nobody has to be asked what light they
+      are sitting in, so the theme falls back to the OS; the Mode is a choice
+      about the document itself, and Paper Mode is what the site is for, so it
+      is the default at every width until the reader says otherwise (ADR-0017). -->
     <script is:inline>
-      let stored = null;
+      let storedTheme = null;
+      let storedMode = null;
       try {
-        stored = localStorage.getItem('cv-theme');
+        storedTheme = localStorage.getItem('cv-theme');
+        storedMode = localStorage.getItem('cv-mode');
       } catch {}
       const theme =
-        stored === 'light' || stored === 'dark'
-          ? stored
+        storedTheme === 'light' || storedTheme === 'dark'
+          ? storedTheme
           : matchMedia('(prefers-color-scheme: dark)').matches
             ? 'dark'
             : 'light';
       document.documentElement.dataset.theme = theme;
       document.documentElement.style.colorScheme = theme;
+      document.documentElement.dataset.mode = storedMode === 'reading' ? 'reading' : 'paper';
     </script>
 
     <style is:inline>

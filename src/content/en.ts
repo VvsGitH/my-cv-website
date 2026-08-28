@@ -11,14 +11,16 @@ export const en: CvContent = {
     // ── Sheet 1 · Aside ──────────────────────────────────────────────────
     {
       kind: 'photo',
-      sheet: 1,
-      column: 'aside',
+      paperSheet: 1,
+      paperColumn: 'aside',
+      readOrder: 1,
       alt: 'Vito Paparella Santorsola',
     },
     {
       kind: 'about',
-      sheet: 1,
-      column: 'aside',
+      paperSheet: 1,
+      paperColumn: 'aside',
+      readOrder: 3,
       heading: 'About Me',
       paragraphs: [
         'Senior Software Developer with 5 years of experience across consulting and product companies, working on large-scale applications (from internal enterprise tools to high-traffic news platforms serving 40k+ concurrent users). I’ve led small teams, mentored junior developers, and collaborated closely with product managers, designers and non-technical stakeholders to translate business needs into pragmatic technical solutions. I care about maintainable, well-tested code and I’m genuinely curious about the why behind what I build.',
@@ -26,8 +28,9 @@ export const en: CvContent = {
     },
     {
       kind: 'skills',
-      sheet: 1,
-      column: 'aside',
+      paperSheet: 1,
+      paperColumn: 'aside',
+      readOrder: 7,
       heading: 'Tech Skills',
       groups: [
         {
@@ -93,8 +96,9 @@ export const en: CvContent = {
     // ── Sheet 1 · Main ───────────────────────────────────────────────────
     {
       kind: 'header',
-      sheet: 1,
-      column: 'main',
+      paperSheet: 1,
+      paperColumn: 'main',
+      readOrder: 2,
       name: 'Vito Paparella Santorsola',
       title: 'Senior Software Developer',
       contacts: [
@@ -113,8 +117,9 @@ export const en: CvContent = {
     },
     {
       kind: 'mainSection',
-      sheet: 1,
-      column: 'main',
+      paperSheet: 1,
+      paperColumn: 'main',
+      readOrder: 4,
       heading: 'Experience',
       groups: [
         {
@@ -152,8 +157,9 @@ export const en: CvContent = {
     },
     {
       kind: 'mainSection',
-      sheet: 1,
-      column: 'main',
+      paperSheet: 1,
+      paperColumn: 'main',
+      readOrder: 5,
       heading: 'Selected Projects',
       groups: [
         {
@@ -178,8 +184,9 @@ export const en: CvContent = {
     // ── Sheet 2 · Aside ──────────────────────────────────────────────────
     {
       kind: 'bullets',
-      sheet: 2,
-      column: 'aside',
+      paperSheet: 2,
+      paperColumn: 'aside',
+      readOrder: 8,
       heading: 'Soft Skills',
       items: [
         'Creativity',
@@ -194,8 +201,9 @@ export const en: CvContent = {
     },
     {
       kind: 'languages',
-      sheet: 2,
-      column: 'aside',
+      paperSheet: 2,
+      paperColumn: 'aside',
+      readOrder: 11,
       heading: 'Languages',
       entries: [
         { name: 'Italian', level: 'Native', proficiency: 1 },
@@ -204,8 +212,9 @@ export const en: CvContent = {
     },
     {
       kind: 'certifications',
-      sheet: 2,
-      column: 'aside',
+      paperSheet: 2,
+      paperColumn: 'aside',
+      readOrder: 10,
       heading: 'Certifications',
       entries: [
         {
@@ -224,8 +233,9 @@ export const en: CvContent = {
     },
     {
       kind: 'bullets',
-      sheet: 2,
-      column: 'aside',
+      paperSheet: 2,
+      paperColumn: 'aside',
+      readOrder: 12,
       heading: 'Other Info',
       items: [
         'Driving licence: B.',
@@ -235,8 +245,9 @@ export const en: CvContent = {
     },
     {
       kind: 'privacy',
-      sheet: 2,
-      column: 'aside',
+      paperSheet: 2,
+      paperColumn: 'aside',
+      readOrder: 13,
       heading: 'Privacy',
       statement:
         'I authorize the processing of my personal data pursuant to Legislative Decree 2018/101 and art. 13 GDPR (EU Regulation 2016/679) for the purposes of personnel research and selection.',
@@ -247,8 +258,9 @@ export const en: CvContent = {
     // ── Sheet 2 · Main ───────────────────────────────────────────────────
     {
       kind: 'mainSection',
-      sheet: 2,
-      column: 'main',
+      paperSheet: 2,
+      paperColumn: 'main',
+      readOrder: 6,
       // A Continuation (ADR-0005) — see the note in `it.ts`.
       heading: 'Selected Projects (continued)',
       continues: true,
@@ -316,8 +328,9 @@ export const en: CvContent = {
     },
     {
       kind: 'mainSection',
-      sheet: 2,
-      column: 'main',
+      paperSheet: 2,
+      paperColumn: 'main',
+      readOrder: 9,
       heading: 'Education',
       groups: [
         {

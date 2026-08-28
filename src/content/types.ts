@@ -8,10 +8,20 @@ export type SheetNumber = 1 | 2;
 /** The two columns of a Sheet. */
 export type Column = 'aside' | 'main';
 
-/** Explicit Paging (ADR-0002): where a Block sits. */
+/**
+ * Explicit Paging (ADR-0002): where a Block sits, once per Mode (ADR-0017).
+ * The two are independent — the paper's columns and the reading column are
+ * different documents' worth of sequencing, and neither is derived from the other.
+ */
 export interface Placement {
-  sheet: SheetNumber;
-  column: Column;
+  paperSheet: SheetNumber;
+  paperColumn: Column;
+  /**
+   * Rank in Reading Mode's single column. 1-based, and a permutation of `1..n`
+   * across a Locale's Blocks — `tsc` cannot check that, so `Document.astro` does,
+   * at build time. A Continuation must follow the Block it continues.
+   */
+  readOrder: number;
 }
 
 /** `heading` is required on every one, deliberately (ADR-0005). */

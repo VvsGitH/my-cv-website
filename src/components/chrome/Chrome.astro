@@ -3,21 +3,24 @@ import { getRelativeLocaleUrl } from 'astro:i18n';
 import type { CvContent } from '../../content/types';
 import { otherLocale } from '../../i18n/locale';
 import { ui } from '../../i18n/ui';
-import Block from '../structure/Block.astro';
 import Colophon from './Colophon.astro';
-import Drawer from './Drawer';
 import Toolbar from './Toolbar';
 
-/** The Chrome (CONTEXT.md): two islands and the Colophon. ADR-0007, ADR-0008, ADR-0013. */
+/**
+ * The Chrome (CONTEXT.md): one island and the Colophon. ADR-0008, ADR-0013.
+ *
+ * It was two islands until ADR-0017. The Drawer existed because Reading Mode was
+ * a viewport width, which meant the Aside's Blocks had to be rendered a second
+ * time into a panel — CSS cannot reparent. Now the Mode is chosen and the Aside
+ * reads in the column itself, so the panel, the second copy and the signal that
+ * crossed between them are all gone.
+ */
 interface Props {
   content: CvContent;
 }
 
 const { content } = Astro.props;
 const strings = ui[content.locale];
-const asideBlocks = content.blocks.filter(
-  (block) => block.column === 'aside' && block.kind !== 'photo',
-);
 
 // Written down twice, deliberately (ADR-0009). Change one end, change the other.
 const pdfHref = `${import.meta.env.BASE_URL}Vito_Paparella_Santorsola_CV_${content.locale.toUpperCase()}.pdf`;
@@ -26,16 +29,11 @@ const pdfHref = `${import.meta.env.BASE_URL}Vito_Paparella_Santorsola_CV_${conte
 <Toolbar
   client:idle
   toolbar={strings.toolbar}
-  drawer={strings.drawer}
   links={{
     languageHref: getRelativeLocaleUrl(otherLocale(content.locale)),
     languageLocale: otherLocale(content.locale),
     pdfHref,
   }}
 />
-
-<Drawer client:idle name={strings.drawer.name} close={strings.drawer.close}>
-  {asideBlocks.map((block) => <Block block={block} />)}
-</Drawer>
 
 <Colophon content={content} />

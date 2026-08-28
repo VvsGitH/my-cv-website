@@ -32,14 +32,14 @@ export async function openPainted(page: Page, route: string): Promise<void> {
  * chosen, and a phone gets Paper Mode there until something calls `readingMode`.
  *
  * `twoUp` is the exact width at which the pair stops wrapping: 2 × 840px of
- * paper, the 24px between them and the 24px gutter either side. No stylesheet
+ * paper, the 24px between them and the 8px gutter either side. No stylesheet
  * writes that number down any more — the flex line finds it — so this is the
  * assertion that it is where the arithmetic says it is.
  */
 export const VIEWPORTS = {
   reading: { width: 375, height: 812 },
   stacked: { width: 1024, height: 1400 },
-  twoUp: { width: 2 * 840 + 24 + 2 * 24, height: 1200 },
+  twoUp: { width: 2 * 840 + 24 + 2 * 8, height: 1200 },
   paper: { width: 1280, height: 1600 },
 } as const;
 

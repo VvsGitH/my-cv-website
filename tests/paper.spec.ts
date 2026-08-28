@@ -6,7 +6,7 @@ import { LOCALES, routeFor } from './support/site';
 
 // Declared rather than inherited from the config. It is no longer a Mode that
 // rests on it — Paper Mode is the default at every width (ADR-0017) — but the
-// Sheet zooms to fit below ~888px, and a measurement of scaled paper is a
+// Sheet zooms to fit below ~856px, and a measurement of scaled paper is a
 // measurement of nothing. `paper` is wide enough that the zoom resolves to 1.
 test.use({ viewport: VIEWPORTS.paper });
 

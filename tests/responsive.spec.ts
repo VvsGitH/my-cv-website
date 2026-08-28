@@ -123,18 +123,18 @@ test('shows whole paper at a phone width, fitted rather than dismantled', async 
 
 /**
  * `min(1, …)` is the guarantee ADR-0006 wanted and ADR-0017 keeps: the paper is
- * fitted down, never up. Once there is room for 840px plus both gutters — 888px
+ * fitted down, never up. Once there is room for 840px plus both gutters — 856px
  * — the fit is inert and every wider tier measures exactly as it did before.
  */
 test('stops fitting the moment the paper fits, and never scales it up', async ({ page }) => {
   await openPainted(page, routeFor('it'));
 
-  await page.setViewportSize({ width: 887, height: 1200 });
+  await page.setViewportSize({ width: 855, height: 1200 });
   const [fitted] = await sheetBoxes(page);
-  expect(fitted!.width, 'at 887px the paper is still being fitted').toBeLessThan(A4.width);
+  expect(fitted!.width, 'at 855px the paper is still being fitted').toBeLessThan(A4.width);
 
-  await page.setViewportSize({ width: 888, height: 1200 });
-  expectRealA4((await sheetBoxes(page))[0]!, 'at 888px Sheet 1');
+  await page.setViewportSize({ width: 856, height: 1200 });
+  expectRealA4((await sheetBoxes(page))[0]!, 'at 856px Sheet 1');
 
   await page.setViewportSize(VIEWPORTS.twoUp);
   expectRealA4((await sheetBoxes(page))[0]!, `at ${VIEWPORTS.twoUp.width}px Sheet 1`);
@@ -173,13 +173,13 @@ test('keeps a query container over the paper on screen, and none in print', asyn
  * A sideways scrollbar is a bug at every width (ADR-0006), so this sweeps rather
  * than samples. It is the sharpest single guard on the fit above, because Paper
  * Mode is now the default at the narrow widths that used to be Reading Mode's:
- * everything under 888px is real A4 paper being scaled to fit, and any
+ * everything under 856px is real A4 paper being scaled to fit, and any
  * arithmetic error there shows up here as an overflow. The two widths where the
  * flex line wraps are swept too — that is the other place the gutters are
  * spent, and the one the fit does not cover.
  */
 const NO_OVERFLOW_WIDTHS = [
-  375, 390, 414, 500, 600, 700, 780, 855, 887, 888, 889, 900, 1024, 1280, 1440,
+  375, 390, 414, 500, 600, 700, 780, 855, 856, 857, 888, 900, 1024, 1280, 1440,
   VIEWPORTS.twoUp.width - 1, VIEWPORTS.twoUp.width, VIEWPORTS.twoUp.width + 1, 1920, 2560,
 ];
 

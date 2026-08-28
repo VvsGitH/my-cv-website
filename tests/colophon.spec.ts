@@ -3,7 +3,7 @@ import { cv } from '../src/content';
 import type { Locale } from '../src/content/types';
 import { ui } from '../src/i18n/ui';
 import { inkOn } from './support/contrast';
-import { openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
+import { openPainted, readingMode, sheet, toolbar, VIEWPORTS } from './support/page';
 import { readPdf, withoutWhitespace } from './support/pdf';
 import { distPathForHref, LOCALES, otherLocale, routeFor } from './support/site';
 
@@ -124,6 +124,9 @@ test.describe('Reading Mode', () => {
 
   test.beforeEach(async ({ page }) => {
     await openPainted(page, routeFor('it'));
+    // Entered rather than assumed: since ADR-0017 the Mode is chosen, and Paper
+    // Mode is what a phone gets until something asks for this one.
+    await readingMode(page);
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   });
 

@@ -40,10 +40,10 @@ const { content } = Astro.props;
          the width at which the pair stops sharing a line. Named rather than
          repeated, and zeroed for print in the layer below. */
       --sheets-gap: 1.5rem;
-      --sheets-pad: 1.5rem;
+      --sheets-pad: 0.5rem;
 
       gap: var(--sheets-gap);
-      padding: var(--sheets-pad);
+      padding: var(--sheets-gap) var(--sheets-pad);
 
       /* A wrapping line, not a grid with a breakpoint: the pair goes side by side
          exactly when there is room for it — 1704px of paper inside the two

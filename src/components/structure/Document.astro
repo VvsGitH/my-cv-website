@@ -72,16 +72,18 @@ const { content } = Astro.props;
       zoom: min(1, calc((100cqw - 2 * var(--sheets-pad)) / var(--sheet-width)));
     }
 
-    /* Reading Mode: one column of Blocks on a white surface, at a comfortable
-       measure. The Sheets' own boxes are dismantled in Sheet.astro, so the items
-       in this grid are the Blocks themselves — from both Sheets and both columns,
-       sequenced by the `order` that component sets.
+    /* Reading Mode: one column of Blocks at a comfortable measure. The Sheets'
+       own boxes are dismantled in Sheet.astro, so the items in this grid are the
+       Blocks themselves — from both Sheets and both columns, sequenced by the
+       `order` that component sets.
 
-       The surface is the paper's own colour, so Reading Mode takes the theme
-       from the Sheets it dismantled rather than inventing one (ADR-0015).
+       The surface is the page's colour, not the paper's: with the Sheets taken
+       apart there is no paper left to be a second surface against, and a column
+       painted `--color-main-bg` would draw an edge around a box that is no longer
+       a Sheet. It still takes the theme from the same ladder (ADR-0015).
 
        `min-width` is dropped: the Mode is now reachable at any width, so it has
-       to survive a 320px phone rather than assume 23rem of room. */
+       to survive a 320px phone rather than assume a measure's worth of room. */
     :global(html[data-mode='reading']) {
       .sheets {
         flex-direction: column;
@@ -94,7 +96,7 @@ const { content } = Astro.props;
         /* No block padding: every Block carries the gap above it instead, because
            `order` makes `:first-child` meaningless (Sheet.astro). */
         padding: 0 var(--space-l) var(--space-xl);
-        background-color: var(--color-main-bg);
+        background-color: var(--color-page-bg);
       }
 
       .sheets :global(.sheet) {

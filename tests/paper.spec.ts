@@ -1,8 +1,9 @@
 import { expect, test } from '@playwright/test';
 import { cv } from '../src/content';
-import type { Column, Locale, SheetNumber } from '../src/content/types';
+import type { Column, SheetNumber } from '../src/content/types';
 import { openPainted, renderedKinds, sheet, slackBelowLastBlock, VIEWPORTS } from './support/page';
 import { LOCALES, routeFor } from './support/site';
+import type { Locale } from '../src/i18n/locale';
 
 // Declared rather than inherited from the config. It is no longer a Mode that
 // rests on it — Paper Mode is the default at every width (ADR-0017) — but the

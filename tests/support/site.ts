@@ -1,7 +1,7 @@
 import astroConfig from '../../astro.config.mjs';
-import type { Locale } from '../../src/content/types';
+import { type Locale, locales, otherLocale } from '../../src/i18n/locale';
 
-export { otherLocale } from '../../src/i18n/locale';
+export { locales as LOCALES, otherLocale };
 
 /** Derived from astro.config, the same way render-captures.mjs derives its routes. */
 
@@ -13,12 +13,8 @@ export const BASE = astroConfig.base ?? '/';
 
 const OUT_DIR = astroConfig.outDir ?? 'dist';
 
-const DEFAULT_LOCALE = (astroConfig.i18n?.defaultLocale ?? 'it') as Locale;
-
-export const LOCALES: readonly Locale[] = ['it', 'en'];
-
-export const routeFor = (locale: Locale): string =>
-  locale === DEFAULT_LOCALE ? BASE : `${BASE}${locale}/`;
+export const routeFor = (locale: Locale): string => `${BASE}${locale}/`;
+export const ogRouteFor = (locale: Locale): string => `${BASE}${locale}/og/`;
 
 /** Resolved from the link, not a template — a third copy of the filename would
  * hide the other two drifting apart instead of catching it (ADR-0009). */

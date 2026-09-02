@@ -1,10 +1,10 @@
 import { existsSync } from 'node:fs';
 import { expect, test, type Page } from '@playwright/test';
 import { cv } from '../src/content';
-import type { Locale } from '../src/content/types';
+import type { Locale } from '../src/i18n/locale';
 import { openPainted } from './support/page';
 import { readPdf, withoutWhitespace, type PdfReport } from './support/pdf';
-import { BASE, distPathForHref, LOCALES, ORIGIN, otherLocale, routeFor } from './support/site';
+import { distPathForHref, LOCALES, ogRouteFor, ORIGIN, otherLocale, routeFor } from './support/site';
 
 /** A4 in PostScript points, with the slack `render-captures.mjs` documents. */
 const A4 = { width: 595.28, height: 841.89 };
@@ -180,7 +180,7 @@ test.describe('the OG card', () => {
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
       const paper = (await surfaces(page)).sheet;
 
-      await openPainted(page, `${BASE}og/${locale}/`);
+      await openPainted(page, ogRouteFor(locale));
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
 
       const card = await page.evaluate(() => ({

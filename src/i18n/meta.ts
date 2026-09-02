@@ -1,4 +1,4 @@
-import type { Locale } from '../content/types';
+import type { Locale } from './locale';
 
 /**
  * What the document says about itself in each Locale. A sibling of `ui.ts`, not a

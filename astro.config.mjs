@@ -21,8 +21,8 @@ export default defineConfig({
     locales: ['it', 'en'],
     defaultLocale: 'it',
     routing: {
-      // Italian (default) is served unprefixed at `/`; English is prefixed at `/en/`.
-      prefixDefaultLocale: false,
+      // Italian (default) is also served unprefixed using a rewrite.
+      prefixDefaultLocale: true,
     },
   },
   vite: {

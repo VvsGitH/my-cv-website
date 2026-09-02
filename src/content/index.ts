@@ -1,4 +1,5 @@
-import type { Column, CvContent, Locale } from './types';
+import type { Column, CvContent } from './types';
+import type { Locale } from '../i18n/locale';
 import { en } from './en';
 import { it } from './it';
 
@@ -89,5 +90,3 @@ for (const content of Object.values(cv)) {
   assertContinuationsMatch(content);
   assertReadOrder(content);
 }
-
-export type * from './types';

@@ -1,4 +1,4 @@
-import type { Locale } from '../content/types';
+import type { Locale } from './locale';
 
 /**
  * The Chrome's own words, never CV content. Serialized whole into island props,

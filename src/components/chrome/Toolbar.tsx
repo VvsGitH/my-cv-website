@@ -1,4 +1,4 @@
-import type { Locale } from '../../content/types';
+import type { Locale } from '../../i18n/locale';
 import type { ToolbarStrings } from '../../i18n/ui';
 import { copyLink, linkCopied, toggleMode, toggleTheme } from './state';
 import './toolbar.css';

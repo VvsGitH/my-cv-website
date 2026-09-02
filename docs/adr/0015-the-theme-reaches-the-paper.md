@@ -1,5 +1,25 @@
 # The theme reaches the paper, and stops at the cream
 
+> **Amended on three points, 2026-08-31, all of them consequences of ADR-0017.** The ladder,
+> the two surfaces, the ~1.13:1 step and the cream's refusal to participate all stand; three of
+> the tokens this ADR names have moved under it.
+>
+> - **Reading Mode reads on the page, not the paper.** The sentence below saying its surface
+>   takes `--color-main-bg` is reversed: `.sheets` takes `--color-page-bg`. With the Sheets
+>   dismantled there is no paper left for a second surface to sit on, and painting the column the
+>   paper's colour drew an edge around a box that is no longer a Sheet. It still takes its theme
+>   from this ladder, which was the point of the sentence.
+> - **There is no muted ramp.** `--color-muted-light` / `--color-muted-dark` are deleted. A third
+>   rung between the body ink and the surface cleared the contrast minimum on the paper but not on
+>   the page behind it, and Reading Mode reads on the page. Outside the cream `--color-muted` is
+>   now `--color-text`; the two cream surfaces pin `--color-cream-muted`, the same grey this ADR
+>   measured, now a literal rather than a rung. The Toolbar takes that name and not
+>   `--color-aside-muted`, which rejoins the theme in Reading Mode while the cluster stays cream.
+> - **The signature is no longer theme-invariant.** It carries a pair like the themed tokens,
+>   consulted only in Reading Mode, where its dark end is `--color-accent` — a blue that deep has
+>   nowhere to go on a dark page, so it hands over to the warm side, which is the handover the
+>   cream panel itself makes. On the cream it is the blue in both themes, exactly as below.
+
 Dark mode used to be the smallest thing it could be: it repainted `body` and the Colophon's ink, nothing else. The Sheets stayed white paper in both themes, which was spec US17 in as many words. **The theme now reaches the paper.** The page behind the Sheets goes to a mid blue, the Sheet under it to a darker navy, and the inks travel from near-black to near-white with them.
 
 Three things follow, and each is a decision rather than a detail.

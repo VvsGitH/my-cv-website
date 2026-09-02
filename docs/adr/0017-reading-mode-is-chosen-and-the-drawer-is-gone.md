@@ -1,5 +1,16 @@
 # Reading Mode is chosen, not triggered — and the Drawer goes with it
 
+> **Amended on the reading column, 2026-08-31.** Two things this ADR describes have moved; the
+> Mode, the Drawer's deletion and the split of the 53.5rem boundary are untouched.
+>
+> - **`--reading-column-min` is gone entirely**, not merely dropped from `.sheets`. Nothing bounds
+>   the column from below any more, which is what "survive a 320px phone" asked for, and
+>   `--reading-column-max` — now `75ch`, a measure counted in characters — is the Mode's only
+>   width.
+> - **The column is painted `--color-page-bg`**, not the paper's colour; see ADR-0015's own
+>   amendment. The Aside inks that rejoin the theme here now include the signature and the muted
+>   grey, both of which were still pinned to the light ramp when this ADR shipped.
+
 Reading Mode was never a mode. It was `@media screen and (width < 53.5rem)`, repeated in six
 files, and the reader had no say in it. **It is now `<html data-mode>`, flipped from the Toolbar
 and remembered in `localStorage`, with Paper Mode the default at every width — phone included,

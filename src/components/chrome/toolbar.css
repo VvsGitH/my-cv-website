@@ -4,12 +4,15 @@
 @layer components {
   .toolbar {
     /* Chrome, not paper: the cluster keeps its cream and its dark ink in both
-       themes (ADR-0015). --color-main-bg is pinned with the inks because the
-       toast below inverts against it, and the shadow mixes on --color-heading. */
+       themes (ADR-0015) — the same surface the Aside is on paper, so it takes the
+       Aside's inks. --color-cream-muted, not --color-aside-muted: the Aside's
+       version rejoins the theme in Reading Mode, where this cluster is still
+       cream. --color-main-bg is pinned with the inks because the toast below
+       inverts against it, and the shadow mixes on --color-heading. */
     --color-main-bg: var(--color-main-bg-light);
     --color-heading: var(--color-heading-light);
     --color-text: var(--color-text-light);
-    --color-muted: var(--color-muted-light);
+    --color-muted: var(--color-cream-muted);
 
     /* The base shape is Paper Mode's vertical rail; Reading Mode flips it below
        (ADR-0008). Sizes are tokens because the Colophon reserves this cluster's

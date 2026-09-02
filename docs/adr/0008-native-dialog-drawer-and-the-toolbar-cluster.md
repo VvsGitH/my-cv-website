@@ -71,3 +71,19 @@ The Drawer half of this ADR — the native `<dialog>`, the platform's focus and 
 
 - **`--color-photo-circle` is `--color-accent`.** Same value, honest name: the token was already carrying the Toolbar's border and button hover and the OG card's subtitle, not only the disc behind the portrait. The `## Consequences` entry above still uses the old name; read it as `--color-accent`. `--color-ink` and `--color-bar-track` were dropped in the same pass — the first folded into `--color-heading`, the second into a `color-mix` off `--color-muted`, so a proficiency bar's track can no longer drift from its own fill.
 - **The focus ring is `--color-muted`, and the ratio listed as Open is answered.** `--color-heading` measured **1.29:1** against `--color-dark-bg`, which is what the open entry recorded. `--color-muted` is the one token in the palette that clears 3:1 against every surface this project paints a ring on: **4.75:1** on white paper, **3.29:1** on `--color-dark-bg`, **4.48:1** on `--color-aside-bg`, **3.55:1** on `--color-accent` where a hovered Toolbar button sits under it. Measured after the same pass moved all four inks onto hue 264, so the numbers are of the shipped values. The remedy is the ring's colour alone; nothing about the Reading Mode row's geometry changed, and the rail-overlap entry beside it stays open.
+
+**2026-08-31.** The palette moved again under ADR-0015's amendment, and the focus ring's token
+went with it. The entry above stays true in its conclusion and false in its material.
+
+- **The ring is still `--color-muted`, but that token is no longer a grey of its own.** Outside
+  the cream it is `--color-text`; on the cream — the Aside and this cluster — it is
+  `--color-cream-muted`, the literal that inherited the grey the entry above measured as
+  `--color-muted-light`. Both of those tokens are deleted, so the four ratios listed there are of
+  values that still exist only in part.
+- **The 3:1 conclusion holds with more headroom than it had.** Measured on the built site:
+  **4.57:1** on the Toolbar's cream in both Modes and both themes, and **7.65:1** light /
+  **6.88:1** dark on the page in Reading Mode, where the ring is the body ink.
+- **`.sheets` no longer carries `min-width: 23rem`.** The horizontal-budget argument under
+  `## Considered Options` names it; the token behind it, `--reading-column-min`, is deleted
+  (ADR-0017's amendment). The argument's conclusion — the rail belongs to Paper Mode and the row
+  to Reading Mode — is untouched.

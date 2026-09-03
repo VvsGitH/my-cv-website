@@ -62,7 +62,7 @@ export default function Toolbar({ toolbar, links }: Props) {
 
       <button
         type="button"
-        class="toolbar-button"
+        class="toolbar-button toolbar-anchor"
         title={linkCopied.value ? toolbar.shared : toolbar.share}
         aria-label={linkCopied.value ? toolbar.shared : toolbar.share}
         onClick={copyLink}

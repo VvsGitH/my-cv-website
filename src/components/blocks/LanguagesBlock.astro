@@ -46,19 +46,17 @@ const { block } = Astro.props;
     dd {
       margin-inline-start: 0;
       font-style: italic;
-      color: var(--color-muted);
+      color: var(--color-text);
     }
 
     .bar {
       grid-column: 1 / -1;
-      /* The reference draws a ~5px rule: the filled run in --color-muted
-         over a pale-blue track. */
       height: var(--skill-bar-height);
       margin-block-start: var(--space-xs);
       background-image: linear-gradient(
         to right,
-        var(--color-muted) var(--fill),
-        color-mix(in oklab, var(--color-muted) 20%, transparent) var(--fill)
+        var(--color-text) var(--fill),
+        color-mix(in oklab, var(--color-text) 20%, transparent) var(--fill)
       );
     }
   }

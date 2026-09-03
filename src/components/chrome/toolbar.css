@@ -3,17 +3,6 @@
 
 @layer components {
   .toolbar {
-    /* Chrome, not paper: the cluster keeps its cream and its dark ink in both
-       themes (ADR-0015) — the same surface the Aside is on paper, so it takes the
-       Aside's inks. --color-cream-muted, not --color-aside-muted: the Aside's
-       version rejoins the theme in Reading Mode, where this cluster is still
-       cream. --color-main-bg is pinned with the inks because the toast below
-       inverts against it, and the shadow mixes on --color-heading. */
-    --color-main-bg: var(--color-main-bg-light);
-    --color-heading: var(--color-heading-light);
-    --color-text: var(--color-text-light);
-    --color-muted: var(--color-cream-muted);
-
     /* The base shape is Paper Mode's vertical rail; Reading Mode flips it below
        (ADR-0008). Sizes are tokens because the Colophon reserves this cluster's
        berth and cannot be left to remember the numbers (ADR-0013). */
@@ -26,10 +15,9 @@
     flex-direction: column;
     gap: var(--space-xs);
     padding: var(--space-xs);
-    border: var(--toolbar-border-size) solid var(--color-accent);
     border-radius: 2px;
     background-color: var(--color-aside-bg);
-    box-shadow: 0 1px 6px color-mix(in oklab, var(--color-heading) 18%, transparent);
+    box-shadow: 0 0 8px oklch(0% 0 0 / 0.45);
   }
 
   .toolbar-button {
@@ -46,10 +34,14 @@
     cursor: pointer;
   }
 
+  .toolbar-anchor {
+    anchor-name: --toolbar-anchor;
+  }
+
   /* Gated: a tap otherwise leaves :hover stuck on the control last touched. */
   @media (hover: hover) {
     .toolbar-button:hover {
-      background-color: var(--color-accent);
+      background-color: var(--color-aside-accent);
     }
   }
 
@@ -61,14 +53,16 @@
     display: none;
   }
 
-  [data-theme='dark'] .toolbar-theme .icon-contrast,
-  [data-theme='dark'] .toolbar-theme .toolbar-theme-to-dark {
-    display: none;
-  }
+  [data-theme='dark'] {
+    .toolbar-theme .icon-contrast,
+    .toolbar-theme .toolbar-theme-to-dark {
+      display: none;
+    }
 
-  [data-theme='dark'] .toolbar-theme .icon-sun,
-  [data-theme='dark'] .toolbar-theme .toolbar-theme-to-light {
-    display: block;
+    .toolbar-theme .icon-sun,
+    .toolbar-theme .toolbar-theme-to-light {
+      display: block;
+    }
   }
 
   /* Paper Mode is the default, so the base state is "offers Reading Mode". With
@@ -79,23 +73,25 @@
     display: none;
   }
 
-  [data-mode='reading'] .toolbar-mode .icon-book,
-  [data-mode='reading'] .toolbar-mode .toolbar-mode-to-reading {
-    display: none;
-  }
+  [data-mode='reading'] {
+    .toolbar-mode .icon-book,
+    .toolbar-mode .toolbar-mode-to-reading {
+      display: none;
+    }
 
-  [data-mode='reading'] .toolbar-mode .icon-file-text,
-  [data-mode='reading'] .toolbar-mode .toolbar-mode-to-paper {
-    display: block;
+    .toolbar-mode .icon-file-text,
+    .toolbar-mode .toolbar-mode-to-paper {
+      display: block;
+    }
   }
 
   /* Centred and cleared on the two axes the cluster is not using; both flip below. */
   .toolbar-toast {
     position: absolute;
-    inset-block-start: 50%;
-    inset-inline-start: 100%;
+    position-anchor: --toolbar-anchor;
+    inset-block-start: anchor(center);
+    inset-inline-start: calc(anchor(self-end) + var(--space-s));
     translate: 0 -50%;
-    margin-inline-start: var(--space-s);
     padding: var(--space-xs) var(--space-s);
     border-radius: 2px;
     background-color: var(--color-heading);
@@ -128,15 +124,16 @@
 
     /* Both axes flip with the cluster. */
     .toolbar-toast {
-      inset-block: auto 100%;
-      inset-inline-start: 50%;
+      inset-block-start: auto;
+      inset-block-end: calc(anchor(start) + var(--space-s));
+      inset-inline-start: anchor(center);
       translate: -50% 0;
-      margin-inline-start: 0;
-      margin-block: 0 var(--space-s);
     }
 
     :root {
-      scroll-padding-block-end: calc(var(--toolbar-block-size) + 2 * var(--toolbar-inset));
+      scroll-padding-block-end: calc(
+        var(--toolbar-block-size) + 2 * var(--toolbar-inset)
+      );
     }
   }
 }

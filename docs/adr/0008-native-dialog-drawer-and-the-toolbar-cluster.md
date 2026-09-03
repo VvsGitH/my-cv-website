@@ -87,3 +87,26 @@ went with it. The entry above stays true in its conclusion and false in its mate
   `## Considered Options` names it; the token behind it, `--reading-column-min`, is deleted
   (ADR-0017's amendment). The argument's conclusion — the rail belongs to Paper Mode and the row
   to Reading Mode — is untouched.
+
+**2026-09-03.** The Aside stopped being theme-invariant (ADR-0019), and this cluster borrowed its
+surface, so two of the three things this ADR dresses the Toolbar with have changed shape.
+
+- **The ring is `--color-text`, and `--color-muted` is deleted.** Third token for this entry, same
+  conclusion, most headroom yet. Measured off the built site with the control actually focused, the
+  ring against every surface this project rings: **9.20:1** / **8.65:1** on the paper,
+  **7.65:1** / **6.88:1** on the page, **8.69:1** / **7.95:1** on the Toolbar and the Aside's
+  panel, and **6.89:1** / **5.49:1** on `--color-aside-accent`, where a hovered Toolbar button sits
+  under it — light and dark respectively, and that last pair is the worst case. Every earlier
+  figure in the two entries above is of a token that no longer exists.
+- **The cluster has no border.** It was `--color-accent`, a warm ring on the cream; with the panel
+  themed the token became the same colour as the background it sat on, and the border is deleted
+  rather than re-pointed. `--toolbar-border-size` goes with it and `--toolbar-block-size` drops the
+  `2 * var(--toolbar-border-size)` term — the same formula this ADR's 2026-08-01 note already had
+  to correct once for under-reserving the Colophon's berth, so it is worth saying which direction
+  this one moves: 2px less reserved, against a border that is gone.
+- **The shadow is a literal, `0 0 8px oklch(0% 0 0 / 0.45)`.** It used to mix on
+  `--color-heading`, which was pinned light beside it; unpinned, it inverted into a near-white glow
+  on the dark page. A shadow has no light end of a ramp to pair against, so a literal is the honest
+  spelling — and it is the shape the OG card's `.paper` already used.
+
+The Drawer half of this ADR remains deleted (ADR-0017), and the rail-overlap defect stays open.

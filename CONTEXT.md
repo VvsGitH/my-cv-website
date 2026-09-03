@@ -9,7 +9,7 @@ One A4 page of the CV. The CV is two Sheets. A Sheet has fixed dimensions in A4'
 _Avoid_: page (ambiguous with browser/site page), card
 
 **Aside**:
-The narrower left column of a Sheet, rendered on a cream panel — holds About Me, Tech Skills, Soft Skills, Languages, Certifications, Other Info, Privacy. The panel is the same cream in both themes, and takes its dark ink with it (ADR-0015); when the paper darkens around it, the Aside is what does not move. It is a Paper Mode structure only: in Reading Mode there is no panel, its Blocks read in the one column, and their ink rejoins the theme (ADR-0017).
+The narrower left column of a Sheet, rendered on its own panel — holds About Me, Tech Skills, Soft Skills, Languages, Certifications, Other Info, Privacy. The panel is cream on the light theme and darkens with the paper on the dark one, taking its ink with it: it is a themed surface like every other, not the theme-invariant exception it was until ADR-0019. A print is always the cream, because the theme lives inside `@media screen`. It is a Paper Mode structure only: in Reading Mode there is no panel, its Blocks read in the one column, and their ink follows the page (ADR-0017).
 _Avoid_: sidebar, left column
 
 **Main**:

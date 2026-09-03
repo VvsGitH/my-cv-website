@@ -11,6 +11,15 @@
 >   amendment. The Aside inks that rejoin the theme here now include the signature and the muted
 >   grey, both of which were still pinned to the light ramp when this ADR shipped.
 
+> **Amended on the Aside's ink, 2026-09-03, by ADR-0019.** The section below headed
+> *"The Aside's ink had to be indirected"* describes a problem that no longer exists. The panel is
+> themed, so nothing is pinned to the light ramp on paper and nothing has to be lifted here:
+> `--color-aside-heading` / `-text` / `-muted` are deleted, `Sheet.astro` names no colour, and
+> `html[data-mode='reading']` touches no colour either. The defect that section records was real —
+> pinned ink inheriting through `display: contents` onto the dark reading column — and the
+> indirection did fix it; it is simply not the fix in the tree. Everything else in this ADR is
+> untouched.
+
 Reading Mode was never a mode. It was `@media screen and (width < 53.5rem)`, repeated in six
 files, and the reader had no say in it. **It is now `<html data-mode>`, flipped from the Toolbar
 and remembered in `localStorage`, with Paper Mode the default at every width — phone included,

@@ -48,17 +48,6 @@ const asideBlocks = blocksIn('aside');
     }
 
     .aside {
-      /* The cream panel is the same surface in both themes, so its ink is the
-         same too — not left to the theme, which would print white text on cream
-         (ADR-0015). Named through `--color-aside-*` rather than off the light
-         ramp directly, because the pin has to lift in Reading Mode where there
-         is no panel; `tokens.css` is where the two cases are stated. Custom
-         properties inherit down the DOM, so both survive the `display: contents`
-         below. */
-      --color-heading: var(--color-aside-heading);
-      --color-text: var(--color-aside-text);
-      --color-muted: var(--color-aside-muted);
-
       grid-area: aside;
       display: flex;
       flex-direction: column;

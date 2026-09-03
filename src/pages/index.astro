@@ -1,11 +1,9 @@
 ---
-import BaseLayout from '../layouts/BaseLayout.astro';
-import Document from '../components/structure/Document.astro';
-import Chrome from '../components/chrome/Chrome.astro';
-import { cv } from '../content';
+import { defaultLocale } from '../i18n/locale';
+/* A top-level return is a syntax error in a module. TypeScript error-recovers past that statement, 
+  so the reference to defaultLocale inside it is never counted: the import looks unread.
+  Using a dummy "target" export to disable the unused import warning.
+ */
+export const target = `${defaultLocale}/`;
+return Astro.rewrite(target);
 ---
-
-<BaseLayout locale="it">
-  <Document content={cv.it} />
-  <Chrome slot="chrome" content={cv.it} />
-</BaseLayout>

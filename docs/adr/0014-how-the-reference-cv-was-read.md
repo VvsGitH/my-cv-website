@@ -14,7 +14,7 @@ The reference is the owner's original Canva CV: `docs/assets/CV_page1.png` / `CV
 - **Two things the screenshots do not carry were recovered from the PDF's `/URI` annotations**: the LinkedIn profile URL and the edX link on the accessibility certificate.
 - **Language proficiency was measured off the bar pixels**: Italian fills the track (1.0), English stops at 158/226 (0.7).
 - **Punctuation was settled from the PDF's 11 `/ToUnicode` CMaps**, which is exact where a 798px screenshot is not — a curly quote and a straight one are a pixel apart there. `“ ”` are present and `"` appears nowhere; `—` is present; **U+2026 is absent, so "and more…" is really three periods.** Apostrophes are genuinely mixed in the source (U+0027 on one Sheet, U+2019 on the other, in both families) and were normalised to `’`.
-- **The role-to-face mapping was read out of the PDF's font resources.** An earlier pass inferred it by rendering comparison against the screenshots and got Now and Garet swapped (ADR-0012).
+- **The role-to-face mapping was read out of the PDF's font resources.** An earlier pass inferred it by rendering comparison against the screenshots and got Now and Garet swapped (ADR-0012). **The mapping no longer governs**: the CV sets itself in its own faces now (ADR-0020). The method still stands for anyone re-reading the source — read the resources, do not infer from a rendering.
 - **The type scale needed two "body" sizes** because the source draws its display lines straight on the page but its prose inside forms carrying their own ~2.7788 scale — so a `12 Tf` means 12px in one place and 10.67px in the other. That is why the transcription carried `--font-size-skill` and `--font-size-level` beside `--font-size-body`; the designed scale that replaced it has one body size, and the two-scale trap is now only a hazard for anyone re-reading the source.
 
 ## Deliberate infidelities
@@ -23,7 +23,7 @@ These are settled. Do not chase them as bugs.
 
 - **B2B Environment's bullets wrap differently, about −20px by the foot of Sheet 1.** Canva sized that one text box 396px wide where its neighbours are ~423–430px. Matching it would mean per-Block widths in the content, which is layout leaking into content.
 - **The certification link icon falls to its own line**, where the reference wraps the title instead.
-- **Spacing, prose leading, type sizes and column geometry do not match the reference at all**, by design — ADR-0011 supersedes it on all four axes. What still answers to the reference is the copy, the colors, the faces and the layout's shape.
+- **Spacing, prose leading, type sizes and column geometry do not match the reference at all**, by design — ADR-0011 supersedes it on all four axes. **Nor do the faces**, since ADR-0020. What still answers to the reference is the copy, the colors and the layout's shape.
 - **Six transcription quirks are preserved verbatim.** They are the owner's text, not ours to correct, and a reviewer or spellchecker *will* try: `WC3x.org` (the issuer's site is `W3Cx.org`), "Coordination of the **fronted** team", "based **of** Microsoft Power Apps", "**Boostrap** 4", "in **an** scrum based project", and "A2A S.p.a" with no closing period beside "Leonardo S.p.a.".
 
 ## Consequences

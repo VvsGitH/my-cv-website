@@ -1,0 +1,858 @@
+<!DOCTYPE html>
+<html lang="it" data-theme="light" data-lang="it" data-concept="1">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tre concept di toolbar — CV Vito Paparella Santorsola</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,800&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   TOKENS
+   Palette "Petrolio & Ocra": scura verde-petrolio, chiara osso.
+   Due accenti (teal + ocra) per evitare il monoaccento generico.
+============================================================ */
+:root{
+  --r-sm:10px; --r-md:16px; --r-lg:24px; --r-pill:999px;
+  --dur-1:.18s; --dur-2:.34s; --dur-3:.6s;
+  --ease-out:cubic-bezier(.22,1,.36,1);
+  --ease-spring:cubic-bezier(.34,1.56,.64,1);
+  --f-display:"Bricolage Grotesque", "Trebuchet MS", system-ui, sans-serif;
+  --f-body:"Instrument Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --f-mono:"JetBrains Mono", ui-monospace, "SF Mono", Menlo, monospace;
+}
+html[data-theme="light"]{
+  --bg:#EDEFEA; --bg-2:#F8F9F6; --fg:#0F1513; --fg-2:#586460;
+  --line:#D3DAD3; --line-2:#BFC8BF;
+  --surface:rgba(255,255,255,.82); --surface-solid:#FFFFFF;
+  --accent:#0E6C65; --accent-ink:#FFFFFF; --accent-soft:rgba(14,108,101,.10);
+  --accent-2:#8C6206; --accent-2-soft:rgba(140,98,6,.12);
+  --shadow:0 1px 2px rgba(15,21,19,.06), 0 12px 32px -12px rgba(15,21,19,.22);
+  --shadow-lift:0 2px 6px rgba(15,21,19,.08), 0 26px 50px -18px rgba(15,21,19,.34);
+}
+html[data-theme="dark"]{
+  --bg:#0A1312; --bg-2:#101E1C; --fg:#E8EEEA; --fg-2:#93A39D;
+  --line:#20302D; --line-2:#2C403C;
+  --surface:rgba(19,35,33,.78); --surface-solid:#132321;
+  --accent:#5AD8C6; --accent-ink:#062522; --accent-soft:rgba(90,216,198,.14);
+  --accent-2:#E7B145; --accent-2-soft:rgba(231,177,69,.14);
+  --shadow:0 1px 2px rgba(0,0,0,.5), 0 12px 32px -12px rgba(0,0,0,.7);
+  --shadow-lift:0 2px 6px rgba(0,0,0,.55), 0 26px 50px -18px rgba(0,0,0,.8);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0; background:var(--bg); color:var(--fg);
+  font-family:var(--f-body); font-size:17px; line-height:1.6;
+  -webkit-font-smoothing:antialiased;
+  transition:background var(--dur-2) ease, color var(--dur-2) ease;
+}
+a{color:inherit}
+button{font:inherit; color:inherit}
+:focus-visible{
+  outline:2px solid var(--accent); outline-offset:3px; border-radius:6px;
+}
+.sr-only{
+  position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+  overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; border:0;
+}
+
+/* ============================================================
+   PAGINA CV (contesto realistico per i mockup)
+============================================================ */
+.page{max-width:760px; margin:0 auto; padding:0 24px 200px}
+.site-head{
+  position:sticky; top:0; z-index:40;
+  display:flex; align-items:center; justify-content:space-between; gap:16px;
+  padding:14px 24px; margin:0 auto; max-width:1080px;
+  backdrop-filter:blur(14px); -webkit-backdrop-filter:blur(14px);
+}
+.site-head::after{
+  content:""; position:absolute; inset:0; z-index:-1;
+  background:linear-gradient(to bottom, var(--bg) 40%, transparent);
+  mask-image:linear-gradient(to bottom, #000 60%, transparent);
+}
+.ident{display:flex; align-items:center; gap:12px; min-width:0}
+.ident .mark{
+  width:34px; height:34px; flex:none; border-radius:11px;
+  background:var(--accent); color:var(--accent-ink);
+  display:grid; place-items:center;
+  font-family:var(--f-display); font-weight:800; font-size:14px; letter-spacing:-.02em;
+}
+.ident .who{font-family:var(--f-display); font-weight:600; font-size:15px; letter-spacing:-.01em; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+
+.hero{padding:72px 0 40px}
+.eyebrow{
+  font-family:var(--f-mono); font-size:12px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--accent); margin:0 0 18px;
+}
+h1{
+  font-family:var(--f-display); font-weight:800; letter-spacing:-.035em; line-height:.94;
+  font-size:clamp(44px,9vw,86px); margin:0 0 22px;
+}
+.lede{font-size:clamp(17px,2.2vw,20px); color:var(--fg-2); max-width:56ch; margin:0}
+.rule{height:1px; background:var(--line); border:0; margin:52px 0}
+h2{
+  font-family:var(--f-display); font-weight:600; letter-spacing:-.02em;
+  font-size:24px; margin:0 0 22px;
+}
+.job{display:grid; grid-template-columns:minmax(0,1fr); gap:4px; padding:20px 0; border-top:1px solid var(--line)}
+.job:first-of-type{border-top:0}
+.job .role{font-weight:600}
+.job .meta{font-family:var(--f-mono); font-size:12.5px; color:var(--fg-2)}
+.job p{margin:8px 0 0; color:var(--fg-2); font-size:15.5px}
+.chips{display:flex; flex-wrap:wrap; gap:8px; padding:0; margin:0; list-style:none}
+.chips li{
+  font-family:var(--f-mono); font-size:12.5px; padding:6px 11px;
+  border:1px solid var(--line); border-radius:var(--r-pill); color:var(--fg-2);
+}
+.chips li.key{border-color:var(--accent); color:var(--accent); background:var(--accent-soft)}
+
+/* ============================================================
+   SLOT TOOLBAR — stesso posto per tutti e tre i concept
+============================================================ */
+#slot{position:relative; display:flex; justify-content:flex-end; flex:1}
+.tb{display:none}
+html[data-concept="1"] #tb1,
+html[data-concept="2"] #tb2,
+html[data-concept="3"] #tb3{display:flex}
+
+.icon{width:20px; height:20px; flex:none; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round}
+.icon.sm{width:17px; height:17px}
+
+/* ------------------------------------------------------------
+   CONCEPT 01 — DOCK MAGNETICO
+------------------------------------------------------------ */
+.dock{
+  position:relative; align-items:flex-end; gap:6px;
+  padding:8px 10px; border-radius:var(--r-pill);
+  background:var(--surface); border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px) saturate(1.4); -webkit-backdrop-filter:blur(18px) saturate(1.4);
+}
+.dock-btn{
+  --s:1; --lift:0px;
+  position:relative; width:42px; height:42px; flex:none;
+  display:grid; place-items:center;
+  background:transparent; border:0; border-radius:14px; cursor:pointer;
+  transform:translateY(var(--lift)) scale(var(--s));
+  transform-origin:bottom center;
+  transition:transform .18s var(--ease-out), background var(--dur-1) ease;
+  color:var(--fg);
+}
+.dock-btn:hover,.dock-btn:focus-visible{background:var(--accent-soft); color:var(--accent)}
+.dock-btn:active{transform:translateY(var(--lift)) scale(calc(var(--s) * .92))}
+.dock-btn .lang-badge{
+  font-family:var(--f-mono); font-weight:500; font-size:13px; letter-spacing:.02em;
+}
+.dock-sep{width:1px; height:24px; background:var(--line-2); margin:0 4px 9px; flex:none}
+.dock-dot{
+  position:absolute; bottom:3px; left:50%; width:3px; height:3px; margin-left:-1.5px;
+  border-radius:50%; background:var(--accent-2); opacity:0;
+  transition:opacity var(--dur-1) ease;
+}
+.dock-btn[aria-pressed="true"] .dock-dot{opacity:1}
+.dock-tip{
+  position:absolute; bottom:calc(100% + 12px); left:0;
+  padding:6px 12px; border-radius:var(--r-pill); white-space:nowrap;
+  background:var(--fg); color:var(--bg);
+  font-size:13px; font-weight:500;
+  opacity:0; transform:translate3d(0,6px,0) scale(.9); transform-origin:bottom center;
+  transition:transform .38s var(--ease-out), opacity .16s ease, width .3s var(--ease-out);
+  pointer-events:none; overflow:hidden;
+}
+.dock.tip-on .dock-tip{opacity:1; transform:translate3d(var(--tip-x,0),0,0) scale(1)}
+.dock-tip span{display:block}
+
+/* ------------------------------------------------------------
+   CONCEPT 02 — COMMAND BAR (⌘K)
+------------------------------------------------------------ */
+.cmdbar{
+  align-items:center; gap:4px; padding:5px 5px 5px 14px;
+  border-radius:var(--r-pill); cursor:text;
+  background:var(--surface); border:1px solid var(--line);
+  box-shadow:var(--shadow);
+  backdrop-filter:blur(18px) saturate(1.4); -webkit-backdrop-filter:blur(18px) saturate(1.4);
+  transition:border-color var(--dur-1) ease, box-shadow var(--dur-2) ease, transform var(--dur-1) ease;
+}
+.cmdbar:hover{border-color:var(--line-2); box-shadow:var(--shadow-lift)}
+.cmdbar .cb-open{
+  display:flex; align-items:center; gap:9px; padding:6px 6px 6px 0;
+  background:none; border:0; cursor:text; color:var(--fg-2);
+}
+.cmdbar .cb-open .ph{font-size:14.5px; white-space:nowrap}
+.cmdbar .kbd{
+  font-family:var(--f-mono); font-size:11.5px; color:var(--fg-2);
+  border:1px solid var(--line-2); border-radius:7px; padding:2px 6px; margin-left:2px;
+}
+.cb-quick{display:flex; align-items:center; gap:2px; padding-left:8px; margin-left:2px; border-left:1px solid var(--line-2)}
+.cb-btn{
+  height:34px; min-width:34px; padding:0 9px; display:grid; place-items:center;
+  background:transparent; border:0; border-radius:var(--r-pill); cursor:pointer;
+  transition:background var(--dur-1) ease, color var(--dur-1) ease;
+}
+.cb-btn:hover,.cb-btn:focus-visible{background:var(--accent-soft); color:var(--accent)}
+.cb-btn .lang-badge{font-family:var(--f-mono); font-size:12.5px; font-weight:500}
+
+.scrim{
+  position:fixed; inset:0; z-index:90; display:none;
+  background:rgba(6,14,13,.42); backdrop-filter:blur(3px); -webkit-backdrop-filter:blur(3px);
+  opacity:0; transition:opacity var(--dur-2) ease;
+}
+.scrim.on{display:block; opacity:1}
+.palette{
+  position:fixed; z-index:91; left:50%; top:12vh; width:min(560px, calc(100vw - 32px));
+  transform:translate(-50%, 10px) scale(.97); opacity:0;
+  background:var(--surface-solid); border:1px solid var(--line);
+  border-radius:var(--r-lg); box-shadow:var(--shadow-lift);
+  overflow:hidden; display:none;
+  transition:transform var(--dur-2) var(--ease-out), opacity var(--dur-1) ease;
+}
+.palette.on{display:block; opacity:1; transform:translate(-50%,0) scale(1)}
+.pal-field{display:flex; align-items:center; gap:12px; padding:16px 18px; border-bottom:1px solid var(--line)}
+.pal-field input{
+  flex:1; min-width:0; border:0; outline:0; background:transparent; color:var(--fg);
+  font-family:var(--f-body); font-size:17px;
+}
+.pal-field input::placeholder{color:var(--fg-2)}
+.pal-esc{font-family:var(--f-mono); font-size:11px; color:var(--fg-2); border:1px solid var(--line-2); border-radius:7px; padding:3px 7px}
+.pal-list{list-style:none; margin:0; padding:8px; max-height:min(46vh,380px); overflow:auto}
+.pal-group{
+  font-family:var(--f-mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase;
+  color:var(--fg-2); padding:12px 12px 6px;
+}
+.pal-opt{
+  display:flex; align-items:center; gap:13px; padding:11px 12px; border-radius:12px; cursor:pointer;
+}
+.pal-opt .label{flex:1; min-width:0; font-size:15.5px; white-space:nowrap; overflow:hidden; text-overflow:ellipsis}
+.pal-opt .hint{font-family:var(--f-mono); font-size:11.5px; color:var(--fg-2)}
+.pal-opt[aria-selected="true"]{background:var(--accent-soft); color:var(--accent)}
+.pal-opt[aria-selected="true"] .hint{color:var(--accent)}
+.pal-empty{padding:26px 20px; color:var(--fg-2); font-size:15px}
+.pal-foot{
+  display:flex; gap:18px; padding:10px 18px; border-top:1px solid var(--line);
+  font-family:var(--f-mono); font-size:11px; color:var(--fg-2); flex-wrap:wrap;
+}
+
+/* ------------------------------------------------------------
+   CONCEPT 03 — BARRA MORFICA
+------------------------------------------------------------ */
+.morph{
+  align-items:center; gap:8px; padding:6px; border-radius:var(--r-pill);
+  background:var(--surface); border:1px solid var(--line); box-shadow:var(--shadow);
+  backdrop-filter:blur(18px) saturate(1.4); -webkit-backdrop-filter:blur(18px) saturate(1.4);
+}
+.seg{position:relative; display:flex; padding:3px; border-radius:var(--r-pill); background:var(--accent-soft)}
+.seg-blob{
+  position:absolute; top:3px; bottom:3px; left:0; border-radius:var(--r-pill);
+  background:var(--accent); z-index:0;
+  transform:translateX(var(--x,0)) scaleX(var(--sx,1));
+  width:var(--w,44px); transform-origin:center;
+  transition:transform .5s var(--ease-spring), width .5s var(--ease-spring);
+}
+.seg-opt{
+  position:relative; z-index:1; padding:6px 13px; border:0; background:none; cursor:pointer;
+  font-family:var(--f-mono); font-size:12.5px; font-weight:500; border-radius:var(--r-pill);
+  color:var(--fg-2); transition:color var(--dur-2) ease;
+}
+.seg-opt[aria-checked="true"]{color:var(--accent-ink)}
+.m-dl{
+  position:relative; display:flex; align-items:center; gap:9px; height:38px; padding:0 16px 0 14px;
+  border:0; border-radius:var(--r-pill); cursor:pointer; text-decoration:none;
+  background:var(--fg); color:var(--bg); font-size:14.5px; font-weight:500;
+  transition:transform var(--dur-1) var(--ease-out), background var(--dur-2) ease;
+}
+.m-dl:hover{transform:translateY(-1px)}
+.m-dl:active{transform:translateY(0) scale(.97)}
+.m-dl.done{background:var(--accent); color:var(--accent-ink)}
+.swap{display:grid; align-items:center}
+.swap>span{
+  grid-area:1/1; white-space:nowrap;
+  transition:transform var(--dur-2) var(--ease-out), opacity var(--dur-1) ease;
+}
+.swap .s2{transform:translateY(10px); opacity:0}
+.m-dl.done .swap .s1{transform:translateY(-10px); opacity:0}
+.m-dl.done .swap .s2{transform:translateY(0); opacity:1}
+.m-dl .ring{width:18px; height:18px; flex:none}
+.m-dl .ring circle{fill:none; stroke:currentColor; stroke-width:2.2; opacity:.28}
+.m-dl .ring .arc{
+  opacity:1; stroke-linecap:round; stroke-dasharray:50.3; stroke-dashoffset:50.3;
+  transform:rotate(-90deg); transform-origin:center;
+}
+.m-dl.loading .ring .arc{transition:stroke-dashoffset .62s linear; stroke-dashoffset:0}
+.m-dl .ico-dl,.m-dl .ico-ok{grid-area:1/1; transition:transform var(--dur-2) var(--ease-out), opacity .15s ease}
+.m-dl .stack{display:grid; place-items:center; width:20px; height:20px}
+.m-dl .ico-ok{transform:scale(.4); opacity:0}
+.m-dl.done .ico-dl{transform:scale(.4); opacity:0}
+.m-dl.done .ico-ok{transform:scale(1); opacity:1}
+.m-dl.loading .ico-dl{opacity:0}
+.m-theme{
+  position:relative; width:38px; height:38px; display:grid; place-items:center;
+  background:transparent; border:1px solid var(--line); border-radius:50%; cursor:pointer;
+  overflow:hidden; transition:border-color var(--dur-1) ease, color var(--dur-1) ease;
+}
+.m-theme:hover{border-color:var(--accent); color:var(--accent)}
+.m-theme .ico-sun,.m-theme .ico-moon{
+  grid-area:1/1; transition:transform .5s var(--ease-out), opacity .25s ease;
+}
+html[data-theme="light"] .m-theme .ico-moon{transform:rotate(0) scale(1); opacity:1}
+html[data-theme="light"] .m-theme .ico-sun{transform:rotate(-70deg) scale(.4); opacity:0}
+html[data-theme="dark"] .m-theme .ico-moon{transform:rotate(70deg) scale(.4); opacity:0}
+html[data-theme="dark"] .m-theme .ico-sun{transform:rotate(0) scale(1); opacity:1}
+
+/* View Transitions: rivelazione circolare del tema */
+::view-transition-old(root),::view-transition-new(root){animation:none; mix-blend-mode:normal}
+::view-transition-old(root){z-index:0}
+::view-transition-new(root){z-index:1}
+
+/* ============================================================
+   CHROME DEL MOCKUP (non fa parte del design proposto)
+============================================================ */
+.switcher{
+  position:fixed; left:20px; bottom:20px; z-index:70; width:min(320px, calc(100vw - 40px));
+  background:var(--surface-solid); border:1px dashed var(--line-2); border-radius:var(--r-md);
+  box-shadow:var(--shadow); overflow:hidden;
+}
+.sw-head{
+  display:flex; align-items:center; justify-content:space-between; gap:10px;
+  width:100%; padding:11px 13px; background:none; border:0; cursor:pointer; text-align:left;
+}
+.sw-head b{font-family:var(--f-mono); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--fg-2); font-weight:400}
+.sw-head .chev{transition:transform var(--dur-2) var(--ease-out)}
+.switcher[data-open="false"] .chev{transform:rotate(180deg)}
+.switcher[data-open="false"] .sw-body{display:none}
+.sw-body{padding:2px 9px 11px}
+.sw-opt{
+  display:block; width:100%; text-align:left; padding:9px 10px; margin-bottom:2px;
+  background:none; border:0; border-radius:10px; cursor:pointer;
+}
+.sw-opt:hover{background:var(--accent-soft)}
+.sw-opt[aria-pressed="true"]{background:var(--accent); color:var(--accent-ink)}
+.sw-opt .n{font-family:var(--f-mono); font-size:11px; opacity:.7; margin-right:8px}
+.sw-opt .t{font-weight:500; font-size:14.5px}
+.sw-opt .d{display:block; font-size:12.5px; opacity:.75; margin-top:2px; line-height:1.4}
+
+@media (max-width:820px){
+  .site-head{padding:12px 16px}
+  .ident .who{display:none}
+  #slot{
+    position:fixed; left:0; right:0; bottom:18px; justify-content:center; padding:0 16px;
+    pointer-events:none; z-index:60;
+  }
+  #slot>*{pointer-events:auto}
+  .cmdbar .ph{display:none}
+  .switcher{left:12px; right:12px; bottom:auto; top:64px; width:auto}
+  .page{padding:0 18px 220px}
+  .palette{top:8vh}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms !important; transition-duration:.01ms !important}
+}
+</style>
+</head>
+<body>
+
+<!-- Icone riusabili -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
+  <defs>
+    <g id="i-globe"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.5 2.6 2.5 15.4 0 18M12 3c-2.5 2.6-2.5 15.4 0 18"/></g>
+    <g id="i-dl"><path d="M12 4v11m0 0 4.2-4.2M12 15l-4.2-4.2M4.5 18.5h15"/></g>
+    <g id="i-ok"><path d="m5 12.6 4.6 4.6L19 7.8"/></g>
+    <g id="i-moon"><path d="M20 14.2A8.2 8.2 0 0 1 9.8 4 8.5 8.5 0 1 0 20 14.2Z"/></g>
+    <g id="i-sun"><circle cx="12" cy="12" r="4.2"/><path d="M12 2.6v2.2M12 19.2v2.2M21.4 12h-2.2M4.8 12H2.6m16.1-6.7-1.6 1.6M7.1 16.9l-1.6 1.6m13.2 0-1.6-1.6M7.1 7.1 5.5 5.5"/></g>
+    <g id="i-in"><rect x="3.5" y="3.5" width="17" height="17" rx="3"/><path d="M8 10.5V16M8 7.6v.1M12 16v-3.2a2 2 0 0 1 4 0V16"/></g>
+    <g id="i-mail"><rect x="3" y="5.5" width="18" height="13" rx="2.5"/><path d="m4 7.5 8 5.5 8-5.5"/></g>
+    <g id="i-search"><circle cx="11" cy="11" r="6.5"/><path d="m16 16 4 4"/></g>
+    <g id="i-chev"><path d="m6 14 6-6 6 6"/></g>
+    <g id="i-arrow"><path d="M12 19V5m0 0-6 6m6-6 6 6"/></g>
+    <g id="i-copy"><rect x="9" y="9" width="11" height="11" rx="2.5"/><path d="M15 6.5A2.5 2.5 0 0 0 12.5 4h-6A2.5 2.5 0 0 0 4 6.5v6A2.5 2.5 0 0 0 6.5 15"/></g>
+  </defs>
+</svg>
+
+<header class="site-head">
+  <div class="ident">
+    <span class="mark" aria-hidden="true">VP</span>
+    <span class="who">Vito Paparella Santorsola</span>
+  </div>
+
+  <div id="slot">
+
+    <!-- ========== CONCEPT 01 — DOCK MAGNETICO ========== -->
+    <div class="tb dock" id="tb1" role="toolbar" aria-label="Azioni del CV" aria-orientation="horizontal">
+      <span class="dock-tip" id="dockTip" aria-hidden="true"><span>—</span></span>
+
+      <button class="dock-btn" data-act="lang" data-tip-it="Read in English" data-tip-en="Leggi in italiano" tabindex="0">
+        <span class="lang-badge" data-target-lang>EN</span>
+        <span class="sr-only" data-act-label>Passa all'inglese</span>
+      </button>
+
+      <button class="dock-btn" data-act="pdf" data-tip-it="Scarica il PDF" data-tip-en="Download the PDF" tabindex="-1">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-dl"/></svg>
+        <span class="sr-only" data-act-label>Scarica il CV in PDF</span>
+      </button>
+
+      <button class="dock-btn" data-act="theme" aria-pressed="false" data-tip-it="Tema scuro" data-tip-en="Dark theme" tabindex="-1">
+        <svg class="icon ico-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg>
+        <span class="dock-dot"></span>
+        <span class="sr-only" data-act-label>Attiva il tema scuro</span>
+      </button>
+
+      <span class="dock-sep" aria-hidden="true"></span>
+
+      <button class="dock-btn" data-act="linkedin" data-tip-it="LinkedIn" data-tip-en="LinkedIn" tabindex="-1">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-in"/></svg>
+        <span class="sr-only">Apri il profilo LinkedIn</span>
+      </button>
+
+      <button class="dock-btn" data-act="mail" data-tip-it="Copia l'email" data-tip-en="Copy the email" tabindex="-1">
+        <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-mail"/></svg>
+        <span class="sr-only" data-act-label>Copia l'indirizzo email</span>
+      </button>
+    </div>
+
+    <!-- ========== CONCEPT 02 — COMMAND BAR ========== -->
+    <div class="tb cmdbar" id="tb2">
+      <button class="cb-open" id="cbOpen" aria-haspopup="dialog">
+        <svg class="icon sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-search"/></svg>
+        <span class="ph" data-i18n="cbPlaceholder">Cerca un'azione</span>
+        <span class="kbd" aria-hidden="true">⌘K</span>
+        <span class="sr-only" data-i18n="cbOpenSr">Apri la palette dei comandi</span>
+      </button>
+      <div class="cb-quick">
+        <button class="cb-btn" data-act="lang"><span class="lang-badge" data-target-lang>EN</span><span class="sr-only" data-act-label>Passa all'inglese</span></button>
+        <button class="cb-btn" data-act="pdf"><svg class="icon sm" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-dl"/></svg><span class="sr-only" data-act-label>Scarica il CV in PDF</span></button>
+        <button class="cb-btn" data-act="theme" aria-pressed="false">
+          <svg class="icon sm ico-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg>
+          <span class="sr-only" data-act-label>Attiva il tema scuro</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ========== CONCEPT 03 — BARRA MORFICA ========== -->
+    <div class="tb morph" id="tb3">
+      <div class="seg" role="radiogroup" aria-label="Lingua del CV" id="seg">
+        <span class="seg-blob" id="segBlob" aria-hidden="true"></span>
+        <button class="seg-opt" role="radio" aria-checked="true" data-lang-opt="it" tabindex="0">IT</button>
+        <button class="seg-opt" role="radio" aria-checked="false" data-lang-opt="en" tabindex="-1">EN</button>
+      </div>
+
+      <a class="m-dl" id="mDl" href="#" download>
+        <span class="stack" aria-hidden="true">
+          <svg class="icon ico-dl" viewBox="0 0 24 24"><use href="#i-dl"/></svg>
+          <svg class="icon ico-ok" viewBox="0 0 24 24"><use href="#i-ok"/></svg>
+          <svg class="ring" viewBox="0 0 24 24"><circle cx="12" cy="12" r="8"/><circle class="arc" cx="12" cy="12" r="8"/></svg>
+        </span>
+        <span class="swap">
+          <span class="s1" data-i18n="dlIdle">Scarica PDF</span>
+          <span class="s2" data-i18n="dlDone">Fatto</span>
+        </span>
+      </a>
+
+      <button class="m-theme" data-act="theme" aria-pressed="false">
+        <svg class="icon ico-moon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-moon"/></svg>
+        <svg class="icon ico-sun" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-sun"/></svg>
+        <span class="sr-only" data-act-label>Attiva il tema scuro</span>
+      </button>
+    </div>
+
+  </div>
+</header>
+
+<main class="page">
+  <section class="hero">
+    <p class="eyebrow" data-i18n="eyebrow">Senior Software Developer · Bari</p>
+    <h1>Vito Paparella<br>Santorsola</h1>
+    <p class="lede" data-i18n="lede">Cinque anni tra consulenza e prodotto, su frontend React e Angular. Piattaforme news ad alto traffico, fino a 40k utenti concorrenti.</p>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2 data-i18n="h2exp">Esperienza</h2>
+    <article class="job">
+      <span class="role">Senior Software Developer — RCS Innovation</span>
+      <span class="meta">2024.05 — <span data-i18n="today">oggi</span></span>
+      <p data-i18n="job1">Corriere della Sera e Gazzetta dello Sport. Lead frontend della nuova homepage, architettura micro-frontend a islands, modernizzazione incrementale del legacy.</p>
+    </article>
+    <article class="job">
+      <span class="role">Software Developer — CyberSecurity S.r.l.</span>
+      <span class="meta">2021.07 — 2024.05</span>
+      <p data-i18n="job2">Full-stack in consulenza su utility, energia, finanza e piattaforme AI. Technical leader di team fino a 4 sviluppatori, mentoring e colloqui tecnici.</p>
+    </article>
+  </section>
+
+  <hr class="rule">
+
+  <section>
+    <h2 data-i18n="h2stack">Tecnologie</h2>
+    <ul class="chips">
+      <li class="key">TypeScript</li><li class="key">React &amp; Next.js</li><li class="key">Angular &amp; RxJS</li>
+      <li>Redux / NgRx / Zustand</li><li>Jest &amp; RTL</li><li>Node.js</li><li>Vite</li><li>Docker</li><li>WCAG 2.2</li>
+    </ul>
+  </section>
+</main>
+
+<!-- Palette dei comandi (concept 02) -->
+<div class="scrim" id="scrim"></div>
+<div class="palette" id="palette" role="dialog" aria-modal="true" aria-labelledby="palTitle">
+  <h2 class="sr-only" id="palTitle" data-i18n="palTitle">Palette dei comandi</h2>
+  <div class="pal-field">
+    <svg class="icon" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-search"/></svg>
+    <input id="palInput" type="text" role="combobox" autocomplete="off" spellcheck="false"
+           aria-expanded="true" aria-controls="palList" aria-autocomplete="list"
+           data-i18n-ph="palPh" placeholder="Cerca un'azione…">
+    <span class="pal-esc" aria-hidden="true">esc</span>
+  </div>
+  <ul class="pal-list" id="palList" role="listbox" aria-labelledby="palTitle"></ul>
+  <div class="pal-foot" aria-hidden="true">
+    <span>↑↓ <span data-i18n="footNav">naviga</span></span>
+    <span>↵ <span data-i18n="footRun">esegui</span></span>
+    <span>esc <span data-i18n="footClose">chiudi</span></span>
+  </div>
+</div>
+
+<!-- Chrome del mockup -->
+<aside class="switcher" data-open="true">
+  <button class="sw-head" id="swHead" aria-expanded="true" aria-controls="swBody">
+    <b>Mockup · scegli il concept</b>
+    <svg class="icon sm chev" viewBox="0 0 24 24" aria-hidden="true"><use href="#i-chev"/></svg>
+  </button>
+  <div class="sw-body" id="swBody">
+    <button class="sw-opt" data-concept="1" aria-pressed="true">
+      <span class="n">01</span><span class="t">Dock magnetico</span>
+      <span class="d">Ingrandimento con curva gaussiana, tooltip che scivola tra le icone. Frecce ← → per navigare.</span>
+    </button>
+    <button class="sw-opt" data-concept="2" aria-pressed="false">
+      <span class="n">02</span><span class="t">Command bar ⌘K</span>
+      <span class="d">Palette con ricerca fuzzy su tutte le azioni, più tre scorciatoie sempre visibili.</span>
+    </button>
+    <button class="sw-opt" data-concept="3" aria-pressed="false">
+      <span class="n">03</span><span class="t">Barra morfica</span>
+      <span class="d">Indicatore liquido sulla lingua, download che si trasforma, tema con rivelazione circolare.</span>
+    </button>
+  </div>
+</aside>
+
+<div class="sr-only" role="status" aria-live="polite" id="live"></div>
+
+<script>
+(() => {
+  "use strict";
+  const root = document.documentElement;
+  const live = document.getElementById('live');
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+  const PDF = l => `https://vvsgith.github.io/my-cv-website/Vito_Paparella_Santorsola_CV_${l.toUpperCase()}.pdf`;
+  const EMAIL = 'vs.paparella@gmail.com';
+  const LINKEDIN = 'https://www.linkedin.com/in/vito-paparella-santorsola-aa686817b/';
+
+  /* ---------- i18n ---------- */
+  const S = {
+    it:{eyebrow:"Senior Software Developer · Bari",
+        lede:"Cinque anni tra consulenza e prodotto, su frontend React e Angular. Piattaforme news ad alto traffico, fino a 40k utenti concorrenti.",
+        h2exp:"Esperienza", h2stack:"Tecnologie", today:"oggi",
+        job1:"Corriere della Sera e Gazzetta dello Sport. Lead frontend della nuova homepage, architettura micro-frontend a islands, modernizzazione incrementale del legacy.",
+        job2:"Full-stack in consulenza su utility, energia, finanza e piattaforme AI. Technical leader di team fino a 4 sviluppatori, mentoring e colloqui tecnici.",
+        cbPlaceholder:"Cerca un'azione", cbOpenSr:"Apri la palette dei comandi",
+        palTitle:"Palette dei comandi", palPh:"Cerca un'azione…",
+        footNav:"naviga", footRun:"esegui", footClose:"chiudi",
+        dlIdle:"Scarica PDF", dlDone:"Fatto"},
+    en:{eyebrow:"Senior Software Developer · Bari, Italy",
+        lede:"Five years across consultancy and product, on React and Angular frontends. High-traffic news platforms with up to 40k concurrent users.",
+        h2exp:"Experience", h2stack:"Stack", today:"present",
+        job1:"Corriere della Sera and Gazzetta dello Sport. Frontend lead on the new homepage, hybrid micro-frontend islands architecture, incremental legacy modernisation.",
+        job2:"Full-stack consulting across utilities, energy, finance and AI platforms. Technical leader of teams up to 4 developers, mentoring and technical interviews.",
+        cbPlaceholder:"Search an action", cbOpenSr:"Open the command palette",
+        palTitle:"Command palette", palPh:"Search an action…",
+        footNav:"navigate", footRun:"run", footClose:"close",
+        dlIdle:"Download PDF", dlDone:"Done"}
+  };
+  const L = {
+    it:{toEn:"Passa all'inglese", pdf:"Scarica il CV in PDF", dark:"Attiva il tema scuro", light:"Attiva il tema chiaro",
+        copy:"Copia l'indirizzo email", copied:"Email copiata negli appunti", langOn:"Lingua: italiano",
+        themeOn:t=>`Tema ${t==='dark'?'scuro':'chiaro'} attivo`, dl:"Download del CV avviato"},
+    en:{toEn:"Leggi in italiano", pdf:"Download the CV as PDF", dark:"Switch to dark theme", light:"Switch to light theme",
+        copy:"Copy the email address", copied:"Email copied to clipboard", langOn:"Language: English",
+        themeOn:t=>`${t==='dark'?'Dark':'Light'} theme on`, dl:"CV download started"}
+  };
+  const say = m => { live.textContent = ''; setTimeout(() => live.textContent = m, 40); };
+
+  function applyLang(lang){
+    root.setAttribute('data-lang', lang);
+    root.lang = lang;
+    const s = S[lang], l = L[lang];
+    document.querySelectorAll('[data-i18n]').forEach(el => { const k = el.dataset.i18n; if (s[k]) el.textContent = s[k]; });
+    document.querySelectorAll('[data-i18n-ph]').forEach(el => { const k = el.dataset.i18nPh; if (s[k]) el.placeholder = s[k]; });
+    document.querySelectorAll('[data-target-lang]').forEach(el => el.textContent = lang === 'it' ? 'EN' : 'IT');
+    document.querySelectorAll('[data-act]').forEach(b => {
+      const lbl = b.querySelector('[data-act-label]'); if (!lbl) return;
+      if (b.dataset.act === 'lang') lbl.textContent = l.toEn;
+      if (b.dataset.act === 'pdf')  lbl.textContent = l.pdf;
+      if (b.dataset.act === 'mail') lbl.textContent = l.copy;
+      if (b.dataset.act === 'theme') lbl.textContent = root.dataset.theme === 'dark' ? l.light : l.dark;
+    });
+    document.querySelectorAll('#seg [data-lang-opt]').forEach(o => {
+      const on = o.dataset.langOpt === lang;
+      o.setAttribute('aria-checked', String(on));
+      o.tabIndex = on ? 0 : -1;
+    });
+    document.getElementById('mDl').href = PDF(lang);
+    moveBlob();
+    buildPalette(palInput.value);
+  }
+
+  function applyTheme(next, origin){
+    const swap = () => {
+      root.setAttribute('data-theme', next);
+      document.querySelectorAll('[data-act="theme"]').forEach(b => {
+        b.setAttribute('aria-pressed', String(next === 'dark'));
+        const lbl = b.querySelector('[data-act-label]');
+        if (lbl) lbl.textContent = next === 'dark' ? L[root.dataset.lang].light : L[root.dataset.lang].dark;
+      });
+      buildPalette(palInput.value);
+    };
+    const vt = document.startViewTransition && origin && !reduce.matches;
+    if (!vt) { swap(); say(L[root.dataset.lang].themeOn(next)); return; }
+    const t = document.startViewTransition(swap);
+    t.ready.then(() => {
+      const { x, y } = origin;
+      const r = Math.hypot(Math.max(x, innerWidth - x), Math.max(y, innerHeight - y));
+      root.animate(
+        { clipPath: [`circle(0px at ${x}px ${y}px)`, `circle(${r}px at ${x}px ${y}px)`] },
+        { duration: 620, easing: 'cubic-bezier(.22,1,.36,1)', pseudoElement: '::view-transition-new(root)' }
+      );
+    }).catch(() => {});
+    say(L[root.dataset.lang].themeOn(next));
+  }
+
+  async function copyEmail(){
+    try { await navigator.clipboard.writeText(EMAIL); say(L[root.dataset.lang].copied); }
+    catch { location.href = 'mailto:' + EMAIL; }
+  }
+
+  function run(act, ev){
+    const lang = root.dataset.lang;
+    if (act === 'lang'){ const n = lang === 'it' ? 'en' : 'it'; applyLang(n); say(L[n].langOn); }
+    else if (act === 'pdf'){ const a = document.createElement('a'); a.href = PDF(lang); a.download = ''; a.click(); say(L[lang].dl); }
+    else if (act === 'theme'){
+      const el = ev && ev.currentTarget && ev.currentTarget.getBoundingClientRect ? ev.currentTarget.getBoundingClientRect() : null;
+      applyTheme(root.dataset.theme === 'dark' ? 'light' : 'dark',
+        el ? { x: el.left + el.width / 2, y: el.top + el.height / 2 } : null);
+    }
+    else if (act === 'linkedin') open(LINKEDIN, '_blank', 'noopener');
+    else if (act === 'mail') copyEmail();
+  }
+  document.querySelectorAll('[data-act]').forEach(b => b.addEventListener('click', e => run(b.dataset.act, e)));
+
+  /* ================= CONCEPT 01 — dock magnetico ================= */
+  const dock = document.getElementById('tb1');
+  const tip = document.getElementById('dockTip');
+  const tipTxt = tip.firstElementChild;
+  const dockBtns = [...dock.querySelectorAll('.dock-btn')];
+  const AMP = .62, SIGMA = 62;
+
+  function magnify(x){
+    if (reduce.matches) return;
+    dockBtns.forEach(b => {
+      const c = b.offsetLeft + b.offsetWidth / 2;
+      const d = x - c;
+      const s = 1 + AMP * Math.exp(-(d * d) / (2 * SIGMA * SIGMA));
+      b.style.setProperty('--s', s.toFixed(3));
+      b.style.setProperty('--lift', (-(s - 1) * 15).toFixed(2) + 'px');
+    });
+  }
+  const resetDock = () => dockBtns.forEach(b => { b.style.setProperty('--s', 1); b.style.setProperty('--lift', '0px'); });
+
+  function showTip(btn){
+    const key = root.dataset.lang === 'it' ? 'tipIt' : 'tipEn';
+    tipTxt.textContent = btn.dataset[key] || '';
+    tip.style.width = 'auto';
+    const w = tipTxt.scrollWidth + 24;
+    tip.style.width = w + 'px';
+    const cx = btn.offsetLeft + btn.offsetWidth / 2;
+    tip.style.setProperty('--tip-x', (cx - w / 2) + 'px');
+    dock.classList.add('tip-on');
+  }
+  const hideTip = () => dock.classList.remove('tip-on');
+
+  dock.addEventListener('pointermove', e => magnify(e.clientX - dock.getBoundingClientRect().left));
+  dock.addEventListener('pointerleave', () => { resetDock(); hideTip(); });
+  dockBtns.forEach((b, i) => {
+    b.addEventListener('pointerenter', () => showTip(b));
+    b.addEventListener('focus', () => { showTip(b); magnify(b.offsetLeft + b.offsetWidth / 2); });
+    b.addEventListener('blur', () => { if (!dock.matches(':hover')) { hideTip(); resetDock(); } });
+    b.addEventListener('keydown', e => {
+      const map = { ArrowRight: 1, ArrowLeft: -1 };
+      let n = null;
+      if (e.key in map) n = (i + map[e.key] + dockBtns.length) % dockBtns.length;
+      if (e.key === 'Home') n = 0;
+      if (e.key === 'End') n = dockBtns.length - 1;
+      if (n === null) return;
+      e.preventDefault();
+      dockBtns.forEach(x => x.tabIndex = -1);
+      dockBtns[n].tabIndex = 0;
+      dockBtns[n].focus();
+    });
+  });
+
+  /* ================= CONCEPT 02 — command bar ================= */
+  const scrim = document.getElementById('scrim');
+  const palette = document.getElementById('palette');
+  const palInput = document.getElementById('palInput');
+  const palList = document.getElementById('palList');
+  let opts = [], cur = 0, lastFocus = null;
+
+  const ACTIONS = () => {
+    const lang = root.dataset.lang, dark = root.dataset.theme === 'dark';
+    const g = { nav: lang === 'it' ? 'Vai a' : 'Jump to', act: lang === 'it' ? 'Azioni' : 'Actions', ct: lang === 'it' ? 'Contatti' : 'Contacts' };
+    return [
+      { g:g.act, ico:'#i-globe', hint:'L', label: lang==='it' ? 'Leggi il CV in inglese' : 'Leggi il CV in italiano', run:()=>run('lang') },
+      { g:g.act, ico:'#i-dl', hint:'D', label: lang==='it' ? 'Scarica il PDF (italiano)' : 'Download the PDF (English)', run:()=>run('pdf') },
+      { g:g.act, ico:'#i-dl', hint:'', label: lang==='it' ? 'Scarica il PDF (inglese)' : 'Scarica il PDF (italiano)',
+        run:()=>{ const a=document.createElement('a'); a.href=PDF(root.dataset.lang==='it'?'en':'it'); a.download=''; a.click(); say(L[root.dataset.lang].dl); } },
+      { g:g.act, ico: dark ? '#i-sun' : '#i-moon', hint:'T',
+        label: dark ? (lang==='it'?'Attiva il tema chiaro':'Switch to light theme') : (lang==='it'?'Attiva il tema scuro':'Switch to dark theme'),
+        run:()=>applyTheme(dark?'light':'dark', { x: innerWidth/2, y: 0 }) },
+      { g:g.nav, ico:'#i-arrow', hint:'', label: lang==='it'?'Esperienza':'Experience', run:()=>scrollTo({top:document.querySelector('[data-i18n="h2exp"]').offsetTop-90, behavior: reduce.matches?'auto':'smooth'}) },
+      { g:g.nav, ico:'#i-arrow', hint:'', label: lang==='it'?'Tecnologie':'Stack', run:()=>scrollTo({top:document.querySelector('[data-i18n="h2stack"]').offsetTop-90, behavior: reduce.matches?'auto':'smooth'}) },
+      { g:g.ct, ico:'#i-copy', hint:'', label: lang==='it'?'Copia l\'email':'Copy the email', run:copyEmail },
+      { g:g.ct, ico:'#i-in', hint:'', label:'LinkedIn', run:()=>open(LINKEDIN,'_blank','noopener') }
+    ];
+  };
+
+  function score(q, t){
+    q = q.toLowerCase().trim(); t = t.toLowerCase();
+    if (!q) return 1;
+    let i = 0, s = 0, streak = 0;
+    for (const ch of t){ if (ch === q[i]){ i++; streak++; s += streak * 2; } else streak = 0; }
+    return i === q.length ? s : 0;
+  }
+
+  function buildPalette(q = ''){
+    const lang = root.dataset.lang;
+    const list = ACTIONS().map(a => ({ a, s: score(q, a.label) })).filter(x => x.s > 0)
+                          .sort((x, y) => y.s - x.s);
+    palList.innerHTML = '';
+    opts = [];
+    if (!list.length){
+      const li = document.createElement('li');
+      li.className = 'pal-empty';
+      li.textContent = lang === 'it' ? 'Nessuna azione trovata. Prova con "pdf" o "tema".' : 'No action found. Try “pdf” or “theme”.';
+      palList.appendChild(li);
+      palInput.removeAttribute('aria-activedescendant');
+      return;
+    }
+    let g = null;
+    list.forEach(({ a }, i) => {
+      if (!q && a.g !== g){
+        g = a.g;
+        const h = document.createElement('li');
+        h.className = 'pal-group'; h.setAttribute('role', 'presentation'); h.textContent = g;
+        palList.appendChild(h);
+      }
+      const li = document.createElement('li');
+      li.className = 'pal-opt'; li.id = 'opt-' + i; li.setAttribute('role', 'option');
+      li.setAttribute('aria-selected', 'false');
+      li.innerHTML = `<svg class="icon sm" viewBox="0 0 24 24" aria-hidden="true"><use href="${a.ico}"/></svg>
+                      <span class="label"></span>${a.hint ? `<span class="hint">${a.hint}</span>` : ''}`;
+      li.querySelector('.label').textContent = a.label;
+      li.addEventListener('click', () => { closePalette(); a.run(); });
+      li.addEventListener('pointermove', () => select(i));
+      palList.appendChild(li);
+      opts.push({ el: li, a });
+    });
+    select(0);
+  }
+  function select(i){
+    if (!opts.length) return;
+    cur = (i + opts.length) % opts.length;
+    opts.forEach((o, n) => o.el.setAttribute('aria-selected', String(n === cur)));
+    palInput.setAttribute('aria-activedescendant', opts[cur].el.id);
+    opts[cur].el.scrollIntoView({ block: 'nearest' });
+  }
+  function openPalette(){
+    lastFocus = document.activeElement;
+    scrim.classList.add('on'); palette.classList.add('on');
+    palInput.value = ''; buildPalette('');
+    palInput.focus();
+  }
+  function closePalette(){
+    scrim.classList.remove('on'); palette.classList.remove('on');
+    if (lastFocus && lastFocus.isConnected) lastFocus.focus();
+  }
+  document.getElementById('cbOpen').addEventListener('click', openPalette);
+  scrim.addEventListener('click', closePalette);
+  palInput.addEventListener('input', () => buildPalette(palInput.value));
+  palette.addEventListener('keydown', e => {
+    if (e.key === 'Escape'){ e.preventDefault(); closePalette(); }
+    else if (e.key === 'ArrowDown'){ e.preventDefault(); select(cur + 1); }
+    else if (e.key === 'ArrowUp'){ e.preventDefault(); select(cur - 1); }
+    else if (e.key === 'Enter' && opts.length){ e.preventDefault(); const a = opts[cur].a; closePalette(); a.run(); }
+    else if (e.key === 'Tab'){ e.preventDefault(); } /* focus trap: un solo elemento focusabile */
+  });
+  addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k'){
+      e.preventDefault();
+      if (root.dataset.concept !== '2'){ setConcept('2'); }
+      palette.classList.contains('on') ? closePalette() : openPalette();
+    }
+  });
+
+  /* ================= CONCEPT 03 — barra morfica ================= */
+  const seg = document.getElementById('seg');
+  const blob = document.getElementById('segBlob');
+  const segOpts = [...seg.querySelectorAll('[data-lang-opt]')];
+  function moveBlob(){
+    const on = seg.querySelector('[aria-checked="true"]');
+    if (!on) return;
+    blob.style.setProperty('--w', on.offsetWidth + 'px');
+    blob.style.setProperty('--x', on.offsetLeft - 3 + 'px');
+    if (reduce.matches) return;
+    blob.style.setProperty('--sx', 1.22);
+    setTimeout(() => blob.style.setProperty('--sx', 1), 190);
+  }
+  segOpts.forEach((o, i) => {
+    o.addEventListener('click', () => {
+      if (o.getAttribute('aria-checked') === 'true') return;
+      applyLang(o.dataset.langOpt); say(L[o.dataset.langOpt].langOn);
+    });
+    o.addEventListener('keydown', e => {
+      if (!['ArrowLeft','ArrowRight','ArrowUp','ArrowDown'].includes(e.key)) return;
+      e.preventDefault();
+      const n = segOpts[(i + (e.key === 'ArrowRight' || e.key === 'ArrowDown' ? 1 : -1) + segOpts.length) % segOpts.length];
+      applyLang(n.dataset.langOpt); n.focus(); say(L[n.dataset.langOpt].langOn);
+    });
+  });
+  const mDl = document.getElementById('mDl');
+  mDl.addEventListener('click', () => {
+    say(L[root.dataset.lang].dl);
+    if (reduce.matches){ mDl.classList.add('done'); setTimeout(() => mDl.classList.remove('done'), 1600); return; }
+    mDl.classList.add('loading');
+    setTimeout(() => { mDl.classList.remove('loading'); mDl.classList.add('done'); }, 640);
+    setTimeout(() => mDl.classList.remove('done'), 2400);
+  });
+
+  /* ================= chrome del mockup ================= */
+  function setConcept(n){
+    root.setAttribute('data-concept', n);
+    document.querySelectorAll('.sw-opt').forEach(b => b.setAttribute('aria-pressed', String(b.dataset.concept === n)));
+    if (n === '3') requestAnimationFrame(moveBlob);
+    if (n === '1') resetDock();
+  }
+  document.querySelectorAll('.sw-opt').forEach(b => b.addEventListener('click', () => setConcept(b.dataset.concept)));
+  const sw = document.querySelector('.switcher'), swHead = document.getElementById('swHead');
+  swHead.addEventListener('click', () => {
+    const open = sw.dataset.open === 'true';
+    sw.dataset.open = String(!open);
+    swHead.setAttribute('aria-expanded', String(!open));
+  });
+
+  /* ---------- avvio ---------- */
+  if (matchMedia('(prefers-color-scheme: dark)').matches) applyTheme('dark', null);
+  applyLang('it');
+  addEventListener('resize', moveBlob);
+  requestAnimationFrame(moveBlob);
+})();
+</script>
+</body>
+</html>

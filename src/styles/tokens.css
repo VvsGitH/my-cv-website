@@ -2,11 +2,8 @@
   /* --- Colors. The theme reaches the paper (ADR-0015): two ramps on one cool
      axis, and the Sheet is the darker of the two surfaces in the dark theme —
      the paper settles into a pool rather than floating above it.
-
      The `-light` / `-dark` pairs here are raw material and are never read by a
-     component; the semantic tokens at the foot of the block are. Cream and accent
-     have no pair: both live on the Aside, which is the same surface in both themes
-     and takes its inks back locally. --- */
+     component; the semantic tokens at the foot of the block are. --- */
 
   /* Surfaces. In light the paper is lighter than the page behind it; in dark
      it is darker. Either way the step is ~1.13:1, which draws the Sheet's edge
@@ -15,55 +12,28 @@
   --color-page-bg-dark: oklch(32.5% 0.0315 259); /* #2b3747 */
   --color-main-bg-light: oklch(100% 0 89.88); /* #ffffff */
   --color-main-bg-dark: oklch(25.84% 0.0295 259.07); /* #1b2432 */
+  --color-aside-bg-light: oklch(97.94% 0.0331 97.68); /* #fef9e0 */
+  --color-aside-bg-dark: oklch(30% 0.1066 352.13); /* #520d33 */
+  --color-aside-accent-light: oklch(90.15% 0.0848 95.96); /* #efdf9e */
+  --color-aside-accent-dark: oklch(40% 0.1297 352.13); /* #771f4e */
 
   /* Inks, fifteen points of lightness apart on both ramps. */
   --color-heading-light: oklch(25% 0.0228 264); /* #1c222d */
   --color-heading-dark: oklch(96% 0.006 264); /* #f2f3f7 */
   --color-text-light: oklch(40% 0.012 264); /* #414854 */
   --color-text-dark: oklch(81% 0.008 264); /* #c3c7d1 */
-
-  /* Three of the Aside's four inks; the signature is below. On paper the panel is
-     cream in both themes and takes the light ramp with it (ADR-0015); in Reading
-     Mode there is no panel, so they follow the page like every other ink
-     (ADR-0017). Indirected here rather than restated in `Sheet.astro`, which would
-     have to rebuild the whole theme ladder to say it. */
-  --color-aside-heading: var(--color-heading-light);
-  --color-aside-text: var(--color-text-light);
-  /* The one ink with a literal of its own: nothing else needs a muted grey, and
-     what it is muted against — the cream — is a literal here too. Two names for
-     it, because the Toolbar borrows the grey the way it borrows the cream itself
-     and must keep it in Reading Mode, where `--color-aside-muted` rejoins the
-     theme below and would hand the Toolbar a near-white ink on its own cream. */
-  --color-cream-muted: oklch(55% 0.008 264); /* #6b727f */
-  --color-aside-muted: var(--color-cream-muted);
-
-  /* Theme-invariant: the cream panel and the one warm ink that sits on it. */
-  --color-accent: oklch(90.15% 0.0848 95.96); /* #efdf9e */
-  --color-aside-bg: oklch(97.94% 0.0331 97.68); /* #fef9e0 */
-
-  /* The signature is a fourth Aside ink, and the only coloured one, so it follows
-     the other three: cream underneath on paper, the theme underneath in Reading
-     Mode. Its dark end is not a ramp step — a blue this deep has nowhere to go on
-     a dark page, so it hands over to the accent, the palette's warm side, which
-     is the same handover the panel itself makes. */
   --color-signature-light: oklch(40% 0.0955 265); /* #2e457b */
-  --color-signature-dark: var(--color-accent);
-  --color-signature: var(--color-signature-light);
+  --color-signature-dark: oklch(92% 0.0469 95.235); /* #eee5c2 */
 
   /* The semantic tokens — the only colours a component names. Light is the
      base value; the ladder below rebinds them. */
   --color-page-bg: var(--color-page-bg-light);
   --color-main-bg: var(--color-main-bg-light);
+  --color-aside-bg: var(--color-aside-bg-light);
+  --color-aside-accent: var(--color-aside-accent-light);
   --color-heading: var(--color-heading-light);
   --color-text: var(--color-text-light);
-  /* Not a colour of its own outside the cream: `--color-muted` is what the
-     proficiency bars and the focus ring name, and on the page ground it missed
-     the contrast minimum in both themes. It is now the body ink everywhere the
-     Aside's panel and the Toolbar do not pin it back. */
-  --color-muted: var(--color-text);
-  /* Read only through --color-signature, and only in Reading Mode: on paper the
-     signature keeps the cream under it and so ignores the ladder entirely. */
-  --color-signature-themed: var(--color-signature-light);
+  --color-signature: var(--color-signature-light);
 
   /* --- Type scale. Designed rather than measured: the reference's own sizes were
      transcribed first (ADR-0014) and have since been replaced by one round scale,
@@ -122,12 +92,11 @@
   --font-size-button: 1.125rem;
 
   --toolbar-button-size: 2.25rem;
-  --toolbar-border-size: 1px;
   /* The berth from the viewport edge; three things read it. */
   --toolbar-inset: var(--space-m);
   /* The Reading Mode row only, and it does not encode the control count (ADR-0008). */
   --toolbar-block-size: calc(
-    var(--toolbar-button-size) + 2 * var(--space-xs) + 2 * var(--toolbar-border-size)
+    var(--toolbar-button-size) + 2 * var(--space-xs)
   );
 
   /* Reading Mode's measure, and a ceiling only: the Mode is chosen rather than
@@ -158,9 +127,11 @@
   :root {
     --color-page-bg: var(--color-page-bg-dark);
     --color-main-bg: var(--color-main-bg-dark);
+    --color-aside-bg: var(--color-aside-bg-dark);
+    --color-aside-accent: var(--color-aside-accent-dark);
     --color-heading: var(--color-heading-dark);
     --color-text: var(--color-text-dark);
-    --color-signature-themed: var(--color-signature-dark);
+    --color-signature: var(--color-signature-dark);
   }
 }
 
@@ -171,17 +142,21 @@
   html[data-theme='light'] {
     --color-page-bg: var(--color-page-bg-light);
     --color-main-bg: var(--color-main-bg-light);
+    --color-aside-bg: var(--color-aside-bg-light);
+    --color-aside-accent: var(--color-aside-accent-light);
     --color-heading: var(--color-heading-light);
     --color-text: var(--color-text-light);
-    --color-signature-themed: var(--color-signature-light);
+    --color-signature: var(--color-signature-light);
   }
 
   html[data-theme='dark'] {
     --color-page-bg: var(--color-page-bg-dark);
     --color-main-bg: var(--color-main-bg-dark);
+    --color-aside-bg: var(--color-aside-bg-dark);
+    --color-aside-accent: var(--color-aside-accent-dark);
     --color-heading: var(--color-heading-dark);
     --color-text: var(--color-text-dark);
-    --color-signature-themed: var(--color-signature-dark);
+    --color-signature: var(--color-signature-dark);
   }
 }
 
@@ -236,14 +211,6 @@ html[data-mode='reading'] {
 
   /* The portrait leads the compact header rather than filling a panel. */
   --photo-size: 10rem;
-
-  /* No cream panel down here, so the Aside's inks rejoin the theme. Pointing at
-     the semantic tokens rather than at a ramp is what lets one rebinding serve
-     both themes, and it resolves here on :root where the ladder has already run. */
-  --color-aside-heading: var(--color-heading);
-  --color-aside-text: var(--color-text);
-  --color-aside-muted: var(--color-muted);
-  --color-signature: var(--color-signature-themed);
 }
 
 /* The Chrome's own tier, and the one thing down here that stays a width: a touch

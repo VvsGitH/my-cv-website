@@ -1,6 +1,6 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
 import { cv } from '../src/content';
-import type { Locale } from '../src/content/types';
+import type { Locale } from '../src/i18n/locale';
 import { ui } from '../src/i18n/ui';
 import { inkOn } from './support/contrast';
 import { openPainted, readingMode, sheet, toolbar, VIEWPORTS } from './support/page';

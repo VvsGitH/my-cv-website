@@ -69,7 +69,7 @@ const { content } = Astro.props;
       `min(1, …)` is the whole guarantee ADR-0006 wanted: the paper is fitted
       down, never up, so every width at or above 888px renders as it did. */
     .sheets :global(.sheet) {
-      zoom: min(1, calc((100cqw - 2 * var(--sheets-pad)) / var(--sheet-width)));
+      zoom: min(1, calc(100cqw / var(--sheet-width)));
     }
 
     /* Reading Mode: one column of Blocks at a comfortable measure. The Sheets'

@@ -1,19 +1,15 @@
 ---
-import type { Locale } from '../../content/types';
+import type { GetStaticPaths } from 'astro';
+import { localePaths } from '../../i18n/locale';
 import { cv } from '../../content';
 import { ogCard } from '../../lib/og-card';
 import Sheet from '../../components/structure/Sheet.astro';
 import '../../styles/global.css';
 
 /** The link-preview image is a route, not a composed screenshot (ADR-0009). */
-export const getStaticPaths = () =>
-  (Object.keys(cv) as Locale[]).map((locale) => ({ params: { locale }, props: { locale } }));
-
-interface Props {
-  locale: Locale;
-}
-
+export const getStaticPaths = (() => localePaths()) satisfies GetStaticPaths;
 const { locale } = Astro.props;
+
 const content = cv[locale];
 
 const header = content.blocks.find((block) => block.kind === 'header');
@@ -98,7 +94,8 @@ if (!header) {
       font-weight: var(--font-weight-subtitle);
       font-size: 1.5rem;
       letter-spacing: 0.055em;
-      color: var(--color-accent);
+      /* This should be equal to the accent color of the light aside used in the right page */
+      color: var(--color-aside-accent-light);
     }
 
     .paper {

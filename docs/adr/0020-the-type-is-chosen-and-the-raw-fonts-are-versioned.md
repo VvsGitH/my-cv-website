@@ -1,0 +1,39 @@
+# The type is chosen, not inherited, and the raw fonts are versioned
+
+The CV no longer sets itself in the reference PDF's faces. It sets itself in **JetBrains Mono** for display — the name, the subtitle, section headings, entry titles, contact labels — and **Atkinson Hyperlegible** for everything read as prose, with **Primera Signature** on the signature and **icomoon** on the Toolbar. Garet, Now and Lato are gone.
+
+With them goes the arrangement that fed them: raw source files no longer live in a git-ignored drop folder. They live in **`src/assets/raw-fonts/`, committed**, and `scripts/subset-fonts.mjs` reads from there into `src/assets/fonts/`. This reverses ADR-0012 on that axis, and for the reason ADR-0012 itself named as the hazard: with the sources outside the repo, **only the owner's machine could reproduce a shipped `.woff2`**. A clean clone had the outputs and no way to regenerate them — so widening the charset, adding a weight, or re-cutting after a subsetter upgrade were all one lost laptop away from impossible.
+
+`docs/assets/` is still git-ignored and still holds the reference PNGs and PDF (ADR-0014). It just no longer holds anything the build depends on.
+
+## Considered Options
+
+- **Buying a Garet licence and keeping the reference's type.** Rejected. Garet was the one commercial face in the stack and the one licensing risk the research called out; the CV is a public repo on GitHub Pages, which is exactly the case a webfont EULA is written about. Choosing type outright costs nothing and settles it.
+- **Keeping the raw fonts git-ignored and versioning only the subsets.** Rejected, as above — it is the property that made the subsetting step unreproducible. The counter-argument is repo weight, and it is real: the raws are **2.05 MB** against **161 kB** of shipped subsets. Accepted deliberately. Font binaries do not churn, so they cost their size once in the history rather than on every clone-and-build.
+- **Versioning only the raw variants actually shipped.** Rejected on the owner's call. All 16 JetBrains Mono cuts and all four Atkinson cuts are kept, so a future weight is a line in `subset-fonts.mjs` rather than a re-download from a page that may have moved on. The `variants` array is what decides what ships; the folder is an archive, not a manifest.
+- **A variable font for JetBrains Mono.** Not pursued. Three static instances subset to 34–35 kB each; the variable file carries the whole axis and the CV uses three points on it.
+
+## The trap this exposed, which is silent by construction
+
+Subsetting is **idempotent**. Re-subsetting an already-subset face with the same charset yields the same glyph set, the same tables, and a byte-identical `.woff2`. So a subset accidentally dropped into `raw-fonts/` in place of its source does not fail — it round-trips, and the pipeline reports success.
+
+It happened here, to `AtkinsonHyperlegible-Bold.woff2`, and nothing caught it: the shipped Bold was correct, the build was green, the PDF was right. The only evidence was in the numbers.
+
+- **The symptom**: the script logs `23776 -> 17328 bytes` for a real source, and `17328 -> 17328` for a subset masquerading as one. Output the same size as input means no subsetting happened.
+- **The confirmation**: a woff2 header carries `totalSfntSize` at byte offset 16. The three sound Atkinson raws read ~55000; the bad one read 40276, which is subset territory (the true subsets read ~39000–40500).
+- **The cost if it goes unnoticed**: the raw is unrecoverable. Every glyph outside the subsetting charset is gone, so the charset can never be widened for that face again — which is the one thing versioning the raws exists to make possible.
+
+Worth a guard in the script if it ever happens twice.
+
+## Consequences
+
+- **Every face is OFL, and the licence files ship beside the fonts** — `src/assets/raw-fonts/atkinson/OFL.txt` and `.../jetbrains/OFL.txt`. **The exception is Primera Signature**, for which no licence could be found. The full `.ttf` is now committed to a public repo where before only the subset was, so its redistribution rests on nothing explicit. Known and accepted, not overlooked.
+- **Nothing reaches Chromium as Type3 any more.** Garet and Now were CFF, which Chromium redrew as anonymous glyph procedures (ADR-0009); JetBrains Mono and Atkinson are TrueType. Both PDFs now carry **12 font references over 8 distinct faces, all named, all embedded, zero Type3** — so the test suite asserts the set by name and ADR-0010's Type3-counting workaround is retired.
+- **Subsetting cuts less than it used to, and the headline number changed.** ADR-0012 claimed 75–80% per file; that was against `.otf`/`.ttf` sources. The Atkinson raws are already Google's optimised woff2, so they give up only **28–29%**. JetBrains Mono gives **63%**, Primera Signature **41%**, and icomoon still **99%** — 105 kB down to 1.2 kB, which remains the single biggest win in the pipeline.
+- **`font-display: swap` on the text faces**, where ADR-0012 mandated `block`. `block` paints nothing for ~3s and then swaps; `swap` paints the metric-matched fallback immediately. This changes how ADR-0009's viewport hazard fails — a face the capture never requested now prints in the fallback rather than not printing at all — which is the better failure and, unlike the old one, a failure the suite catches by name. Verified: the PDFs are unchanged under `swap`. **`icons.css` keeps `block`**, because the fallback for a private-use codepoint is tofu, and briefly-nothing beats briefly-tofu.
+- **`optional` is still forbidden.** It is a determinism hazard for the capture, and that half of ADR-0012's rule stands.
+- **The fallbacks are real now, and they are generated in PostCSS.** See `scripts/fontaine-after-imports.mjs`: fontaine ships as a Vite plugin at `enforce: 'pre'`, which runs *before* Vite inlines CSS `@import`s, so it only ever saw `global.css`'s five import lines, found no `@font-face`, and generated nothing — for as long as ADR-0012 has claimed otherwise. PostCSS is the one stage that sees the imports inlined *and* the `url()`s still as authored; one stage later they are `__VITE_ASSET__` placeholders, which fontaine skips for not ending in `.woff2`. So the plugin runs there and `global.css` keeps its import chain.
+- **Fallback faces are matched per family, and the names are written by hand.** A single `['Arial']` put a proportional face behind a monospace one: JetBrains Mono against Courier New computes `size-adjust: 99.98%`, against Arial **134.59%**. Measured in the browser, the generated fallback tracks the real face to **0.01%** on the name and **0.14%** on body prose, against 8.37% for bare `monospace` and 0.81% for bare Arial. The `'X fallback'` names are spelled out in `fonts.css`'s tokens because fontaine appends itself only to a literal `font-family`, and every one of ours is a `var()`.
+- **Atkinson's BoldItalic is not shipped.** Italic is the Languages proficiency labels and nothing else, and that `dd` renders `entry.level` as a bare expression — no inline markup, so bold inside italic is unreachable rather than merely unused. The raw is kept.
+- **JetBrains Mono ExtraBold is declared at 800, its real weight**, and `--font-weight-name` / `--font-weight-heading` name 800 to match. An earlier pass declared it 900, which left `font-weight: 800` falling back to Bold.
+- Adding a face is now four steps and all of them are in the repo: drop the source into `src/assets/raw-fonts/<family>/`, add it to `variants` in `subset-fonts.mjs`, run `npm run fonts:subset`, add the `@font-face` to `fonts.css` — then commit the generated `.woff2` alongside the raw. CI still never runs the subsetter.

@@ -22,9 +22,8 @@ const CAPTURE_VIEWPORT = { width: 1280, height: 1600 };
 const pdfPath = (locale) => `${outDir}/Vito_Paparella_Santorsola_CV_${locale.toUpperCase()}.pdf`;
 const cardPath = (locale) => `${outDir}/og-${locale}.png`;
 
-const cvRoute = (locale) =>
-  locale === config.i18n.defaultLocale ? config.base : `${config.base}${locale}/`;
-const cardRoute = (locale) => `${config.base}og/${locale}/`;
+const cvRoute = (locale) => `${config.base}${locale}/`;
+const cardRoute = (locale) => `${config.base}${locale}/og/`;
 
 /** The 2-page split is asserted, not assumed (ADR-0009). */
 async function assertTwoA4Pages(path) {

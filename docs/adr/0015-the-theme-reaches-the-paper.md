@@ -1,5 +1,24 @@
 # The theme reaches the paper, and stops at the cream
 
+> **Superseded on the cream, 2026-09-03, by ADR-0019.** The title's second clause is no longer
+> true: `--color-aside-bg` and `--color-aside-accent` are themed pairs like every other surface
+> token, and the panel darkens with the paper around it. Everything else here stands — the ladder,
+> the two surfaces, the ~1.13:1 step, the symmetric ink ramps, and the `@media screen` gate that
+> keeps print and the OG card light.
+>
+> What the reversal deletes, so this ADR is not read for tokens that are gone: the three
+> `--color-aside-*` inks, `--color-cream-muted`, `--color-muted`, `--color-accent` and
+> `--color-signature-themed`, plus the local re-declarations in `Sheet.astro` and `toolbar.css`.
+> The paragraph below beginning *"The cream does not participate"* describes a mechanism that no
+> longer exists, and the option this ADR dismissed under `## Considered Options` —
+> *"Darkening the Aside too"* — is what shipped. Two bullets of the 2026-08-31 amendment below go
+> with it: *"There is no muted ramp"* is void in both directions — there is no muted ramp **and**
+> no `--color-muted` — and *"The signature is no longer theme-invariant"* now understates it, since
+> the signature's pair is read in both Modes rather than only in Reading Mode.
+>
+> The last Consequence — *"a themed token is only safe where the surface under it is themed too"* —
+> is the one sentence here that the reversal proves rather than contradicts.
+
 > **Amended on three points, 2026-08-31, all of them consequences of ADR-0017.** The ladder,
 > the two surfaces, the ~1.13:1 step and the cream's refusal to participate all stand; three of
 > the tokens this ADR names have moved under it.

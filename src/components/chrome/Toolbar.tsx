@@ -1,4 +1,4 @@
-import type { Locale } from '../../content/types';
+import type { Locale } from '../../i18n/locale';
 import type { ToolbarStrings } from '../../i18n/ui';
 import { copyLink, linkCopied, toggleMode, toggleTheme } from './state';
 import './toolbar.css';
@@ -62,7 +62,7 @@ export default function Toolbar({ toolbar, links }: Props) {
 
       <button
         type="button"
-        class="toolbar-button"
+        class="toolbar-button toolbar-anchor"
         title={linkCopied.value ? toolbar.shared : toolbar.share}
         aria-label={linkCopied.value ? toolbar.shared : toolbar.share}
         onClick={copyLink}

@@ -1,105 +1,84 @@
-/* Weight/role mapping, read out of the reference PDF's own font resources
-   (ADR-0014). What the source actually uses:
-
-     Now-Bold      -> the name
-     Now-Regular   -> the "Professional software developer" subtitle
-     Garet-Bold    -> section headings, entry titles, contact labels
-     Garet-Regular -> employer / period lines, and the Aside's prose
-     Lato-Regular  -> dense prose: bullets, summaries, Tech Skills items
-     Lato-Bold     -> the bold runs inside that prose (the source names
-                      this face Lato-Heavy; Bold is what ships here)
-     Lato-Italic   -> Languages proficiency labels
-
-   Garet ships only Book and Heavy in docs/assets/fonts/, so Garet-Bold is
-   rendered with Heavy — the nearest available weight. */
-
 @font-face {
-  font-family: 'Garet';
-  src: url('../assets/fonts/garet/Garet-Book.woff2') format('woff2');
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/jetbrains/JetBrainsMono-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: 'Garet';
-  src: url('../assets/fonts/garet/Garet-Heavy.woff2') format('woff2');
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/jetbrains/JetBrainsMono-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: 'Now';
-  src: url('../assets/fonts/now/Now-Regular.woff2') format('woff2');
+  font-family: 'JetBrains Mono';
+  src: url('../assets/fonts/jetbrains/JetBrainsMono-ExtraBold.woff2') format('woff2');
+  font-weight: 800;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: 'Atkinson Hyperlegible';
+  src: url('../assets/fonts/atkinson/AtkinsonHyperlegible-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: 'Now';
-  src: url('../assets/fonts/now/Now-Bold.woff2') format('woff2');
+  font-family: 'Atkinson Hyperlegible';
+  src: url('../assets/fonts/atkinson/AtkinsonHyperlegible-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 @font-face {
-  font-family: 'Lato';
-  src: url('../assets/fonts/lato/Lato-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: block;
-}
-
-@font-face {
-  font-family: 'Lato';
-  src: url('../assets/fonts/lato/Lato-Italic.woff2') format('woff2');
+  font-family: 'Atkinson Hyperlegible';
+  src: url('../assets/fonts/atkinson/AtkinsonHyperlegible-Italic.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
-  font-display: block;
+  font-display: swap;
 }
 
-@font-face {
-  font-family: 'Lato';
-  src: url('../assets/fonts/lato/Lato-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: block;
-}
-
-/* The signature's script face — an approximation, never a scan, and self-hosted
-   so headless Chromium renders it deterministically (ADR-0012). */
+/* The signature's face (ADR-0012). */
 @font-face {
   font-family: 'Primera Signature';
-  src: url('../assets/fonts/primera-signature/PrimeraSignature.woff2') format('woff2');
+  src: url('../assets/fonts/primera-signature/PrimeraSignature-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 :root {
-  /* 'X fallback' entries are generated at build time by the fontaine Vite
-     plugin (astro.config.mjs) — metric-matched local faces that keep line
-     breaks stable while the real face loads. */
+  /* The 'X fallback' faces are generated at build time by fontaine
+     (astro.config.mjs) — `local()` system faces carrying `size-adjust` and the
+     override trio, so their metrics match the real face. They have to be named
+     here by hand: fontaine appends itself to a literal `font-family`, and every
+     one of ours is a `var()` on these tokens. */
 
-  /* The name and its subtitle — the only Now on the page. */
-  --font-name: 'Now', 'Now fallback', sans-serif;
-  --font-weight-name: 700;
-  --font-subtitle: 'Now', 'Now fallback', sans-serif;
+  /* The name and its subtitle. */
+  --font-name: 'JetBrains Mono', 'JetBrains Mono fallback', monospace;
+  --font-weight-name: 800;
+  --font-subtitle: 'JetBrains Mono', 'JetBrains Mono fallback', monospace;
   --font-weight-subtitle: 400;
 
   /* Section headings, entry titles, contact labels. */
-  --font-heading: 'Garet', 'Garet fallback', sans-serif;
-  --font-weight-heading: 700;
+  --font-heading: 'JetBrains Mono', 'JetBrains Mono fallback', monospace;
+  --font-weight-heading: 800;
+  --font-weight-subheading: 700;
 
   /* Employer / period lines and the Aside's prose. */
-  --font-display: 'Garet', 'Garet fallback', sans-serif;
+  --font-display: 'Atkinson Hyperlegible', 'Atkinson Hyperlegible fallback', sans-serif;
   --font-weight-display: 400;
 
   /* Bullets, summaries and other dense prose. */
-  --font-body: 'Lato', 'Lato fallback', sans-serif;
+  --font-body: 'Atkinson Hyperlegible', 'Atkinson Hyperlegible fallback', sans-serif;
   --font-weight-body: 400;
   --font-weight-body-strong: 700;
 

@@ -109,42 +109,59 @@ for (const locale of LOCALES) {
       ).toBe(true);
     });
 
-    test('repaints the page and the paper, and never the cream Aside', async ({ page }) => {
+    test('repaints all three surfaces, and keeps them apart', async ({ page }) => {
       const html = page.locator('html');
       const paper = sheet(page, 1);
       const panel = paper.locator('.aside');
-
-      await expect(html).toHaveAttribute('data-theme', 'light');
-      const before = {
+      const surfaces = async () => ({
         body: await backgroundOf(page.locator('body')),
         sheet: await backgroundOf(paper),
         aside: await backgroundOf(panel),
         asideInk: await inkOf(panel.locator('p').first()),
-      };
+      });
 
-      // The page and the paper are two surfaces, and they were never the same
-      // colour to begin with — the backdrop is grey under the white Sheet.
+      await expect(html).toHaveAttribute('data-theme', 'light');
+      const before = await surfaces();
+
+      // Three surfaces, and no two of them share a colour: a grey page under the
+      // white paper, with the Aside's panel laid on the paper.
       expect(before.body, 'the page and the paper are separate surfaces').not.toBe(before.sheet);
+      expect(before.aside, 'the Aside panel is a surface of its own').not.toBe(before.sheet);
 
       await actions(page).theme.click();
       await expect(html).toHaveAttribute('data-theme', 'dark');
+      const after = await surfaces();
 
-      expect(await backgroundOf(page.locator('body')), 'the page backdrop').not.toBe(before.body);
-      // The theme reaches the paper (ADR-0015)...
-      expect(await backgroundOf(paper), 'the Sheet surface').not.toBe(before.sheet);
-      // ...but stops at the cream, which would otherwise take white ink.
-      expect(await backgroundOf(panel), 'the Aside panel').toBe(before.aside);
-      expect(await inkOf(panel.locator('p').first()), 'the Aside ink').toBe(before.asideInk);
+      // The theme reaches the paper (ADR-0015) and no longer stops at the panel:
+      // the Aside is themed rather than pinned to one cream, so all three move,
+      // and its ink — no longer pinned either — moves with them.
+      expect(after.body, 'the page backdrop').not.toBe(before.body);
+      expect(after.sheet, 'the Sheet surface').not.toBe(before.sheet);
+      expect(after.aside, 'the Aside panel').not.toBe(before.aside);
+      expect(after.asideInk, 'the Aside ink').not.toBe(before.asideInk);
+
+      // Still three surfaces on the dark side. Asserted on both ends of the ramp
+      // because there is no longer a fixed cream holding the panel apart from the
+      // paper: a panel that landed on the paper's own colour would stop reading
+      // as a panel, and nothing but this would say so.
+      expect(after.body, 'the page and the paper stay separate').not.toBe(after.sheet);
+      expect(after.aside, 'the Aside panel stays a surface of its own').not.toBe(after.sheet);
     });
 
-    test('keeps the Aside legible on its cream in the dark theme', async ({ page }) => {
+    test('keeps the Aside legible on its panel in both themes', async ({ page }) => {
+      // What the cream pin used to buy by construction, now bought by
+      // measurement: the panel takes the theme, so both ends of the ramp have to
+      // clear their own surface. The failure this replaces is the one that
+      // pinning existed to prevent — an ink that followed the theme onto a fixed
+      // #fef9e0, at about 1.05:1.
+      const light = await inkOn(page, '.aside p', '.aside');
+      expect(light.ratio, 'the Aside ink on its panel, light theme').toBeGreaterThanOrEqual(4.5);
+
       await actions(page).theme.click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
-      // The one failure this whole architecture exists to prevent: an ink that
-      // followed the theme would be white on #fef9e0, at about 1.05:1.
-      const { ratio } = await inkOn(page, '.aside p', '.aside');
-      expect(ratio, 'the Aside ink against its own panel').toBeGreaterThanOrEqual(4.5);
+      const dark = await inkOn(page, '.aside p', '.aside');
+      expect(dark.ratio, 'the Aside ink on its panel, dark theme').toBeGreaterThanOrEqual(4.5);
     });
 
     test('keeps the Main column legible on the dark paper', async ({ page }) => {

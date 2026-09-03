@@ -1,0 +1,16 @@
+---
+import type { GetStaticPaths } from "astro";
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Document from '../../components/structure/Document.astro';
+import Chrome from '../../components/chrome/Chrome.astro';
+import { cv } from '../../content';
+import { localePaths } from "../../i18n/locale";
+
+export const getStaticPaths = (() => localePaths()) satisfies GetStaticPaths;
+const { locale } = Astro.props;
+---
+
+<BaseLayout locale={locale}>
+  <Document content={cv[locale]} />
+  <Chrome slot="chrome" content={cv[locale]} />
+</BaseLayout>

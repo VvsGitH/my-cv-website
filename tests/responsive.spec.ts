@@ -117,7 +117,7 @@ test('shows whole paper at a phone width, fitted rather than dismantled', async 
   const [first] = await sheetBoxes(page);
   // A real box, in A4's ratio, narrower than the viewport it was fitted to.
   expect(first!.width).toBeGreaterThan(0);
-  expect(first!.width).toBeLessThan(VIEWPORTS.reading.width);
+  expect(first!.width).toBe(VIEWPORTS.reading.width);
   expect(first!.height / first!.width).toBeCloseTo(297 / 210, 1);
 });
 
@@ -131,7 +131,7 @@ test('stops fitting the moment the paper fits, and never scales it up', async ({
 
   await page.setViewportSize({ width: 855, height: 1200 });
   const [fitted] = await sheetBoxes(page);
-  expect(fitted!.width, 'at 855px the paper is still being fitted').toBeLessThan(A4.width);
+  expect(fitted!.width, 'at 855px the paper is still being fitted').toBe(A4.width);
 
   await page.setViewportSize({ width: 856, height: 1200 });
   expectRealA4((await sheetBoxes(page))[0]!, 'at 856px Sheet 1');

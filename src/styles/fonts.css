@@ -3,7 +3,7 @@
   src: url('../assets/fonts/jetbrains/JetBrainsMono-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 @font-face {
@@ -11,7 +11,7 @@
   src: url('../assets/fonts/jetbrains/JetBrainsMono-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 @font-face {
@@ -19,7 +19,7 @@
   src: url('../assets/fonts/jetbrains/JetBrainsMono-ExtraBold.woff2') format('woff2');
   font-weight: 800;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 @font-face {
@@ -27,7 +27,7 @@
   src: url('../assets/fonts/atkinson/AtkinsonHyperlegible-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 @font-face {
@@ -35,7 +35,7 @@
   src: url('../assets/fonts/atkinson/AtkinsonHyperlegible-Bold.woff2') format('woff2');
   font-weight: 700;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 @font-face {
@@ -43,7 +43,7 @@
   src: url('../assets/fonts/atkinson/AtkinsonHyperlegible-Italic.woff2') format('woff2');
   font-weight: 400;
   font-style: italic;
-  font-display: block;
+  font-display: swap;
 }
 
 /* The signature's face (ADR-0012). */
@@ -52,35 +52,37 @@
   src: url('../assets/fonts/primera-signature/PrimeraSignature-Regular.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
-  font-display: block;
+  font-display: swap;
 }
 
 :root {
-  /* 'X fallback' entries are generated at build time by the fontaine Vite
-     plugin (astro.config.mjs) — metric-matched local faces that keep line
-     breaks stable while the real face loads. */
+  /* The 'X fallback' faces are generated at build time by fontaine
+     (astro.config.mjs) — `local()` system faces carrying `size-adjust` and the
+     override trio, so their metrics match the real face. They have to be named
+     here by hand: fontaine appends itself to a literal `font-family`, and every
+     one of ours is a `var()` on these tokens. */
 
   /* The name and its subtitle. */
-  --font-name: 'JetBrains Mono', monospace;
+  --font-name: 'JetBrains Mono', 'JetBrains Mono fallback', monospace;
   --font-weight-name: 800;
-  --font-subtitle: 'JetBrains Mono', monospace;
+  --font-subtitle: 'JetBrains Mono', 'JetBrains Mono fallback', monospace;
   --font-weight-subtitle: 400;
 
   /* Section headings, entry titles, contact labels. */
-  --font-heading: 'JetBrains Mono', monospace;
+  --font-heading: 'JetBrains Mono', 'JetBrains Mono fallback', monospace;
   --font-weight-heading: 800;
   --font-weight-subheading: 700;
 
   /* Employer / period lines and the Aside's prose. */
-  --font-display: 'Atkinson Hyperlegible', sans-serif;
+  --font-display: 'Atkinson Hyperlegible', 'Atkinson Hyperlegible fallback', sans-serif;
   --font-weight-display: 400;
 
   /* Bullets, summaries and other dense prose. */
-  --font-body: 'Atkinson Hyperlegible', sans-serif;
+  --font-body: 'Atkinson Hyperlegible', 'Atkinson Hyperlegible fallback', sans-serif;
   --font-weight-body: 400;
   --font-weight-body-strong: 700;
 
   /* The Privacy block's signature approximation only. */
-  --font-signature: 'Primera Signature', cursive;
+  --font-signature: 'Primera Signature', 'Primera Signature fallback', cursive;
   --font-weight-signature: 400;
 }

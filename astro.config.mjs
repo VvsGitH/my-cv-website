@@ -1,11 +1,7 @@
 // @ts-check
-import { resolve } from 'node:path';
-import { fileURLToPath, pathToFileURL } from 'node:url';
 import { defineConfig } from 'astro/config';
 import preact from '@astrojs/preact';
-import { FontaineTransform } from 'fontaine';
-
-const stylesDir = fileURLToPath(new URL('./src/styles/', import.meta.url));
+import { fontaineAfterImports } from './scripts/fontaine-after-imports.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -26,12 +22,6 @@ export default defineConfig({
     },
   },
   vite: {
-    plugins: [
-      // Metric-matched local fallbacks, so text does not reflow on swap (ADR-0012).
-      FontaineTransform.vite({
-        fallbacks: ['Arial'],
-        resolvePath: (id) => pathToFileURL(resolve(stylesDir, id)),
-      }),
-    ],
+    css: { postcss: { plugins: [fontaineAfterImports] } },
   },
 });

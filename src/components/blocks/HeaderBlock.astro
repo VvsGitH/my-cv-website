@@ -44,9 +44,8 @@ const { block } = Astro.props;
       font-family: var(--font-name);
       font-weight: var(--font-weight-name);
       font-size: var(--font-size-name);
-      /* Two lines, 33px apart in the reference. */
       line-height: 0.884;
-      letter-spacing: 0.038em;
+      letter-spacing: 0.25em;
       text-transform: uppercase;
       color: var(--color-heading);
     }
@@ -68,7 +67,7 @@ const { block } = Astro.props;
 
     dt {
       font-family: var(--font-heading);
-      font-weight: var(--font-weight-heading);
+      font-weight: var(--font-weight-subheading);
       font-size: var(--font-size-subheading);
       line-height: 1.2;
       color: var(--color-heading);
@@ -94,6 +93,7 @@ const { block } = Astro.props;
 
       .name {
         line-height: 1.05;
+        margin-inline-end: -0.25em;
       }
 
       .contacts {

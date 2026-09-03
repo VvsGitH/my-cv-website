@@ -1,5 +1,5 @@
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
-import { dirname } from 'node:path';
+import { dirname, extname } from 'node:path';
 import subsetFont from 'subset-font';
 
 // Basic Latin (space through tilde) + Latin-1 accented letters + Latin
@@ -8,53 +8,82 @@ import subsetFont from 'subset-font';
 // Italian and English CV content without pulling in unrelated scripts.
 const BASIC_LATIN =
   ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
-const LATIN1_ACCENTS =
-  'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ';
+const LATIN1_ACCENTS = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ';
 const LATIN_EXTENDED_A =
   'ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĴĵĶķĹĺĻļĽľŁłŃńŅņŇňŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽž';
 const PUNCTUATION = '©–—‘’‚“”„†‡•…‰′″‹›€™';
-
 const TEXT = BASIC_LATIN + LATIN1_ACCENTS + LATIN_EXTENDED_A + PUNCTUATION;
 
-// The Toolbar's icons, as the private-use codepoints IcoMoon assigned them —
-// numeric, because the characters themselves are invisible in an editor. The
-// full set is 491 glyphs and 105 kB; seven are used. Adding an eighth means
-// adding its codepoint here and a rule to src/styles/icons.css; the
-// name -> codepoint mapping is docs/assets/fonts/icons/selection.json.
-const ICONS = [
-  0xe91f, // book — offers Reading Mode
-  0xe922, // file-text — offers Paper Mode
-  0xe960, // download
-  0xe9ca, // earth
-  0xe9cb, // link
-  0xe9d4, // sun
-  0xe9d5, // contrast
-  0xea10, // checkmark
-]
-  .map((codepoint) => String.fromCodePoint(codepoint))
-  .join('');
+const SOURCE = 'src/assets/raw-fonts/';
+const DEST = 'src/assets/fonts/';
 
-// [source, subset destination, the characters to keep].
-const FACES = [
-  ['docs/assets/fonts/garet/Garet-Book.otf', 'src/assets/fonts/garet/Garet-Book.woff2', TEXT],
-  ['docs/assets/fonts/garet/Garet-Heavy.otf', 'src/assets/fonts/garet/Garet-Heavy.woff2', TEXT],
-  ['docs/assets/fonts/now/Now-Bold.otf', 'src/assets/fonts/now/Now-Bold.woff2', TEXT],
-  ['docs/assets/fonts/now/Now-Regular.otf', 'src/assets/fonts/now/Now-Regular.woff2', TEXT],
-  ['docs/assets/fonts/lato/Lato-Regular.ttf', 'src/assets/fonts/lato/Lato-Regular.woff2', TEXT],
-  ['docs/assets/fonts/lato/Lato-Bold.ttf', 'src/assets/fonts/lato/Lato-Bold.woff2', TEXT],
-  ['docs/assets/fonts/lato/Lato-Italic.ttf', 'src/assets/fonts/lato/Lato-Italic.woff2', TEXT],
-  [
-    'docs/assets/fonts/primera-signature/PrimeraSignature-ALLy7.ttf',
-    'src/assets/fonts/primera-signature/PrimeraSignature.woff2',
-    TEXT,
-  ],
-  ['docs/assets/fonts/icons/icomoon.woff', 'src/assets/fonts/icons/icomoon.woff2', ICONS],
+const TEXT_FONTS = [
+  {
+    name: 'atkinson',
+    variants: [
+      'AtkinsonHyperlegible-Bold.woff2',
+      'AtkinsonHyperlegible-Italic.woff2',
+      'AtkinsonHyperlegible-Regular.woff2'
+    ]
+  },
+  {
+    name: 'jetbrains',
+    variants: [
+      'JetBrainsMono-Regular.woff2',
+      'JetBrainsMono-Bold.woff2',
+      'JetBrainsMono-ExtraBold.woff2'
+    ]
+  },
+  { name: 'primera-signature', variants: ['PrimeraSignature-Regular.ttf'] }
 ];
 
-for (const [src, dest, text] of FACES) {
-  const input = await readFile(src);
-  const output = await subsetFont(input, text, { targetFormat: 'woff2' });
-  await mkdir(dirname(dest), { recursive: true });
-  await writeFile(dest, output);
-  console.log(`${src} -> ${dest} (${input.length} -> ${output.length} bytes)`);
+const ICON_FONTS = [
+  {
+    name: 'icons',
+    variants: ['icomoon.ttf'],
+    set: [
+      // The list of icons is in SOURCE/icons/selection.json
+      0xe91f, // book — offers Reading Mode
+      0xe922, // file-text — offers Paper Mode
+      0xe960, // download
+      0xe9ca, // earth
+      0xe9cb, // link
+      0xe9d4, // sun
+      0xe9d5, // contrast
+      0xea10 // checkmark
+    ]
+  }
+];
+
+async function processFont(name, variant, subset) {
+  const src = `${SOURCE}${name}/${variant}`;
+  const ext = extname(variant);
+  const dest = `${DEST}${name}/${variant.replace(ext, '.woff2')}`;
+
+  try {
+    const input = await readFile(src);
+    const output = await subsetFont(input, subset, { targetFormat: 'woff2' });
+
+    await mkdir(dirname(dest), { recursive: true });
+    await writeFile(dest, output);
+
+    console.log(`${src} -> ${dest} (${input.length} -> ${output.length} bytes)`);
+  } catch (err) {
+    console.error(`Error while processing ${src}`, err.message);
+  }
+}
+
+console.log('---------- Start subsetting of text fonts ----------');
+for (const { name, variants } of TEXT_FONTS) {
+  for (const variant of variants) {
+    await processFont(name, variant, TEXT);
+  }
+}
+
+console.log('---------- Start subsetting of icon fonts ----------');
+for (const { name, variants, set } of ICON_FONTS) {
+  const iconSet = set.map(codepoint => String.fromCodePoint(codepoint)).join('');
+  for (const variant of variants) {
+    await processFont(name, variant, iconSet);
+  }
 }

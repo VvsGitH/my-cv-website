@@ -10,8 +10,21 @@ import { distPathForHref, LOCALES, ogRouteFor, ORIGIN, otherLocale, routeFor } f
 const A4 = { width: 595.28, height: 841.89 };
 const TOLERANCE = 1;
 
-/** The faces that can still be named; the rest are Type3 (ADR-0009, ADR-0010). */
-const CV_FACES = ['Lato-Regular', 'Lato-Bold', 'Lato-Italic', 'icomoon', 'Primera_Signature'];
+/** Every face `src/styles/fonts.css` declares, under the name Chromium embeds it
+ *  with — and each one is drawn, so this doubles as the set the PDF must carry.
+ *  All four families are TrueType now, so every one of them has a `BaseFont`:
+ *  the Type3 blind spot ADR-0009 and ADR-0010 worked around, which Garet and Now
+ *  opened by being CFF, is gone. */
+const CV_FACES = [
+  'JetBrainsMono-Regular',
+  'JetBrainsMono-Bold',
+  'JetBrainsMono-ExtraBold',
+  'AtkinsonHyperlegible-Regular',
+  'AtkinsonHyperlegible-Bold',
+  'AtkinsonHyperlegible-Italic',
+  'Primera_Signature',
+  'icomoon',
+];
 
 /** A Continuation's heading is a screen-reader-only copy (ADR-0005), so it is
  *  no evidence of which Locale a file holds. */
@@ -67,14 +80,14 @@ for (const locale of LOCALES) {
         expect(CV_FACES, `${face} is not one of the CV's faces`).toContain(face);
       }
 
-      expect(named).toEqual(expect.arrayContaining(['Lato-Regular', 'Lato-Bold']));
-
-      // The display faces are the unnamed Type3 ones, so their count is the only
-      // handle on them: without this, a CV set entirely in Lato would pass.
-      expect(
-        report.fonts.filter((font) => font.subtype === '/Type3').length,
-        'the display faces stopped reaching the PDF',
-      ).toBeGreaterThan(0);
+      // ...and one that never loaded would be missing from it. Every face is
+      // nameable now, so this is the whole set by name — no longer a count of
+      // anonymous Type3 fonts standing in for the two that could not be checked.
+      // It is what catches the ADR-0009 hazard: the italic and the signature are
+      // only drawn in a corner of the page, and a capture that never renders
+      // them produces a PDF that is right in every other respect.
+      const missing = CV_FACES.filter((face) => !named.includes(face));
+      expect(missing, 'these faces stopped reaching the PDF').toEqual([]);
     });
 
     test('holds this Locale’s words, and not the other’s', () => {

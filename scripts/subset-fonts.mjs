@@ -23,36 +23,36 @@ const TEXT_FONTS = [
     variants: [
       'AtkinsonHyperlegible-Bold.woff2',
       'AtkinsonHyperlegible-Italic.woff2',
-      'AtkinsonHyperlegible-Regular.woff2'
-    ]
+      'AtkinsonHyperlegible-Regular.woff2',
+    ],
   },
   {
     name: 'jetbrains',
     variants: [
       'JetBrainsMono-Regular.woff2',
       'JetBrainsMono-Bold.woff2',
-      'JetBrainsMono-ExtraBold.woff2'
-    ]
+      'JetBrainsMono-ExtraBold.woff2',
+    ],
   },
-  { name: 'primera-signature', variants: ['PrimeraSignature-Regular.ttf'] }
+  { name: 'primera-signature', variants: ['PrimeraSignature-Regular.ttf'] },
 ];
 
 const ICON_FONTS = [
   {
     name: 'icons',
-    variants: ['icomoon.ttf'],
+    variants: ['icomoon-feather.ttf'],
     set: [
       // The list of icons is in SOURCE/icons/selection.json
-      0xe91f, // book — offers Reading Mode
-      0xe922, // file-text — offers Paper Mode
-      0xe960, // download
-      0xe9ca, // earth
-      0xe9cb, // link
-      0xe9d4, // sun
-      0xe9d5, // contrast
-      0xea10 // checkmark
-    ]
-  }
+      0xe902, // file-text - Reading Mode
+      0xe904, // list — offers Paper Mode
+      0xe901, // download
+      0xe903, // link
+      0xe907, // share-2
+      0xe908, // sun - light theme
+      0xe905, // moon - dark theme
+      0xe900, // check-cirlce
+    ],
+  },
 ];
 
 async function processFont(name, variant, subset) {
@@ -82,7 +82,7 @@ for (const { name, variants } of TEXT_FONTS) {
 
 console.log('---------- Start subsetting of icon fonts ----------');
 for (const { name, variants, set } of ICON_FONTS) {
-  const iconSet = set.map(codepoint => String.fromCodePoint(codepoint)).join('');
+  const iconSet = set.map((codepoint) => String.fromCodePoint(codepoint)).join('');
   for (const variant of variants) {
     await processFont(name, variant, iconSet);
   }

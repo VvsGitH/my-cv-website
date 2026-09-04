@@ -1,18 +1,17 @@
-/* IcoMoon's free set, as the Toolbar's icons — a global stylesheet by sanctioned
-   exception (coding-standards). Two departures from what IcoMoon generates:
+/* `icomoon-feather`, the glyph face that carries all the icons. 
+  Three departures from what IcoMoon generates for the face:
 
-   - the face is `src/assets/fonts/icons/icomoon.woff2`, a subset;
+   - the face is a subset of the original ttf font;
    - only the rules for glyphs that survive that subset are kept. Adding an
      icon is a codepoint in `scripts/subset-fonts.mjs` and a rule here.
-
-   The `speak`/`speak-as` descriptor IcoMoon emits is dropped: it is not a
-   property (it belongs to `@counter-style`) and browsers ignore it. What keeps
-   a private-use codepoint from being announced is `aria-hidden` on the span,
-   which the Toolbar sets on every icon it renders. */
+   - The `speak`/`speak-as` descriptor IcoMoon emits is dropped: it is not a
+     property (it belongs to `@counter-style`) and browsers ignore it. What keeps
+     a private-use codepoint from being announced is `aria-hidden` on the span,
+     which the Toolbar sets on every icon it renders. */
 
 @font-face {
   font-family: 'icomoon';
-  src: url('../assets/fonts/icons/icomoon.woff2') format('woff2');
+  src: url('../assets/fonts/icons/icomoon-feather.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -20,8 +19,8 @@
 
 [class^='icon-'],
 [class*=' icon-'] {
-  /* IcoMoon's own !important, kept: an extension that rewrites page fonts
-     would otherwise turn every icon into a missing-glyph box. */
+  /* biome-ignore lint/a11y/useGenericFontNames: a fallback would render the missing-glyph box instead of the icon. */
+  /* biome-ignore lint/complexity/noImportantStyles: an extension that rewrites page fonts would otherwise turn every icon into a missing-glyph box */
   font-family: 'icomoon' !important;
   font-style: normal;
   font-weight: normal;
@@ -32,27 +31,29 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-book:before {
-  content: '\e91f';
-}
-.icon-file-text:before {
-  content: '\e922';
-}
 .icon-download:before {
-  content: '\e960';
+  content: '\e901';
 }
-.icon-earth:before {
-  content: '\e9ca';
+.icon-check-circle:before {
+  content: '\e900';
 }
 .icon-link:before {
-  content: '\e9cb';
+  content: '\e903';
+}
+.icon-share-2:before {
+  content: '\e907';
+}
+
+.icon-file-text:before {
+  content: '\e902';
+}
+.icon-list:before {
+  content: '\e904';
+}
+
+.icon-moon:before {
+  content: '\e905';
 }
 .icon-sun:before {
-  content: '\e9d4';
-}
-.icon-contrast:before {
-  content: '\e9d5';
-}
-.icon-checkmark:before {
-  content: '\ea10';
+  content: '\e908';
 }

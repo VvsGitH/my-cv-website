@@ -95,9 +95,7 @@
   /* The berth from the viewport edge; three things read it. */
   --toolbar-inset: var(--space-m);
   /* The Reading Mode row only, and it does not encode the control count (ADR-0008). */
-  --toolbar-block-size: calc(
-    var(--toolbar-button-size) + 2 * var(--space-xs)
-  );
+  --toolbar-block-size: calc(var(--toolbar-button-size) + 2 * var(--space-xs));
 
   /* Reading Mode's measure, and a ceiling only: the Mode is chosen rather than
      triggered, so a narrow phone gets Paper Mode unless it asks otherwise, and

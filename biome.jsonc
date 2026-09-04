@@ -1,0 +1,76 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.12/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    // Files in the .gitignored are already excluded. Adding docs and assets to the exclusions
+    "includes": ["**", "!docs/*", "!src/assets/*"]
+  },
+  // Half the codebase is `.astro`. Without the flag Biome lints those files and
+  // sorts their frontmatter imports but formats nothing; the formatter is gated
+  // a second time behind `html.formatter.enabled`, and both are needed to reach
+  // the templates. Biome calls the HTML parser experimental and will drop the
+  // flag once it is stable — remove it then rather than leaving it to rot.
+  //
+  // Even with both on, the *frontmatter TypeScript* is still not formatted —
+  // only the template, its `<style>`, and the import order (ADR-0021).
+  "html": {
+    "experimentalFullSupportEnabled": true,
+    "formatter": {
+      "enabled": true,
+      "indentScriptAndStyle": true,
+      "selfCloseVoidElements": "always"
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  "css": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "complexity": {
+        // `astro/tsconfigs/strict` turns on `noPropertyAccessFromIndexSignature`,
+        // which makes `process.env['CI']` and `dataset['theme']` mandatory rather
+        // than a smell.
+        "useLiteralKeys": "off"
+      }
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      // `!` is the Playwright idiom: the locator has already been awaited, and a
+      // wrong assertion throws, which is exactly how a test should fail.
+      "includes": ["tests/**"],
+      "linter": { "rules": { "style": { "noNonNullAssertion": "off" } } }
+    }
+  ]
+}

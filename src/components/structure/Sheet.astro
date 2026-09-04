@@ -10,9 +10,7 @@ interface Props {
 
 const { content, sheet } = Astro.props;
 const blocksIn = (column: Column) =>
-  content.blocks.filter(
-    block => block.paperSheet === sheet && block.paperColumn === column
-  );
+  content.blocks.filter((block) => block.paperSheet === sheet && block.paperColumn === column);
 
 const asideBlocks = blocksIn('aside');
 ---

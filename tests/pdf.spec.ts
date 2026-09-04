@@ -1,10 +1,17 @@
 import { existsSync } from 'node:fs';
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 import { cv } from '../src/content';
 import type { Locale } from '../src/i18n/locale';
 import { openPainted } from './support/page';
-import { readPdf, withoutWhitespace, type PdfReport } from './support/pdf';
-import { distPathForHref, LOCALES, ogRouteFor, ORIGIN, otherLocale, routeFor } from './support/site';
+import { type PdfReport, readPdf, withoutWhitespace } from './support/pdf';
+import {
+  distPathForHref,
+  LOCALES,
+  ORIGIN,
+  ogRouteFor,
+  otherLocale,
+  routeFor,
+} from './support/site';
 
 /** A4 in PostScript points, with the slack `render-captures.mjs` documents. */
 const A4 = { width: 595.28, height: 841.89 };
@@ -23,7 +30,7 @@ const CV_FACES = [
   'AtkinsonHyperlegible-Bold',
   'AtkinsonHyperlegible-Italic',
   'Primera_Signature',
-  'icomoon',
+  'icomoon-feather',
 ];
 
 /** A Continuation's heading is a screen-reader-only copy (ADR-0005), so it is
@@ -32,7 +39,6 @@ const visibleHeadings = (locale: Locale): string[] =>
   cv[locale].blocks.flatMap((block) =>
     'heading' in block && !(block.kind === 'mainSection' && block.continues) ? [block.heading] : [],
   );
-
 
 for (const locale of LOCALES) {
   test.describe(locale, () => {
@@ -47,7 +53,9 @@ for (const locale of LOCALES) {
 
       path = distPathForHref(href!);
       if (!existsSync(path)) {
-        throw new Error(`${path} was never rendered — run \`npm run captures:render\` after a build.`);
+        throw new Error(
+          `${path} was never rendered — run \`npm run captures:render\` after a build.`,
+        );
       }
 
       report = await readPdf(path);
@@ -57,8 +65,14 @@ for (const locale of LOCALES) {
       expect(report.pages, `${path} should be the two Sheets of the CV`).toHaveLength(2);
 
       report.pages.forEach((page, index) => {
-        expect(Math.abs(page.width - A4.width), `page ${index + 1} is ${page.width}pt wide`).toBeLessThanOrEqual(TOLERANCE);
-        expect(Math.abs(page.height - A4.height), `page ${index + 1} is ${page.height}pt tall`).toBeLessThanOrEqual(TOLERANCE);
+        expect(
+          Math.abs(page.width - A4.width),
+          `page ${index + 1} is ${page.width}pt wide`,
+        ).toBeLessThanOrEqual(TOLERANCE);
+        expect(
+          Math.abs(page.height - A4.height),
+          `page ${index + 1} is ${page.height}pt tall`,
+        ).toBeLessThanOrEqual(TOLERANCE);
       });
     });
 
@@ -72,7 +86,9 @@ for (const locale of LOCALES) {
         ).toBe(true);
       }
 
-      const named = [...new Set(report.fonts.flatMap((font) => (font.baseFont ? [font.baseFont] : [])))];
+      const named = [
+        ...new Set(report.fonts.flatMap((font) => (font.baseFont ? [font.baseFont] : []))),
+      ];
 
       // A face that failed to load would show up here as whatever system
       // fallback Chromium reached for instead.
@@ -95,7 +111,9 @@ for (const locale of LOCALES) {
       expect(report.text.length, 'no text came out of the PDF at all').toBeGreaterThan(1000);
 
       for (const heading of visibleHeadings(locale)) {
-        expect(report.text, `“${heading}” should be in ${path}`).toContain(withoutWhitespace(heading));
+        expect(report.text, `“${heading}” should be in ${path}`).toContain(
+          withoutWhitespace(heading),
+        );
       }
 
       const foreign = visibleHeadings(otherLocale(locale)).filter(
@@ -103,7 +121,9 @@ for (const locale of LOCALES) {
       );
 
       for (const heading of foreign) {
-        expect(report.text, `“${heading}” belongs to the other Locale`).not.toContain(withoutWhitespace(heading));
+        expect(report.text, `“${heading}” belongs to the other Locale`).not.toContain(
+          withoutWhitespace(heading),
+        );
       }
     });
   });
@@ -159,13 +179,16 @@ test('prints as paper even from Reading Mode', async ({ page }) => {
 
   await page.emulateMedia({ media: 'print' });
 
-  const printed = await page.locator('.sheet').first().evaluate((element) => ({
-    sheet: getComputedStyle(element).display,
-    columns: getComputedStyle(element.querySelector('.columns')!).display,
-    aside: getComputedStyle(element.querySelector('.aside')!).display,
-    main: getComputedStyle(element.querySelector('.main')!).display,
-    width: element.getBoundingClientRect().width,
-  }));
+  const printed = await page
+    .locator('.sheet')
+    .first()
+    .evaluate((element) => ({
+      sheet: getComputedStyle(element).display,
+      columns: getComputedStyle(element.querySelector('.columns')!).display,
+      aside: getComputedStyle(element.querySelector('.aside')!).display,
+      main: getComputedStyle(element.querySelector('.main')!).display,
+      width: element.getBoundingClientRect().width,
+    }));
 
   expect(printed.sheet, 'the Sheet is a box again').toBe('block');
   expect(printed.columns).toBe('grid');

@@ -11,14 +11,13 @@ const { block } = Astro.props;
 
 <SectionHeading text={block.heading} />
 <ul class="certifications">
-  {
-    block.entries.map(entry => (
+  {block.entries.map(entry => (
       <li>
         <p class="issued">
           {entry.date} | {entry.issuer}
         </p>
         {entry.url ? (
-          <a class="title" href={entry.url} target="_blank">
+          <a class="title" href={entry.url} target="_blank" rel="noopener">
             {entry.title}
             <span class="icon icon-link" aria-hidden="true" />
           </a>
@@ -26,8 +25,7 @@ const { block } = Astro.props;
           <p class="title">{entry.title}</p>
         )}
       </li>
-    ))
-  }
+    ))}
 </ul>
 
 <style>

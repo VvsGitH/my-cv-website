@@ -164,10 +164,7 @@ export const en: CvContent = {
       groups: [
         {
           title: 'B2B Environment',
-          meta: [
-            'Senior Frontend Developer & Team Leader',
-            'CyberSecurity S.r.l. ~ A2A S.p.a',
-          ],
+          meta: ['Senior Frontend Developer & Team Leader', 'CyberSecurity S.r.l. ~ A2A S.p.a'],
           period: '2024.03 - 2024.05',
           summary: [
             '“B2B Environment” is a small web application, structured like a wizard, that will be used by the clients of A2A to order and customize garbage collecting services.',
@@ -226,8 +223,7 @@ export const en: CvContent = {
         {
           date: '2013.06.27',
           issuer: 'University of Cambridge',
-          title:
-            'Cambridge ESOL Level 1 Certificate in ESOL International | CoE Level B2',
+          title: 'Cambridge ESOL Level 1 Certificate in ESOL International | CoE Level B2',
         },
       ],
     },

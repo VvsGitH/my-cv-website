@@ -12,8 +12,7 @@ const { block } = Astro.props;
   <h1 class="name">{block.name}</h1>
   <p class="title">{block.title}</p>
   <dl class="contacts">
-    {
-      block.contacts.map((contact) => (
+    {block.contacts.map((contact) => (
         <div class="contact">
           <dt>{contact.label}</dt>
           <dd>
@@ -33,8 +32,7 @@ const { block } = Astro.props;
             }
           </dd>
         </div>
-      ))
-    }
+      ))}
   </dl>
 </header>
 

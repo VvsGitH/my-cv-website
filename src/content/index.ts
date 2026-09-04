@@ -1,7 +1,7 @@
-import type { Column, CvContent } from './types';
 import type { Locale } from '../i18n/locale';
 import { en } from './en';
 import { it } from './it';
+import type { Column, CvContent } from './types';
 
 /** Fails the build if a Continuation's heading has drifted from the one it resumes (ADR-0005). */
 function assertContinuationsMatch(content: CvContent): void {
@@ -13,11 +13,11 @@ function assertContinuationsMatch(content: CvContent): void {
     throw new Error(
       original === undefined
         ? `[content/${content.locale}] ${what} “${copy}” is marked \`continues\` but ` +
-          `nothing precedes it in its column to continue. Either drop \`continues\` ` +
-          `or move the opening half before it.`
+            `nothing precedes it in its column to continue. Either drop \`continues\` ` +
+            `or move the opening half before it.`
         : `[content/${content.locale}] ${what} “${copy}” is marked \`continues\`, so it ` +
-          `must start with “${original}” — the one it resumes. Rename both halves ` +
-          `together (ADR-0005).`,
+            `must start with “${original}” — the one it resumes. Rename both halves ` +
+            `together (ADR-0005).`,
     );
   };
 

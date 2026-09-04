@@ -1,10 +1,10 @@
 ---
 import type { MainSectionBlock } from '../../content/types';
-import SectionHeading from '../primitives/SectionHeading.astro';
-import GroupTitle from '../primitives/GroupTitle.astro';
-import GroupMeta from '../primitives/GroupMeta.astro';
-import Rich from '../primitives/Rich.astro';
 import Bullets from '../primitives/Bullets.astro';
+import GroupMeta from '../primitives/GroupMeta.astro';
+import GroupTitle from '../primitives/GroupTitle.astro';
+import Rich from '../primitives/Rich.astro';
+import SectionHeading from '../primitives/SectionHeading.astro';
 
 /**
  * One Main section — Experience, Selected Projects, Education — as one
@@ -20,8 +20,7 @@ const { block } = Astro.props;
 ---
 
 <SectionHeading text={block.heading} srOnly={block.continues} />
-{
-  block.groups.map((group) => (
+{block.groups.map((group) => (
     <section class="group">
       <GroupTitle text={group.title} srOnly={group.continues} />
       {/* A Continuation resumes mid-Group, so it never repeats the
@@ -38,8 +37,7 @@ const { block } = Astro.props;
       )}
       {group.bullets && <Bullets items={group.bullets} />}
     </section>
-  ))
-}
+  ))}
 
 <style>
   @layer components {

@@ -54,7 +54,7 @@
   }
 
   [data-theme='dark'] {
-    .toolbar-theme .icon-contrast,
+    .toolbar-theme .icon-moon,
     .toolbar-theme .toolbar-theme-to-dark {
       display: none;
     }
@@ -74,7 +74,7 @@
   }
 
   [data-mode='reading'] {
-    .toolbar-mode .icon-book,
+    .toolbar-mode .icon-list,
     .toolbar-mode .toolbar-mode-to-reading {
       display: none;
     }
@@ -131,9 +131,7 @@
     }
 
     :root {
-      scroll-padding-block-end: calc(
-        var(--toolbar-block-size) + 2 * var(--toolbar-inset)
-      );
+      scroll-padding-block-end: calc(var(--toolbar-block-size) + 2 * var(--toolbar-inset));
     }
   }
 }

@@ -1,4 +1,4 @@
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, type Locator, type Page, test } from '@playwright/test';
 import { cv } from '../src/content';
 import type { Locale } from '../src/i18n/locale';
 import { ui } from '../src/i18n/ui';
@@ -23,9 +23,9 @@ const headerOf = (locale: Locale) => {
 };
 
 const hrefsIn = (locator: Locator): Promise<string[]> =>
-  locator.getByRole('link').evaluateAll((links) =>
-    links.map((link) => link.getAttribute('href') ?? ''),
-  );
+  locator
+    .getByRole('link')
+    .evaluateAll((links) => links.map((link) => link.getAttribute('href') ?? ''));
 
 /** The Colophon's ink against the page it is printed on, in the current theme. */
 const readability = (page: Page) => inkOn(page, 'footer', 'body');
@@ -72,8 +72,9 @@ for (const locale of LOCALES) {
     });
 
     test('offers the header’s own channels, not a second copy of them', async ({ page }) => {
-      const expected = headerOf(locale)
-        .contacts.flatMap((contact) => (contact.url ? [contact.url] : []));
+      const expected = headerOf(locale).contacts.flatMap((contact) =>
+        contact.url ? [contact.url] : [],
+      );
       expect(expected.length, 'the header should carry email and LinkedIn').toBe(2);
 
       const onPaper = await hrefsIn(sheet(page, 1).locator('.block--header'));
@@ -86,7 +87,9 @@ for (const locale of LOCALES) {
       await expect(colophon(page)).toHaveCSS('background-color', 'rgba(0, 0, 0, 0)');
 
       const light = await readability(page);
-      expect(light.fontSize, 'the Colophon should not be set below 12px').toBeGreaterThanOrEqual(12);
+      expect(light.fontSize, 'the Colophon should not be set below 12px').toBeGreaterThanOrEqual(
+        12,
+      );
       expect(light.ratio, 'the Colophon against the light page').toBeGreaterThanOrEqual(4.5);
 
       await toolbar(page).locator('.toolbar-theme').click();

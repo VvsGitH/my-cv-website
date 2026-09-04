@@ -3,6 +3,7 @@
 import preact from '@astrojs/preact';
 import { defineConfig } from 'astro/config';
 import { ASTRO_FONTS_CONFIG } from './fonts.config.mjs';
+import { subsetFonts } from './scripts/subset-fonts.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -11,9 +12,13 @@ export default defineConfig({
   // GitHub Pages serves the site under the repository name.
   base: '/my-cv-website/',
   output: 'static',
-  // `preact/debug` in dev only, because a hydration mismatch is otherwise
-  // silent (hacks/2026-08-01 §11).
-  integrations: [preact({ devtools: true })],
+  integrations: [
+    preact({ devtools: true }),
+    // `subsetFonts` cuts the faces `fonts` declares before Astro resolves them
+    // (ADR-0023); `preact/debug` in dev only, because a hydration mismatch is
+    // otherwise silent (hacks/2026-08-01 §11).
+    subsetFonts(),
+  ],
   i18n: {
     locales: ['it', 'en'],
     defaultLocale: 'it',

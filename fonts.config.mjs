@@ -1,18 +1,65 @@
 // @ts-check
 
 import { fontProviders } from 'astro/config';
+import { subsetOf } from './scripts/font-paths.mjs';
 
-const FONTS_DIR = './src/assets/fonts/';
+// Basic Latin (space through tilde) + Latin-1 accented letters + Latin
+// Extended-A + the typographic punctuation the CV copy actually uses (en/em
+// dash, curly quotes, ellipsis, bullet, and the Colophon's ©). Enough for any
+// Italian or English CV copy, which is why the Italian translation needed no
+// re-cut (ADR-0012).
+const BASIC_LATIN =
+  ' !"#$%&\'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~';
+const LATIN1_ACCENTS = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ';
+const LATIN_EXTENDED_A =
+  'ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĴĵĶķĹĺĻļĽľŁłŃńŅņŇňŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽž';
+const PUNCTUATION = '©–—‘’‚“”„†‡•…‰′″‹›€™';
+const TEXT = BASIC_LATIN + LATIN1_ACCENTS + LATIN_EXTENDED_A + PUNCTUATION;
+
+/**
+ * Every source the build cuts, and the charset it is cut to.
+ *
+ * Relative to `src/assets/fonts/`, which holds the raw faces and nothing else:
+ * the `.woff2` the browser gets are generated on every build and never
+ * committed (ADR-0023). `variants[].src` below names the generated file through
+ * `subsetOf()`, so a source that appears here and nowhere else is cut and
+ * unused, and one that appears below without a key here fails the build.
+ *
+ * It cannot ride along inside a family or a variant: Astro's schema rejects an
+ * unknown key on a family (`Unrecognized key`) and `Variant` rejects one on a
+ * variant (TS2353).
+ */
+export const FONT_SUBSETS = {
+  'jetbrains/JetBrainsMono-Regular.woff2': TEXT,
+  'jetbrains/JetBrainsMono-Bold.woff2': TEXT,
+  'jetbrains/JetBrainsMono-ExtraBold.woff2': TEXT,
+  'atkinson/AtkinsonHyperlegible-Regular.woff2': TEXT,
+  'atkinson/AtkinsonHyperlegible-Bold.woff2': TEXT,
+  'atkinson/AtkinsonHyperlegible-Italic.woff2': TEXT,
+  'primera-signature/PrimeraSignature-Regular.ttf': TEXT,
+  'icons/icomoon-feather.ttf': [
+    0xe902, // file-text — offers Reading Mode
+    0xe904, // list — offers Paper Mode
+    0xe901, // download
+    0xe903, // link
+    0xe907, // share-2
+    0xe908, // sun — light theme
+    0xe905, // moon — dark theme
+    0xe900, // check-circle
+  ]
+    .map((codepoint) => String.fromCodePoint(codepoint))
+    .join(''),
+};
 
 /**
  * Every face the CV draws with, declared where Astro can see it.
  *
- * The files are the hand-cut subsets `npm run fonts:subset` writes (ADR-0012,
- * ADR-0020): Astro ships no subsetter, so `local()` consumes what that pipeline
- * produces and the pipeline is untouched by this. What Astro does instead is
- * generate the metric-matched fallbacks — `local()` system faces carrying
- * `size-adjust` and the override trio — which `fontaine` used to do from a
- * PostCSS plugin, and emit the `rel="preload"` links the page never had.
+ * `src` names a file the build generates, not one in the repo: `subsetOf()`
+ * points at the subset tree under `.astro/`, cut from `FONT_SUBSETS` above by
+ * `scripts/subset-fonts.mjs` before Astro resolves anything (ADR-0023). What
+ * Astro does with it is generate the metric-matched fallbacks — `local()` system
+ * faces carrying `size-adjust` and the override trio — and emit the
+ * `rel="preload"` links the page never had before ADR-0022.
  *
  * Weights and styles are spelled out rather than inferred from the file. The
  * provider would read them (`fonts/providers/local.js`), but an earlier pass
@@ -49,17 +96,17 @@ export const ASTRO_FONTS_CONFIG = [
         {
           weight: 400,
           style: 'normal',
-          src: [`${FONTS_DIR}jetbrains/JetBrainsMono-Regular.woff2`],
+          src: [subsetOf('jetbrains/JetBrainsMono-Regular.woff2')],
         },
         {
           weight: 700,
           style: 'normal',
-          src: [`${FONTS_DIR}jetbrains/JetBrainsMono-Bold.woff2`],
+          src: [subsetOf('jetbrains/JetBrainsMono-Bold.woff2')],
         },
         {
           weight: 800,
           style: 'normal',
-          src: [`${FONTS_DIR}jetbrains/JetBrainsMono-ExtraBold.woff2`],
+          src: [subsetOf('jetbrains/JetBrainsMono-ExtraBold.woff2')],
         },
       ],
     },
@@ -76,17 +123,17 @@ export const ASTRO_FONTS_CONFIG = [
         {
           weight: 400,
           style: 'normal',
-          src: [`${FONTS_DIR}atkinson/AtkinsonHyperlegible-Regular.woff2`],
+          src: [subsetOf('atkinson/AtkinsonHyperlegible-Regular.woff2')],
         },
         {
           weight: 700,
           style: 'normal',
-          src: [`${FONTS_DIR}atkinson/AtkinsonHyperlegible-Bold.woff2`],
+          src: [subsetOf('atkinson/AtkinsonHyperlegible-Bold.woff2')],
         },
         {
           weight: 400,
           style: 'italic',
-          src: [`${FONTS_DIR}atkinson/AtkinsonHyperlegible-Italic.woff2`],
+          src: [subsetOf('atkinson/AtkinsonHyperlegible-Italic.woff2')],
         },
       ],
     },
@@ -103,7 +150,7 @@ export const ASTRO_FONTS_CONFIG = [
         {
           weight: 400,
           style: 'normal',
-          src: [`${FONTS_DIR}primera-signature/PrimeraSignature-Regular.woff2`],
+          src: [subsetOf('primera-signature/PrimeraSignature-Regular.ttf')],
         },
       ],
     },
@@ -121,7 +168,7 @@ export const ASTRO_FONTS_CONFIG = [
         {
           weight: 400,
           style: 'normal',
-          src: [`${FONTS_DIR}icons/icomoon-feather.woff2`],
+          src: [subsetOf('icons/icomoon-feather.ttf')],
         },
       ],
     },

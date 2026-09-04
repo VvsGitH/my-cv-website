@@ -4,7 +4,9 @@ Every face the CV draws with is declared in `fonts.config.mjs`, handed to `astro
 
 `fontaine`, `scripts/fontaine-after-imports.mjs` and the `vite.css.postcss` block that carried it are deleted. Astro generates the metric-matched fallbacks now, in its own pipeline, and emits the `rel="preload"` links the page never had.
 
-**The subsetting pipeline is untouched.** Astro ships no subsetter — `fonts/providers/local.js` normalizes the paths it is given and reads metrics off the file, nothing more — so `scripts/subset-fonts.mjs`, `src/assets/raw-fonts/`, the committed `.woff2` in `src/assets/fonts/` and ADR-0020's rule that CI never runs the subsetter all stand. This ADR supersedes ADR-0020 on the fallback-generation axis only.
+> **Superseded on the subsetting axis by ADR-0023.** The faces are still declared exactly as below, but `src` now names a file the build generates: the subsets are cut at build time into `.astro/`, `src/assets/raw-fonts/` is gone, and no generated `.woff2` is committed. The five-step recipe at the end is three.
+
+**The subsetting pipeline is untouched, for now.** Astro ships no subsetter — `fonts/providers/local.js` normalizes the paths it is given and reads metrics off the file, nothing more — so `scripts/subset-fonts.mjs`, `src/assets/raw-fonts/`, the committed `.woff2` in `src/assets/fonts/` and ADR-0020's rule that CI never runs the subsetter all stand. This ADR supersedes ADR-0020 on the fallback-generation axis only.
 
 ## Considered Options
 

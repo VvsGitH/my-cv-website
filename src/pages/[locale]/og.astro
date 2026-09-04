@@ -1,9 +1,9 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import { localePaths } from '../../i18n/locale';
-import { cv } from '../../content';
-import { ogCard } from '../../lib/og-card';
 import Sheet from '../../components/structure/Sheet.astro';
+import { cv } from '../../content';
+import { localePaths } from '../../i18n/locale';
+import { ogCard } from '../../lib/og-card';
 import '../../styles/global.css';
 
 /** The link-preview image is a route, not a composed screenshot (ADR-0009). */
@@ -32,7 +32,7 @@ if (!header) {
       /* Cascade layer order (lowest to highest precedence): 
         reset < base < components < print. 
         This bare statement must come first */
-      @layer reset,base,components,print;
+      @layer reset, base, components, print;
     </style>
   </head>
   <body>
@@ -107,7 +107,7 @@ if (!header) {
     .paper :global(.sheet) {
       --calc-card-height: calc(var(--card-height) - 2 * var(--card-pad-block));
       --calc-sheet-height: calc(var(--sheet-width) / calc(var(--sheet-ar)));
-      zoom: calc(var(--calc-card-height) / var(--calc-sheet-height) );
+      zoom: calc(var(--calc-card-height) / var(--calc-sheet-height));
     }
   }
 </style>

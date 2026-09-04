@@ -18,5 +18,4 @@ export const ogRouteFor = (locale: Locale): string => `${BASE}${locale}/og/`;
 
 /** Resolved from the link, not a template — a third copy of the filename would
  * hide the other two drifting apart instead of catching it (ADR-0009). */
-export const distPathForHref = (href: string): string =>
-  `${OUT_DIR}/${href.slice(BASE.length)}`;
+export const distPathForHref = (href: string): string => `${OUT_DIR}/${href.slice(BASE.length)}`;

@@ -1,7 +1,7 @@
 ---
 import type { AboutBlock } from '../../content/types';
-import SectionHeading from '../primitives/SectionHeading.astro';
 import Rich from '../primitives/Rich.astro';
+import SectionHeading from '../primitives/SectionHeading.astro';
 
 interface Props {
   block: AboutBlock;
@@ -11,13 +11,11 @@ const { block } = Astro.props;
 ---
 
 <SectionHeading text={block.heading} />
-{
-  block.paragraphs.map((paragraph) => (
+{block.paragraphs.map((paragraph) => (
     <p class="about">
       <Rich text={paragraph} />
     </p>
-  ))
-}
+  ))}
 
 <style>
   @layer components {

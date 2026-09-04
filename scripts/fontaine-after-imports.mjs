@@ -17,15 +17,15 @@ const fontaine = FontaineTransform.vite({
   fallbacks: {
     'JetBrains Mono': ['Courier New'],
     'Atkinson Hyperlegible': ['Arial'],
-    'Primera Signature': ['Arial']
+    'Primera Signature': ['Arial'],
   },
   // The icon font is the one face a stand-in cannot stand in for: its glyphs are
   // private-use codepoints, so a metric-matched Arial would draw tofu exactly as
   // the generic fallback does. Skipping generation still leaves the name appended
   // to icons.css's literal `font-family` — inert, since a family with no face is
   // passed over, and that declaration had no fallback of its own to lose.
-  skipFontFaceGeneration: fallback => fallback === 'icomoon fallback',
-  resolvePath: id => pathToFileURL(resolve(stylesDir, id))
+  skipFontFaceGeneration: (fallback) => fallback === 'icomoon fallback',
+  resolvePath: (id) => pathToFileURL(resolve(stylesDir, id)),
 });
 
 /**
@@ -58,12 +58,13 @@ export const fontaineAfterImports = {
     if (!hasFace) return;
 
     const { transform } = /** @type {any} */ (fontaine);
-    const result = await (
-      typeof transform === 'function' ? transform : transform.handler
-    )(root.toString(), file);
+    const result = await (typeof transform === 'function' ? transform : transform.handler)(
+      root.toString(),
+      file,
+    );
     if (!result?.code) return;
 
     root.removeAll();
     root.append(postcss.parse(result.code, { from: file }).nodes);
-  }
+  },
 };

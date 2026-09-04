@@ -1,5 +1,5 @@
 import { existsSync } from 'node:fs';
-import { expect, test, type Locator, type Page } from '@playwright/test';
+import { expect, type Locator, type Page, test } from '@playwright/test';
 import { ui } from '../src/i18n/ui';
 import { inkOn } from './support/contrast';
 import { openPainted, sheet, toolbar, VIEWPORTS } from './support/page';
@@ -28,7 +28,6 @@ const backgroundOf = (locator: Locator): Promise<string> =>
 
 const inkOf = (locator: Locator): Promise<string> =>
   locator.evaluate((element) => getComputedStyle(element).color);
-
 
 for (const locale of LOCALES) {
   test.describe(locale, () => {
@@ -322,12 +321,14 @@ test.describe('Focus Not Obscured', () => {
 /** One cluster, one shape per tier (ADR-0008). */
 test.describe('one cluster per tier', () => {
   const controlsOf = (page: Page) =>
-    toolbar(page).locator(':scope > .toolbar-button:visible').evaluateAll((controls) =>
-      controls.map((control) => {
-        const box = control.getBoundingClientRect();
-        return { x: Math.round(box.x), y: Math.round(box.y) };
-      }),
-    );
+    toolbar(page)
+      .locator(':scope > .toolbar-button:visible')
+      .evaluateAll((controls) =>
+        controls.map((control) => {
+          const box = control.getBoundingClientRect();
+          return { x: Math.round(box.x), y: Math.round(box.y) };
+        }),
+      );
 
   // The shape is a width, never the Mode (ADR-0017) — so `reading` and `paper`
   // below name viewports, not what the reader is looking at.
@@ -366,10 +367,7 @@ test.describe('one cluster per tier', () => {
     expect(rail.width).toBeLessThan(viewport.width / 3);
     // Against the inline start, centred on the block axis.
     expect(rail.x, 'against the inline start').toBeLessThan(viewport.width / 4);
-    expect(rail.y + rail.height / 2, 'centred on the viewport').toBeCloseTo(
-      viewport.height / 2,
-      0,
-    );
+    expect(rail.y + rail.height / 2, 'centred on the viewport').toBeCloseTo(viewport.height / 2, 0);
 
     // Out of flow, so Sheet 1 starts at its own margin, not the rail's.
     const paperTop = (await sheet(page, 1).boundingBox())!.y;

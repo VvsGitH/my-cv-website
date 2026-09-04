@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 import { openPainted, sheet, VIEWPORTS } from './support/page';
 import { routeFor } from './support/site';
 
@@ -44,9 +44,10 @@ function expectRealA4(box: Box, label: string): void {
   expect(Math.abs(box.width - A4.width), `${label} width is ${box.width}px`).toBeLessThanOrEqual(
     TOLERANCE,
   );
-  expect(Math.abs(box.height - A4.height), `${label} height is ${box.height}px`).toBeLessThanOrEqual(
-    TOLERANCE,
-  );
+  expect(
+    Math.abs(box.height - A4.height),
+    `${label} height is ${box.height}px`,
+  ).toBeLessThanOrEqual(TOLERANCE);
 }
 
 test.describe('Paper Mode, two-up', () => {
@@ -179,8 +180,26 @@ test('keeps a query container over the paper on screen, and none in print', asyn
  * spent, and the one the fit does not cover.
  */
 const NO_OVERFLOW_WIDTHS = [
-  375, 390, 414, 500, 600, 700, 780, 855, 856, 857, 888, 900, 1024, 1280, 1440,
-  VIEWPORTS.twoUp.width - 1, VIEWPORTS.twoUp.width, VIEWPORTS.twoUp.width + 1, 1920, 2560,
+  375,
+  390,
+  414,
+  500,
+  600,
+  700,
+  780,
+  855,
+  856,
+  857,
+  888,
+  900,
+  1024,
+  1280,
+  1440,
+  VIEWPORTS.twoUp.width - 1,
+  VIEWPORTS.twoUp.width,
+  VIEWPORTS.twoUp.width + 1,
+  1920,
+  2560,
 ];
 
 test('never scrolls sideways, at any supported width', async ({ page }) => {

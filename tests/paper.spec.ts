@@ -1,9 +1,9 @@
 import { expect, test } from '@playwright/test';
 import { cv } from '../src/content';
 import type { Column, SheetNumber } from '../src/content/types';
+import type { Locale } from '../src/i18n/locale';
 import { openPainted, renderedKinds, sheet, slackBelowLastBlock, VIEWPORTS } from './support/page';
 import { LOCALES, routeFor } from './support/site';
-import type { Locale } from '../src/i18n/locale';
 
 // Declared rather than inherited from the config. It is no longer a Mode that
 // rests on it — Paper Mode is the default at every width (ADR-0017) — but the
@@ -129,9 +129,9 @@ test('says the same things in different words in each Locale', async ({ page }) 
 
   expect(italian.headings).toHaveLength(english.headings.length);
   // Privacy is the one section whose heading the two Locales spell the same.
-  expect(
-    italian.headings.filter((heading, index) => heading === english.headings[index]),
-  ).toEqual(['Privacy']);
+  expect(italian.headings.filter((heading, index) => heading === english.headings[index])).toEqual([
+    'Privacy',
+  ]);
 
   expect(italian.about).not.toBe(english.about);
   // The CV is one person's in both Locales, so the name is not translated.

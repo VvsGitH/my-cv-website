@@ -9,9 +9,7 @@ export async function openPainted(page: Page, route: string): Promise<void> {
   const response = await page.goto(route);
   expect(response?.status(), `${route} should be served`).toBe(200);
 
-  await page.evaluate(() =>
-    Promise.all(Array.from(document.images, (image) => image.decode())),
-  );
+  await page.evaluate(() => Promise.all(Array.from(document.images, (image) => image.decode())));
 
   await page.evaluate(() =>
     Promise.all(
@@ -55,10 +53,7 @@ export const sheet = (page: Page, number: SheetNumber): Locator =>
 export const toolbar = (page: Page): Locator => page.locator('.toolbar');
 
 /** The kind of every Block rendered into one column, in document order. */
-export async function renderedKinds(
-  sheetLocator: Locator,
-  column: Column,
-): Promise<string[]> {
+export async function renderedKinds(sheetLocator: Locator, column: Column): Promise<string[]> {
   return sheetLocator.locator(`.${column} > .block`).evaluateAll((blocks) =>
     blocks.map((block) => {
       const kind = [...block.classList].find((name) => name.startsWith('block--'));
@@ -68,10 +63,7 @@ export async function renderedKinds(
 }
 
 /** Slack to the edge each column must stay inside — Aside to its panel, Main to the Sheet (ADR-0010). */
-export async function slackBelowLastBlock(
-  sheetLocator: Locator,
-  column: Column,
-): Promise<number> {
+export async function slackBelowLastBlock(sheetLocator: Locator, column: Column): Promise<number> {
   return sheetLocator.evaluate((sheetElement, columnName) => {
     const columnElement = sheetElement.querySelector(`.${columnName}`);
     if (!columnElement) throw new Error(`no .${columnName} on this Sheet`);

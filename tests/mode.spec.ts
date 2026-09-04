@@ -1,4 +1,4 @@
-import { expect, test, type Page } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 import { cv } from '../src/content';
 import { ui } from '../src/i18n/ui';
 import { openPainted, readingMode, sheet, toolbar, VIEWPORTS } from './support/page';
@@ -99,7 +99,9 @@ test.describe('Reading Mode', () => {
       .locator('.sheets .block:not(.block--photo)')
       .evaluateAll((blocks) => blocks.map((block) => Math.round(block.getBoundingClientRect().x)));
 
-    expect(lefts.length, 'Blocks from both Sheets should reflow into the column').toBeGreaterThan(1);
+    expect(lefts.length, 'Blocks from both Sheets should reflow into the column').toBeGreaterThan(
+      1,
+    );
     expect(new Set(lefts).size, 'every Block should share one column').toBe(1);
   });
 
@@ -116,17 +118,15 @@ test.describe('Reading Mode', () => {
   test('runs the Blocks in the order the content declares, not the paper order', async ({
     page,
   }) => {
-    const rendered = await page
-      .locator('.sheets .section-heading')
-      .evaluateAll((headings) =>
-        headings
-          .map((heading) => ({
-            text: heading.textContent?.trim() ?? '',
-            top: heading.getBoundingClientRect().top,
-          }))
-          .sort((a, b) => a.top - b.top)
-          .map((heading) => heading.text),
-      );
+    const rendered = await page.locator('.sheets .section-heading').evaluateAll((headings) =>
+      headings
+        .map((heading) => ({
+          text: heading.textContent?.trim() ?? '',
+          top: heading.getBoundingClientRect().top,
+        }))
+        .sort((a, b) => a.top - b.top)
+        .map((heading) => heading.text),
+    );
 
     expect(rendered).toEqual(headingsByReadOrder('it'));
   });
@@ -139,8 +139,8 @@ test.describe('Reading Mode', () => {
     // where the paper had to show two (ADR-0005, ADR-0017).
     await expect(continuation.locator('.section-heading')).toHaveClass(/is-sr-only/);
 
-    const gap = await continuation.evaluate(
-      (block) => parseFloat(getComputedStyle(block).marginBlockStart),
+    const gap = await continuation.evaluate((block) =>
+      parseFloat(getComputedStyle(block).marginBlockStart),
     );
     expect(gap, 'a Continuation opens no section, so it takes no section gap').toBe(0);
   });

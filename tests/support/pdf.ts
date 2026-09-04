@@ -5,8 +5,8 @@ import {
   PDFDict,
   PDFDocument,
   PDFName,
-  PDFRawStream,
   type PDFPage,
+  PDFRawStream,
 } from 'pdf-lib';
 
 /** Enough of a PDF reader for ADR-0010's assertions, which also records the two encoding traps. */
@@ -43,7 +43,10 @@ function fontResources(page: PDFPage): [string, PDFDict][] {
   if (!dict) return [];
   return dict
     .entries()
-    .map(([key, ref]): [string, PDFDict] => [key.toString(), page.node.context.lookup(ref, PDFDict)]);
+    .map(([key, ref]): [string, PDFDict] => [
+      key.toString(),
+      page.node.context.lookup(ref, PDFDict),
+    ]);
 }
 
 function fontsOf(page: PDFPage): PdfFont[] {
@@ -60,18 +63,14 @@ function fontsOf(page: PDFPage): PdfFont[] {
       // no font program to point at.
       embedded:
         subtype === '/Type3' ||
-        ['FontFile', 'FontFile2', 'FontFile3'].some((key) =>
-          descriptor?.has(PDFName.of(key)),
-        ),
+        ['FontFile', 'FontFile2', 'FontFile3'].some((key) => descriptor?.has(PDFName.of(key))),
     };
   });
 }
 
 function descriptorOf(font: PDFDict): PDFDict | undefined {
   const descendants = font.lookupMaybe(PDFName.of('DescendantFonts'), PDFArray);
-  const owner = descendants
-    ? font.context.lookup(descendants.get(0), PDFDict)
-    : font;
+  const owner = descendants ? font.context.lookup(descendants.get(0), PDFDict) : font;
   return owner.lookupMaybe(PDFName.of('FontDescriptor'), PDFDict);
 }
 
@@ -85,7 +84,8 @@ function parseToUnicode(cmap: string): Map<number, string> {
 
   const fromHex = (hex: string): string => {
     let out = '';
-    for (let i = 0; i < hex.length; i += 4) out += String.fromCharCode(parseInt(hex.slice(i, i + 4), 16));
+    for (let i = 0; i < hex.length; i += 4)
+      out += String.fromCharCode(parseInt(hex.slice(i, i + 4), 16));
     return out;
   };
 

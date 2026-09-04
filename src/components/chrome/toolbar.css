@@ -131,9 +131,7 @@
     }
 
     :root {
-      scroll-padding-block-end: calc(
-        var(--toolbar-block-size) + 2 * var(--toolbar-inset)
-      );
+      scroll-padding-block-end: calc(var(--toolbar-block-size) + 2 * var(--toolbar-inset));
     }
   }
 }

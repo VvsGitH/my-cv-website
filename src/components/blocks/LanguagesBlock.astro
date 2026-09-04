@@ -11,8 +11,7 @@ const { block } = Astro.props;
 
 <SectionHeading text={block.heading} />
 <dl class="languages">
-  {
-    block.entries.map((entry) => (
+  {block.entries.map((entry) => (
       <div class="language">
         <dt>{entry.name}</dt>
         <dd>{entry.level}</dd>
@@ -21,8 +20,7 @@ const { block } = Astro.props;
           style={`--fill: ${(entry.proficiency * 100).toFixed(1)}%`}
         ></div>
       </div>
-    ))
-  }
+    ))}
 </dl>
 
 <style>

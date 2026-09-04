@@ -3,7 +3,7 @@ import Rich from './Rich.astro';
 
 /**
  * A bulleted list. The owning Block tunes the gap above it through
- * `--bullet-gap`and sets its own font on the wrapper; the marker, 
+ * `--bullet-gap`and sets its own font on the wrapper; the marker,
  * indent, hanging alignment and leading are the same everywhere.
  */
 interface Props {
@@ -14,13 +14,11 @@ const { items } = Astro.props;
 ---
 
 <ul class="bullets">
-  {
-    items.map((item) => (
+  {items.map((item) => (
       <li>
         <Rich text={item} />
       </li>
-    ))
-  }
+    ))}
 </ul>
 
 <style>

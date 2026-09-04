@@ -37,17 +37,14 @@ const year = new Date().getFullYear();
         {ui[other].colophon.localeName}
       </a>
     </li>
-    {
-      channels.map((contact) => (
+    {channels.map((contact) => (
         <li>
           <a href={contact.url}>{contact.label}</a>
         </li>
-      ))
-    }
+      ))}
   </ul>
 
   <p>{strings.dataNotice}</p>
-
 
   <p>{strings.accessibility}</p>
 </footer>
@@ -97,7 +94,7 @@ const year = new Date().getFullYear();
 
     /* The reading column's own measure: the Colophon runs in the column rather
        than under it. The Mode, because that is what sets the column (ADR-0017). */
-    :global(html[data-mode='reading']){ 
+    :global(html[data-mode='reading']) {
       .colophon {
         max-width: var(--reading-column-max);
       }
@@ -110,9 +107,7 @@ const year = new Date().getFullYear();
        stands beside the paper, clear of normal flow. */
     @media screen and (width < 53.5rem) {
       .colophon {
-        padding-block-end: calc(
-          var(--toolbar-block-size) + var(--toolbar-inset) + var(--space-xl)
-        );
+        padding-block-end: calc(var(--toolbar-block-size) + var(--toolbar-inset) + var(--space-xl));
       }
     }
   }

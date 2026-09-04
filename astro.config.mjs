@@ -1,6 +1,7 @@
 // @ts-check
-import { defineConfig } from 'astro/config';
+
 import preact from '@astrojs/preact';
+import { defineConfig } from 'astro/config';
 import { fontaineAfterImports } from './scripts/fontaine-after-imports.mjs';
 
 // https://astro.build/config

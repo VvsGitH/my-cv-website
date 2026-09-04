@@ -69,10 +69,18 @@ export default function Toolbar({ toolbar, links }: Props) {
         aria-label={linkCopied.value ? toolbar.shared : toolbar.share}
         onClick={copyLink}
       >
-        <span class={linkCopied.value ? 'icon-check-circle' : 'icon-share-2'} aria-hidden="true"></span>
+        <span
+          class={linkCopied.value ? 'icon-check-circle' : 'icon-share-2'}
+          aria-hidden="true"
+        ></span>
       </button>
 
-      <button type="button" title={toolbar.themeChange} class="toolbar-button toolbar-theme" onClick={toggleTheme}>
+      <button
+        type="button"
+        title={toolbar.themeChange}
+        class="toolbar-button toolbar-theme"
+        onClick={toggleTheme}
+      >
         <span class="icon-moon" aria-hidden="true"></span>
         <span class="icon-sun" aria-hidden="true"></span>
         <span class="is-sr-only toolbar-theme-to-dark">{toolbar.themeToDark}</span>

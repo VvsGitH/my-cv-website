@@ -11,8 +11,7 @@ const { block } = Astro.props;
 
 <SectionHeading text={block.heading} />
 <ul class="certifications">
-  {
-    block.entries.map(entry => (
+  {block.entries.map(entry => (
       <li>
         <p class="issued">
           {entry.date} | {entry.issuer}
@@ -26,8 +25,7 @@ const { block } = Astro.props;
           <p class="title">{entry.title}</p>
         )}
       </li>
-    ))
-  }
+    ))}
 </ul>
 
 <style>

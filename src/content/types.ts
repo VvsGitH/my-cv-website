@@ -1,6 +1,6 @@
 /** The CV content schema. `tsc` is the validator (ADR-0002); layout reads these, never defines them. */
 
-import type { Locale } from "../i18n/locale";
+import type { Locale } from '../i18n/locale';
 
 /** The CV is exactly two Sheets. */
 export type SheetNumber = 1 | 2;

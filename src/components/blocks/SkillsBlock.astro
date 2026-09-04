@@ -1,7 +1,7 @@
 ---
 import type { SkillsBlock } from '../../content/types';
-import SectionHeading from '../primitives/SectionHeading.astro';
 import Rich from '../primitives/Rich.astro';
+import SectionHeading from '../primitives/SectionHeading.astro';
 
 interface Props {
   block: SkillsBlock;
@@ -11,8 +11,7 @@ const { block } = Astro.props;
 ---
 
 <SectionHeading text={block.heading} />
-{
-  block.groups.map((group) => (
+{block.groups.map((group) => (
     <section class="group">
       <h3 class="group-name">{group.name}</h3>
       {group.display === 'inline' ? (
@@ -34,8 +33,7 @@ const { block } = Astro.props;
         </ul>
       )}
     </section>
-  ))
-}
+  ))}
 
 <style>
   @layer components {

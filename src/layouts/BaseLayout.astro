@@ -1,4 +1,5 @@
 ---
+import { Font } from 'astro:assets';
 import { getAbsoluteLocaleUrl } from 'astro:i18n';
 import type { Locale } from '../i18n/locale';
 import { meta } from '../i18n/meta';
@@ -24,6 +25,13 @@ const ogImage = new URL(`${import.meta.env.BASE_URL}og-${locale}.png`, Astro.sit
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- All fonts and variants but the signature are present above the first fold -->
+    <Font cssVariable="--font-jetbrains-mono" preload />
+    <Font cssVariable="--font-atkinson" preload />
+    <Font cssVariable="--font-icomoon" preload />
+    <Font cssVariable="--font-primera-signature" />
+
     <title>{strings.title}</title>
     <meta name="description" content={strings.description} />
     <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />

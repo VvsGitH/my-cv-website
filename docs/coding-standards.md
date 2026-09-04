@@ -104,11 +104,12 @@ Authored as Astro scoped `<style>`, no framework. See [Baseline table](research/
 
 ## Fonts
 
-ADR-0012 owns the pipeline. The rules that follow from it:
+ADR-0012 and ADR-0020 own the subsetting pipeline, ADR-0022 the declaration. The rules that follow:
 
-- Self-host, `@font-face`. Prefer one variable font to cut requests.
-- **Never `font-display: optional`** (determinism hazard for PDF capture) — use `block`/`swap` and gate capture on `document.fonts.ready`. Add `size-adjust` on the fallback to keep line breaks stable.
-- **Raw source faces live in `docs/assets/`, which is git-ignored; the generated `.woff2` live in `src/assets/`, which is committed.** `npm run fonts:subset` is manual and out-of-band — CI never runs it and never reads `docs/assets/`. Adding a face means running the subsetter and committing its output, or the build fails on a clean clone.
+- Self-host, and **declare every face in `fonts.config.mjs`, which `astro.config.mjs` passes as its `fonts`** — never an `@font-face` in a stylesheet. `<Font>` renders it, once per family, in every head the site has; `src/styles/fonts.css` maps the emitted variables onto role tokens.
+- **A new head means a new set of `<Font>` calls.** The variables exist only where the component renders, and an undefined one makes the whole `font-family` declaration invalid.
+- **Never `font-display: optional`** (determinism hazard for PDF capture) — use `block`/`swap` and gate capture on `document.fonts.ready`. Astro generates the `size-adjust` fallbacks; the `fallbacks` list must end in a generic or it generates none.
+- **Raw source faces and the generated `.woff2` both live in `src/assets/` and are both committed** (`raw-fonts/` and `fonts/`). `npm run fonts:subset` is manual and out-of-band — CI never runs it. Adding a face means running the subsetter, committing its output, declaring it in the config and giving it a role token.
 
 ## Accessibility
 

@@ -2,7 +2,7 @@
 
 import preact from '@astrojs/preact';
 import { defineConfig } from 'astro/config';
-import { fontaineAfterImports } from './scripts/fontaine-after-imports.mjs';
+import { ASTRO_FONTS_CONFIG } from './fonts.config.mjs';
 
 // https://astro.build/config
 export default defineConfig({
@@ -22,9 +22,7 @@ export default defineConfig({
       prefixDefaultLocale: true,
     },
   },
-  vite: {
-    css: { postcss: { plugins: [fontaineAfterImports] } },
-  },
+  fonts: ASTRO_FONTS_CONFIG,
   prefetch: {
     defaultStrategy: 'hover',
   },

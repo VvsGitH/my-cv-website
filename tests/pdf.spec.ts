@@ -30,7 +30,7 @@ const CV_FACES = [
   'AtkinsonHyperlegible-Bold',
   'AtkinsonHyperlegible-Italic',
   'Primera_Signature',
-  'icomoon',
+  'icomoon-feather',
 ];
 
 /** A Continuation's heading is a screen-reader-only copy (ADR-0005), so it is

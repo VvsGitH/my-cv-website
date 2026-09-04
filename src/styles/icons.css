@@ -1,14 +1,13 @@
-/* IcoMoon's free set, as the Toolbar's icons — a global stylesheet by sanctioned
-   exception (coding-standards). Two departures from what IcoMoon generates:
+/* `icomoon-feather`, the glyph face that carries all the icons. 
+  Three departures from what IcoMoon generates for the face:
 
-   - the face is `src/assets/fonts/icons/icomoon.woff2`, a subset;
+   - the face is a subset of the original ttf font;
    - only the rules for glyphs that survive that subset are kept. Adding an
      icon is a codepoint in `scripts/subset-fonts.mjs` and a rule here.
-
-   The `speak`/`speak-as` descriptor IcoMoon emits is dropped: it is not a
-   property (it belongs to `@counter-style`) and browsers ignore it. What keeps
-   a private-use codepoint from being announced is `aria-hidden` on the span,
-   which the Toolbar sets on every icon it renders. */
+   - The `speak`/`speak-as` descriptor IcoMoon emits is dropped: it is not a
+     property (it belongs to `@counter-style`) and browsers ignore it. What keeps
+     a private-use codepoint from being announced is `aria-hidden` on the span,
+     which the Toolbar sets on every icon it renders. */
 
 @font-face {
   font-family: 'icomoon';

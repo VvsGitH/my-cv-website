@@ -21,19 +21,19 @@
     "test": "playwright test"
   },
   "dependencies": {
-    "@astrojs/preact": "^6.0.4",
-    "@preact/signals": "^2.10.0",
-    "astro": "^7.2.9",
-    "preact": "^10.29.7"
+    "@astrojs/preact": "^6.0.5",
+    "@preact/signals": "^2.11.1",
+    "astro": "^7.3.1",
+    "preact": "^10.29.8"
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
-    "@playwright/test": "^1.62.0",
-    "@types/node": "^26.1.1",
-    "fontaine": "^0.8.0",
+    "@playwright/test": "^1.62.1",
+    "@types/node": "^26.4.1",
+    "fontaine": "^0.8.1",
     "pdf-lib": "^1.17.1",
-    "playwright": "^1.62.0",
-    "subset-font": "^2.5.0",
+    "playwright": "^1.62.1",
+    "subset-font": "^2.7.0",
     "typescript": "^6.0.3"
   }
 }

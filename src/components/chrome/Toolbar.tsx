@@ -1,4 +1,4 @@
-import type { Locale } from '../../i18n/locale';
+import { otherLocale, type Locale } from '../../i18n/locale';
 import type { ToolbarStrings } from '../../i18n/ui';
 import { copyLink, linkCopied, toggleMode, toggleTheme } from './state';
 import './toolbar.css';
@@ -35,7 +35,7 @@ export default function Toolbar({ toolbar, links }: Props) {
         onClick={toggleMode}
       >
         <span class="icon-file-text" aria-hidden="true"></span>
-        <span class="icon-book" aria-hidden="true"></span>
+        <span class="icon-list" aria-hidden="true"></span>
         <span class="is-sr-only toolbar-mode-to-reading">{toolbar.modeToReading}</span>
         <span class="is-sr-only toolbar-mode-to-paper">{toolbar.modeToPaper}</span>
       </button>
@@ -47,7 +47,7 @@ export default function Toolbar({ toolbar, links }: Props) {
         title={toolbar.language}
         aria-label={toolbar.language}
       >
-        <span class="icon-earth" aria-hidden="true"></span>
+        {links.languageLocale.toLocaleUpperCase()}
       </a>
 
       <a
@@ -67,11 +67,11 @@ export default function Toolbar({ toolbar, links }: Props) {
         aria-label={linkCopied.value ? toolbar.shared : toolbar.share}
         onClick={copyLink}
       >
-        <span class={linkCopied.value ? 'icon-checkmark' : 'icon-link'} aria-hidden="true"></span>
+        <span class={linkCopied.value ? 'icon-check-circle' : 'icon-share-2'} aria-hidden="true"></span>
       </button>
 
       <button type="button" title={toolbar.themeChange} class="toolbar-button toolbar-theme" onClick={toggleTheme}>
-        <span class="icon-contrast" aria-hidden="true"></span>
+        <span class="icon-moon" aria-hidden="true"></span>
         <span class="icon-sun" aria-hidden="true"></span>
         <span class="is-sr-only toolbar-theme-to-dark">{toolbar.themeToDark}</span>
         <span class="is-sr-only toolbar-theme-to-light">{toolbar.themeToLight}</span>

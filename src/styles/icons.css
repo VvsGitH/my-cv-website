@@ -12,7 +12,7 @@
 
 @font-face {
   font-family: 'icomoon';
-  src: url('../assets/fonts/icons/icomoon.woff2') format('woff2');
+  src: url('../assets/fonts/icons/icomoon-feather.woff2') format('woff2');
   font-weight: normal;
   font-style: normal;
   font-display: block;
@@ -32,27 +32,29 @@
   -moz-osx-font-smoothing: grayscale;
 }
 
-.icon-book:before {
-  content: '\e91f';
-}
-.icon-file-text:before {
-  content: '\e922';
-}
 .icon-download:before {
-  content: '\e960';
+  content: '\e901';
 }
-.icon-earth:before {
-  content: '\e9ca';
+.icon-check-circle:before {
+  content: '\e900';
 }
 .icon-link:before {
-  content: '\e9cb';
+  content: '\e903';
+}
+.icon-share-2:before {
+  content: '\e907';
+}
+
+.icon-file-text:before {
+  content: '\e902';
+}
+.icon-list:before {
+  content: '\e904';
+}
+
+.icon-moon:before {
+  content: '\e905';
 }
 .icon-sun:before {
-  content: '\e9d4';
-}
-.icon-contrast:before {
-  content: '\e9d5';
-}
-.icon-checkmark:before {
-  content: '\ea10';
+  content: '\e908';
 }

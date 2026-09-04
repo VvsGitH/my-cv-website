@@ -40,17 +40,17 @@ const TEXT_FONTS = [
 const ICON_FONTS = [
   {
     name: 'icons',
-    variants: ['icomoon.ttf'],
+    variants: ['icomoon-feather.ttf'],
     set: [
       // The list of icons is in SOURCE/icons/selection.json
-      0xe91f, // book — offers Reading Mode
-      0xe922, // file-text — offers Paper Mode
-      0xe960, // download
-      0xe9ca, // earth
-      0xe9cb, // link
-      0xe9d4, // sun
-      0xe9d5, // contrast
-      0xea10 // checkmark
+      0xe902, // file-text - Reading Mode
+      0xe904, // list — offers Paper Mode
+      0xe901, // download
+      0xe903, // link
+      0xe907, // share-2 
+      0xe908, // sun - light theme
+      0xe905, // moon - dark theme
+      0xe900 // check-cirlce
     ]
   }
 ];

@@ -28,7 +28,7 @@ const channels = header.contacts.filter((contact) => contact.url);
 const year = new Date().getFullYear();
 ---
 
-<footer class="colophon" aria-label={strings.name}>
+<footer role="contentinfo" class="colophon" aria-label={strings.name}>
   <p class="imprint">© {year} {header.name}</p>
 
   <ul class="channels">

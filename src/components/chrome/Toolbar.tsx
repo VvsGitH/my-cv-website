@@ -1,4 +1,4 @@
-import { otherLocale, type Locale } from '../../i18n/locale';
+import type { Locale } from '../../i18n/locale';
 import type { ToolbarStrings } from '../../i18n/ui';
 import { copyLink, linkCopied, toggleMode, toggleTheme } from './state';
 import './toolbar.css';
@@ -50,6 +50,8 @@ export default function Toolbar({ toolbar, links }: Props) {
         {links.languageLocale.toLocaleUpperCase()}
       </a>
 
+      {/* biome-ignore lint/a11y/useAnchorContent: the accessible name is the
+          aria-label below; the rule only recognises a static string. */}
       <a
         class="toolbar-button"
         href={links.pdfHref}

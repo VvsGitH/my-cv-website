@@ -1,0 +1,110 @@
+{
+  "$schema": "https://biomejs.dev/schemas/2.5.12/schema.json",
+  "vcs": {
+    "enabled": true,
+    "clientKind": "git",
+    "useIgnoreFile": true
+  },
+  "files": {
+    // `.gitignore` covers `dist/`, `.astro/`, `node_modules/` and the Playwright
+    // output. The one addition is the toolbar mockup: a throwaway design scratch
+    // (see `docs/todos/ideas.md`), not project source.
+    "includes": [
+      "**",
+      "!docs/todos/toolbar-mockups.html",
+      // IcoMoon writes this one, and re-exports it wholesale; it is never hand-edited.
+      "!src/assets/raw-fonts/icons/selection.json"
+    ]
+  },
+  // Half the codebase is `.astro`. Without the flag Biome lints those files and
+  // sorts their frontmatter imports but formats nothing; the formatter is gated
+  // a second time behind `html.formatter.enabled`, and both are needed to reach
+  // the templates. Biome calls the HTML parser experimental and will drop the
+  // flag once it is stable — remove it then rather than leaving it to rot.
+  //
+  // Even with both on, the *frontmatter TypeScript* is still not formatted —
+  // only the template, its `<style>`, and the import order (ADR-0021).
+  "html": {
+    "experimentalFullSupportEnabled": true,
+    "formatter": {
+      "enabled": true,
+      // The repo indents `<style>` contents one level inside the tag. Biome
+      // would otherwise flatten every one of them for no gain.
+      "indentScriptAndStyle": true,
+      // `<meta … />` is how this codebase writes void elements. Both forms are
+      // identical HTML; matching what is there keeps the diff to real changes.
+      "selfCloseVoidElements": "always"
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "indentStyle": "space",
+    "indentWidth": 2,
+    // Not the default 80: the repo has 85 lines past 100 characters and 52 of
+    // them are CV prose in `src/content/`, which no width breaks anyway.
+    "lineWidth": 100,
+    "lineEnding": "lf"
+  },
+  // The repo quoted CSS strings singly before any formatter existed. Keeping it
+  // costs nothing and keeps both halves of the toolchain saying the same thing.
+  "css": {
+    "formatter": {
+      "quoteStyle": "single"
+    }
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "single",
+      "jsxQuoteStyle": "double",
+      "semicolons": "always",
+      "trailingCommas": "all"
+    }
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "preset": "recommended",
+      "complexity": {
+        // `astro/tsconfigs/strict` turns on `noPropertyAccessFromIndexSignature`,
+        // which makes `process.env['CI']` and `dataset['theme']` mandatory rather
+        // than a smell.
+        "useLiteralKeys": "off"
+      }
+    }
+  },
+  "assist": {
+    "enabled": true,
+    "actions": {
+      "source": {
+        "organizeImports": "on"
+      }
+    }
+  },
+  "overrides": [
+    {
+      // The reduced-motion block cannot work without `!important`: it has to beat
+      // every author declaration, and `:where()` gives it zero specificity by
+      // design (coding-standards, §Accessibility).
+      "includes": ["src/styles/reset.css"],
+      "linter": { "rules": { "complexity": { "noImportantStyles": "off" } } }
+    },
+    {
+      // IcoMoon's own `!important`, and an icon font that must have no generic
+      // fallback — a fallback would render the missing-glyph box instead of the
+      // icon. Both are explained where they sit.
+      "includes": ["src/styles/icons.css"],
+      "linter": {
+        "rules": {
+          "complexity": { "noImportantStyles": "off" },
+          "a11y": { "useGenericFontNames": "off" }
+        }
+      }
+    },
+    {
+      // `!` is the Playwright idiom: the locator has already been awaited, and a
+      // wrong assertion throws, which is exactly how a test should fail.
+      "includes": ["tests/**"],
+      "linter": { "rules": { "style": { "noNonNullAssertion": "off" } } }
+    }
+  ]
+}

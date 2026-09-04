@@ -18,7 +18,7 @@ const { block } = Astro.props;
           {entry.date} | {entry.issuer}
         </p>
         {entry.url ? (
-          <a class="title" href={entry.url} target="_blank">
+          <a class="title" href={entry.url} target="_blank" rel="noopener">
             {entry.title}
             <span class="icon icon-link" aria-hidden="true" />
           </a>

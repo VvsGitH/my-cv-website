@@ -15,6 +15,9 @@
     "build": "astro check && astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write .",
     "fonts:subset": "node scripts/subset-fonts.mjs",
     "captures:render": "node scripts/render-captures.mjs",
     "pretest": "npm run build && npm run captures:render",
@@ -28,6 +31,7 @@
   },
   "devDependencies": {
     "@astrojs/check": "^0.9.10",
+    "@biomejs/biome": "2.5.12",
     "@playwright/test": "^1.62.1",
     "@types/node": "^26.4.1",
     "fontaine": "^0.8.1",

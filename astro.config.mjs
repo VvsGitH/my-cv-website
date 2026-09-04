@@ -25,4 +25,7 @@ export default defineConfig({
   vite: {
     css: { postcss: { plugins: [fontaineAfterImports] } },
   },
+  prefetch: {
+    defaultStrategy: 'hover',
+  },
 });

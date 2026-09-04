@@ -46,6 +46,7 @@ export default function Toolbar({ toolbar, links }: Props) {
         hreflang={links.languageLocale}
         title={toolbar.language}
         aria-label={toolbar.language}
+        data-astro-prefetch=""
       >
         {links.languageLocale.toLocaleUpperCase()}
       </a>

@@ -82,6 +82,8 @@
   outline-offset: 2px;
 }
 
+/* biome-ignore-start lint/complexity/noImportantStyles: reduced-motion should 
+apply to every animation and where has 0 specificity. !Important is required */
 @media (prefers-reduced-motion: reduce) {
   /* `::backdrop` is a descendant of nothing, so `*` does not reach it.
      Note this collapses durations, not delays (coding-standards). */
@@ -92,3 +94,4 @@
     scroll-behavior: auto !important;
   }
 }
+/* biome-ignore-end lint/complexity/noImportantStyles: as explained */

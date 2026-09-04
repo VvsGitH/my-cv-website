@@ -120,5 +120,13 @@ ADR-0012 owns the pipeline. The rules that follow from it:
 
 - **GitHub Action versions:** take the newest major that has had a patch release and a few weeks of soak. Never the majors released days ago and never patched.
 - VS Code + the official Astro extension.
-- Format with `prettier-plugin-astro`. `eslint-plugin-astro` optional.
+- **Formatting and linting are Biome** (ADR-0021), configured in `biome.jsonc`: `npm run lint`
+  to check, `npm run lint:fix` to apply. `biome.jsonc`, not `biome.json` — comments in a
+  `biome.json` make Biome fall back to its defaults **silently**.
+- **Biome formats the `.astro` template and its `<style>`, and sorts the frontmatter imports,
+  but does not format the frontmatter TypeScript.** Two flags are needed for even that much:
+  `html.experimentalFullSupportEnabled` and `html.formatter.enabled`. Both are experimental
+  and go away when Biome's HTML parser stabilises.
+- Exempt a rule in `biome.jsonc` scoped to the files that earn it, or with a `biome-ignore`
+  carrying its reason — never globally, and never a bare suppression.
 - Keep local images in `src/` and render with `astro:assets` `<Image />` (`alt` mandatory); `public/` only for files that must keep a stable URL.

@@ -1,11 +1,4 @@
-# CR
-
-## refactor completo della toolbar
-
-- la toolbar diventa un header sticky
-- nuove icone per light/dark mode -> sole e luna
-- il cambio lingua diventa un pulsante testuale "Passa a italiano"/"Switch to english"
-- nuova icona per il download
+# NEXT STEPS
 
 ## Command Bar
 

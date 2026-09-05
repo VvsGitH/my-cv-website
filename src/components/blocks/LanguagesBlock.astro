@@ -12,13 +12,12 @@ const { block } = Astro.props;
 <SectionHeading text={block.heading} />
 <dl class="languages">
   {block.entries.map((entry) => (
-      <div class="language">
+      <div
+        class="language"
+        style={`--fill: ${(entry.proficiency * 100).toFixed(1)}%`}
+      >
         <dt>{entry.name}</dt>
         <dd>{entry.level}</dd>
-        <div
-          class="bar"
-          style={`--fill: ${(entry.proficiency * 100).toFixed(1)}%`}
-        ></div>
       </div>
     ))}
 </dl>
@@ -47,7 +46,13 @@ const { block } = Astro.props;
       color: var(--color-text);
     }
 
-    .bar {
+    /* The bar restates the `dd` beside it — `proficiency` was read off the
+       reference bars, not measured apart from the CEFR label (ADR-0014) — so it
+       is drawn as generated content: nothing in the DOM to break the `dl`
+       content model, and nothing in the accessibility tree to announce a
+       percentage over the level text. */
+    .language::after {
+      content: '';
       grid-column: 1 / -1;
       height: var(--skill-bar-height);
       margin-block-start: var(--space-xs);

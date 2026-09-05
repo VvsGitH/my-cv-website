@@ -1,5 +1,5 @@
 ---
-import { Image } from 'astro:assets';
+import { Picture } from 'astro:assets';
 import profilePhoto from '../../assets/images/profile.png';
 import type { PhotoBlock } from '../../content/types';
 
@@ -16,7 +16,7 @@ const { block } = Astro.props;
 ---
 
 <div class="photo">
-  <Image src={profilePhoto} alt={block.alt} width={353} height={353} />
+  <Picture src={profilePhoto} format="webp" alt={block.alt} width={400} height={400} />
 </div>
 
 <style>

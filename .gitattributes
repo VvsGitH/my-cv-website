@@ -1,0 +1,17 @@
+# Line endings are LF everywhere, in the index and in the working tree.
+#
+# This overrides `core.autocrlf`, which Git for Windows sets to `true` in its
+# system config, so the rule travels with the repo instead of depending on how
+# each machine installed Git. `biome.jsonc` declares `lineEnding: "lf"` and
+# reads the working tree, so a CRLF checkout fails `npm run lint` on files
+# nobody touched.
+* text=auto eol=lf
+
+# The font sources and the OG reference art: never normalized, never diffed.
+*.woff2 binary
+*.ttf   binary
+*.otf   binary
+*.png   binary
+*.jpg   binary
+*.webp  binary
+*.pdf   binary

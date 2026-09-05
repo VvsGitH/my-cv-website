@@ -33,7 +33,7 @@ const year = new Date().getFullYear();
 
   <ul class="channels">
     <li>
-      <a href={getRelativeLocaleUrl(other)} lang={other} hreflang={other}>
+      <a href={getRelativeLocaleUrl(other)} lang={other} hreflang={other} data-astro-prefetch="">
         {ui[other].colophon.localeName}
       </a>
     </li>

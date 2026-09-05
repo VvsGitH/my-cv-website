@@ -131,7 +131,7 @@ export interface PrivacyBlock extends SectionBlock {
   statement: RichText;
   /** No date lives here — PrivacyBlock.astro dates the statement at build time. */
   place: string;
-  /** Set in a script font — never a scan of the real signature (ADR-0012). */
+  /** Set in a script font — never a scan of the real signature (ADR-0024). */
   signature: string;
 }
 

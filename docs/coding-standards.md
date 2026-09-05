@@ -104,11 +104,15 @@ Authored as Astro scoped `<style>`, no framework. See [Baseline table](research/
 
 ## Fonts
 
-ADR-0012 owns the pipeline. The rules that follow from it:
+ADR-0024 owns the reasoning, the declaration and the pipeline. The rules that follow:
 
-- Self-host, `@font-face`. Prefer one variable font to cut requests.
-- **Never `font-display: optional`** (determinism hazard for PDF capture) — use `block`/`swap` and gate capture on `document.fonts.ready`. Add `size-adjust` on the fallback to keep line breaks stable.
-- **Raw source faces live in `docs/assets/`, which is git-ignored; the generated `.woff2` live in `src/assets/`, which is committed.** `npm run fonts:subset` is manual and out-of-band — CI never runs it and never reads `docs/assets/`. Adding a face means running the subsetter and committing its output, or the build fails on a clean clone.
+- **The pipeline is three files, and stays three.** `fonts.config.mjs` declares the families and adapts that declaration (`toAstroFonts()`, `toSubsetTasks()`); `scripts/subset-fonts.mjs` is an Astro integration that **imports nothing from the project** and takes its tasks as input; `astro.config.mjs` is the entrypoint that wires the two.
+- Self-host, and **declare every face in `fonts.config.mjs`** — never an `@font-face` in a stylesheet. `<Font>` renders it, once per family, in every head the site has; `src/styles/fonts.css` maps the emitted variables onto role tokens.
+- **A new head means a new set of `<Font>` calls.** The variables exist only where the component renders, and an undefined one makes the whole `font-family` declaration invalid.
+- **Never depend on the CSS family name.** Astro appends a config hash to it, and the hash moves whenever the family's config does — no literal `font-family: 'JetBrains Mono'`, no assertion on the string. Assert on embedded PostScript names instead, as `tests/pdf.spec.ts` does.
+- **Never `font-display: optional`** (determinism hazard for PDF capture) — use `block`/`swap` and gate capture on `document.fonts.ready`. Astro generates the `size-adjust` fallbacks; the `fallbacks` list must end in a generic or it generates none.
+- **`src/assets/fonts/` holds the raw faces and only those.** The subsets are cut on every dev start and every build into `.astro/subset-fonts/`, and **nothing derived is ever committed or written back into `src/`** — a subset put where a source belongs round-trips silently and destroys the only copy. The build guards on it: a face that does not shrink is an error.
+- **Adding a face**: drop the source in `src/assets/fonts/<family>/`, add a variant in `fonts.config.mjs` — one place, the charset comes from its family — and, for a new family, give its `cssVariable` a role token. Nothing to run, nothing generated to commit.
 
 ## Accessibility
 

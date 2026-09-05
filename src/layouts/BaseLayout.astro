@@ -1,4 +1,5 @@
 ---
+import { Font } from 'astro:assets';
 import { getAbsoluteLocaleUrl } from 'astro:i18n';
 import type { Locale } from '../i18n/locale';
 import { meta } from '../i18n/meta';
@@ -24,16 +25,22 @@ const ogImage = new URL(`${import.meta.env.BASE_URL}og-${locale}.png`, Astro.sit
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <!-- All fonts and variants but the signature are present above the first fold -->
+    <Font cssVariable="--font-jetbrains-mono" preload />
+    <Font cssVariable="--font-atkinson" preload />
+    <Font cssVariable="--font-icomoon" preload />
+    <Font cssVariable="--font-primera-signature" />
+
     <title>{strings.title}</title>
     <meta name="description" content={strings.description} />
     <link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}favicon.svg`} />
 
+    <!-- Italian is the site's default Locale for reader with unsupported languages -->
     <link rel="canonical" href={canonical} />
     {alternates.map((alternate) => (
-        <link rel="alternate" hreflang={alternate} href={getAbsoluteLocaleUrl(alternate)} />
-      ))}
-    <!-- Italian is the site's default Locale, so it is also what a reader
-      whose language matches neither should land on. -->
+      <link rel="alternate" hreflang={alternate} href={getAbsoluteLocaleUrl(alternate)} />
+    ))}
     <link rel="alternate" hreflang="x-default" href={getAbsoluteLocaleUrl('it')} />
 
     <meta property="og:type" content="profile" />
@@ -42,29 +49,21 @@ const ogImage = new URL(`${import.meta.env.BASE_URL}og-${locale}.png`, Astro.sit
     <meta property="og:url" content={canonical} />
     <meta property="og:locale" content={strings.ogLocale} />
     {alternates
-        .filter((alternate) => alternate !== locale)
-        .map((alternate) => (
-          <meta property="og:locale:alternate" content={meta[alternate].ogLocale} />
-        ))}
+      .filter((alternate) => alternate !== locale)
+      .map((alternate) => (
+        <meta property="og:locale:alternate" content={meta[alternate].ogLocale} />
+      ))}
     <meta property="og:image" content={ogImage} />
     <meta property="og:image:width" content={String(ogCard.width)} />
     <meta property="og:image:height" content={String(ogCard.height)} />
     <meta property="og:image:alt" content={strings.ogImageAlt} />
     <meta name="twitter:card" content="summary_large_image" />
 
-    <!-- Inline and blocking, so the theme and the Mode are both on <html> before
-      the first paint. The keys mirror chrome/state.ts — change them in both.
-
-      The two defaults differ on purpose. Nobody has to be asked what light they
-      are sitting in, so the theme falls back to the OS; the Mode is a choice
-      about the document itself, and Paper Mode is what the site is for, so it
-      is the default at every width until the reader says otherwise (ADR-0017). -->
+    <!-- Setting the theme in a blocking way to avoid flashes. The default is based on the user OS -->
     <script is:inline>
       let storedTheme = null;
-      let storedMode = null;
       try {
         storedTheme = localStorage.getItem('cv-theme');
-        storedMode = localStorage.getItem('cv-mode');
       } catch {}
       const theme =
         storedTheme === 'light' || storedTheme === 'dark'
@@ -74,15 +73,23 @@ const ogImage = new URL(`${import.meta.env.BASE_URL}og-${locale}.png`, Astro.sit
             : 'light';
       document.documentElement.dataset.theme = theme;
       document.documentElement.style.colorScheme = theme;
+    </script>
+
+    <!-- Setting the mode in a blocking way to avoid flashes. The default is paper (ADR-0017). -->
+    <script is:inline>
+      let storedMode = null;
+      try {
+        storedMode = localStorage.getItem('cv-mode');
+      } catch {}
       document.documentElement.dataset.mode = storedMode === 'reading' ? 'reading' : 'paper';
     </script>
 
+    <!-- Define css layers: this must precede the imports or the minifier reorders it -->
     <style is:inline>
-      /* reset < base < components < print. This bare statement must precede
-         the imports, or the minifier reorders it (coding-standards). */
       @layer reset, base, components, print;
     </style>
   </head>
+
   <body>
     <main>
       <slot />

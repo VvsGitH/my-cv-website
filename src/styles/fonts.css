@@ -1,88 +1,37 @@
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: url('../assets/fonts/jetbrains/JetBrainsMono-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+/* Which face plays which role. The faces themselves are declared in
+   `fonts.config.mjs` and reach the page as the CSS variables below, emitted by
+   the `<Font>` components in the two heads this site has — `BaseLayout.astro`
+   and `pages/[locale]/og.astro`. A page that renders neither would leave these
+   variables undefined and every rule using them invalid, so a new head means a
+   new set of `<Font>` calls.
 
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: url('../assets/fonts/jetbrains/JetBrainsMono-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'JetBrains Mono';
-  src: url('../assets/fonts/jetbrains/JetBrainsMono-ExtraBold.woff2') format('woff2');
-  font-weight: 800;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Atkinson Hyperlegible';
-  src: url('../assets/fonts/atkinson/AtkinsonHyperlegible-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Atkinson Hyperlegible';
-  src: url('../assets/fonts/atkinson/AtkinsonHyperlegible-Bold.woff2') format('woff2');
-  font-weight: 700;
-  font-style: normal;
-  font-display: swap;
-}
-
-@font-face {
-  font-family: 'Atkinson Hyperlegible';
-  src: url('../assets/fonts/atkinson/AtkinsonHyperlegible-Italic.woff2') format('woff2');
-  font-weight: 400;
-  font-style: italic;
-  font-display: swap;
-}
-
-/* The signature's face (ADR-0012). */
-@font-face {
-  font-family: 'Primera Signature';
-  src: url('../assets/fonts/primera-signature/PrimeraSignature-Regular.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
+   Each `--font-<family>` variable Astro emits already carries the whole stack:
+   the real face, its generated metric-matched fallback, and the generic. So a
+   role token is one `var()` and nothing else — nothing here is written by hand
+   any more, which is the point of the move (ADR-0024). */
 
 :root {
-  /* The 'X fallback' faces are generated at build time by fontaine
-     (astro.config.mjs) — `local()` system faces carrying `size-adjust` and the
-     override trio, so their metrics match the real face. They have to be named
-     here by hand: fontaine appends itself to a literal `font-family`, and every
-     one of ours is a `var()` on these tokens. */
-
   /* The name and its subtitle. */
-  --font-name: 'JetBrains Mono', 'JetBrains Mono fallback', monospace;
+  --font-name: var(--font-jetbrains-mono);
   --font-weight-name: 800;
-  --font-subtitle: 'JetBrains Mono', 'JetBrains Mono fallback', monospace;
+  --font-subtitle: var(--font-jetbrains-mono);
   --font-weight-subtitle: 400;
 
   /* Section headings, entry titles, contact labels. */
-  --font-heading: 'JetBrains Mono', 'JetBrains Mono fallback', monospace;
+  --font-heading: var(--font-jetbrains-mono);
   --font-weight-heading: 800;
   --font-weight-subheading: 700;
 
   /* Employer / period lines and the Aside's prose. */
-  --font-display: 'Atkinson Hyperlegible', 'Atkinson Hyperlegible fallback', sans-serif;
+  --font-display: var(--font-atkinson);
   --font-weight-display: 400;
 
   /* Bullets, summaries and other dense prose. */
-  --font-body: 'Atkinson Hyperlegible', 'Atkinson Hyperlegible fallback', sans-serif;
+  --font-body: var(--font-atkinson);
   --font-weight-body: 400;
   --font-weight-body-strong: 700;
 
   /* The Privacy block's signature approximation only. */
-  --font-signature: 'Primera Signature', 'Primera Signature fallback', cursive;
+  --font-signature: var(--font-primera-signature);
   --font-weight-signature: 400;
 }

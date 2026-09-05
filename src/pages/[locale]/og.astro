@@ -1,4 +1,5 @@
 ---
+import { Font } from 'astro:assets';
 import type { GetStaticPaths } from 'astro';
 import Sheet from '../../components/structure/Sheet.astro';
 import { cv } from '../../content';
@@ -28,10 +29,15 @@ if (!header) {
     <meta charset="utf-8" />
     <title>{header.name} — link preview ({locale})</title>
     <meta name="robots" content="noindex" />
+
+    <!-- No `preload`, the capture waits on `document.fonts` -->
+    <Font cssVariable="--font-jetbrains-mono" />
+    <Font cssVariable="--font-atkinson" />
+    <Font cssVariable="--font-icomoon" />
+    <Font cssVariable="--font-primera-signature" />
+
+    <!-- Define css layers: this must precede the imports or the minifier reorders it -->
     <style is:inline>
-      /* Cascade layer order (lowest to highest precedence): 
-        reset < base < components < print. 
-        This bare statement must come first */
       @layer reset, base, components, print;
     </style>
   </head>

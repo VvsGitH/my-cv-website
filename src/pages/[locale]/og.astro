@@ -36,10 +36,8 @@ if (!header) {
     <Font cssVariable="--font-icomoon" />
     <Font cssVariable="--font-primera-signature" />
 
+    <!-- Define css layers: this must precede the imports or the minifier reorders it -->
     <style is:inline>
-      /* Cascade layer order (lowest to highest precedence): 
-        reset < base < components < print. 
-        This bare statement must come first */
       @layer reset, base, components, print;
     </style>
   </head>

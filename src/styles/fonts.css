@@ -8,7 +8,7 @@
    Each `--font-<family>` variable Astro emits already carries the whole stack:
    the real face, its generated metric-matched fallback, and the generic. So a
    role token is one `var()` and nothing else — nothing here is written by hand
-   any more, which is the point of the move (ADR-0022). */
+   any more, which is the point of the move (ADR-0024). */
 
 :root {
   /* The name and its subtitle. */

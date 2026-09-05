@@ -1,6 +1,6 @@
 # Spec: The text faces move to Astro's fonts API
 
-Status: shipped — ADR-0022
+Status: shipped — ADR-0024
 
 The four text faces (JetBrains Mono, Atkinson Hyperlegible, Primera Signature) are declared by hand in `src/styles/fonts.css` and given metric-matched fallbacks by `fontaine`, which this repo has to run as a PostCSS plugin (`scripts/fontaine-after-imports.mjs`) because its own Vite plugin runs at a stage where it sees nothing. Astro 7.3.1 ships a stable `fonts` config option and a `<Font>` component that does the same job in-pipeline, and adds the one thing the current arrangement has never had: `<link rel="preload">`.
 

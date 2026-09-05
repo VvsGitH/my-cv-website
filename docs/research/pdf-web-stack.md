@@ -84,7 +84,7 @@ Either way, run the headless render as a post-build Node script inside the same 
 
 ## Open questions / risks
 
-1. ~~**Garet license cost.**~~ **Resolved — by substitution, the option named here.** Garet, Now and Lato were all dropped for **JetBrains Mono** and **Atkinson Hyperlegible**, both SIL OFL, with the licence files committed beside the fonts (ADR-0020). Nothing in the stack needs buying. One residue: **Primera Signature**, the signature face, has no licence on record, and its full `.ttf` is now committed to a public repo — a smaller version of the same question, accepted knowingly.
+1. ~~**Garet license cost.**~~ **Resolved — by substitution, the option named here.** Garet, Now and Lato were all dropped for **JetBrains Mono** and **Atkinson Hyperlegible**, both SIL OFL, with the licence files committed beside the fonts (ADR-0024). Nothing in the stack needs buying. One residue: **Primera Signature**, the signature face, has no licence on record, and its full `.ttf` is now committed to a public repo — a smaller version of the same question, accepted knowingly.
 2. ~~**"Now" identity check.**~~ **Moot** — "Now" is no longer in the stack.
 3. **True byte-stability is version-locked.** Reproducibility holds only if the Chromium/Playwright/Puppeteer *and* qpdf versions are pinned; a browser upgrade can change subsetting/compression and thus bytes even with `--deterministic-id` + `SOURCE_DATE_EPOCH`. Add a CI check that re-renders and diffs the PDF.
 4. **Pixel-perfect screen-vs-PDF.** `page.pdf()` uses `print` media by default; if the live site's paper look lives under `@media screen`, either mirror those rules into `print` or `emulateMedia({ media: 'screen' })` before capture — otherwise the PDF and desktop rendering can diverge.

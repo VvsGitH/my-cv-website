@@ -1,14 +1,14 @@
 /* The rules for `icomoon-feather`, the glyph face that carries all the icons.
   The face itself is declared in `fonts.config.mjs` alongside the text families
-  and arrives as `--font-icomoon` (ADR-0022) — with nothing behind it and
+  and arrives as `--font-icomoon` (ADR-0024) — with nothing behind it and
   `font-display: block`, both for the same reason: a stand-in for a private-use
   codepoint draws the missing-glyph box.
 
   Three departures from what IcoMoon generates:
 
-   - the face is a subset of the original ttf font;
+   - the face is a subset of the original ttf font, cut at build time;
    - only the rules for glyphs that survive that subset are kept. Adding an
-     icon is a codepoint in `scripts/subset-fonts.mjs` and a rule here.
+     icon is a codepoint in `ICONS` in `fonts.config.mjs` and a rule here.
    - The `speak`/`speak-as` descriptor IcoMoon emits is dropped: it is not a
      property (it belongs to `@counter-style`) and browsers ignore it. What keeps
      a private-use codepoint from being announced is `aria-hidden` on the span,

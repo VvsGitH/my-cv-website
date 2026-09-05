@@ -5,7 +5,7 @@ import type { Column, SheetNumber } from '../../src/content/types';
  * Paint, load every declared face, then hydrate. The font trap itself is ADR-0009;
  * the catch is for the generated fallback faces, which are `local()` system
  * faces — `"Atkinson Hyperlegible-<hash> fallback: Arial"` and friends — and so
- * may be absent on any given machine (ADR-0022).
+ * may be absent on any given machine (ADR-0024).
  */
 export async function openPainted(page: Page, route: string): Promise<void> {
   const response = await page.goto(route);

@@ -1,6 +1,6 @@
 # Spec: The subsetting moves into the build, and the derivatives stop being versioned
 
-Status: shipped — ADR-0023
+Status: shipped — ADR-0024
 
 Two changes that only make sense together. **The subsetting runs during the build** instead of being a command the owner remembers to run. And because it does, **the generated `.woff2` stop being committed at all**: the sources move into `src/assets/fonts/`, `src/assets/raw-fonts/` disappears, and the repo versions one asset per face instead of two.
 

@@ -1,9 +1,11 @@
 ---
 import type { GetStaticPaths } from 'astro';
-import Chrome from '../../components/chrome/Chrome.astro';
+import Colophon from '../../components/chrome/Colophon.astro';
+import Toolbar from '../../components/chrome/Toolbar.astro';
 import Document from '../../components/structure/Document.astro';
 import { cv } from '../../content';
-import { localePaths } from '../../i18n/locale';
+import { chromeLinks, localePaths } from '../../i18n/locale';
+import { ui } from '../../i18n/ui';
 import BaseLayout from '../../layouts/BaseLayout.astro';
 
 export const getStaticPaths = (() => localePaths()) satisfies GetStaticPaths;
@@ -11,6 +13,7 @@ const { locale } = Astro.props;
 ---
 
 <BaseLayout locale={locale}>
+  <Toolbar slot="masthead" toolbar={ui[locale].toolbar} links={chromeLinks(locale)} />
   <Document content={cv[locale]} />
-  <Chrome slot="chrome" content={cv[locale]} />
+  <Colophon slot="colophon" content={cv[locale]} />
 </BaseLayout>

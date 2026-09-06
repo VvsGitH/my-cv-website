@@ -45,11 +45,11 @@ The Mode where the same content reflows into a single column at reading type, ab
 _Avoid_: mobile view, responsive view
 
 **Toolbar**:
-The floating control cluster carrying the five actions — Mode, language, download, share, theme — at every tier. One shape per tier (ADR-0008): a vertical rail against the inline start when there is room beside the paper, centred on the viewport, and a horizontal row against the bottom edge on the narrow tier. Its container carries the chrome at both. The shape is a width; what the Mode control offers is not (ADR-0017). The site's only fixed chrome.
-_Avoid_: header, navbar, controls
+The bar at the top of the page carrying the five actions — Mode, language, download, share, theme — in six controls: the Mode at the inline start with a visible label, then the language pair, download and share, then the theme pair at the inline end, with a divider between the groups. One shape at every width and in both Modes (ADR-0025). It is sticky rather than fixed, so it is in flow and first in reading order, and it has no surface of its own — text and icons on the page background, in the Colophon's register, blurring what scrolls under it. Its one piece of chrome is the rule underneath, as wide as the content below it: two Sheets and their gutter when the pair shares a line, one Sheet and its gutters when it does not, and the paper's width even in Reading Mode, where the column is narrower. Nothing about it is a width any more, the Mode included.
+_Avoid_: navbar, controls
 
 **Colophon**:
-The block at the foot of the page, below the paper, carrying the five statements the site makes about itself — who owns the work, what regime the personal data on the page falls under, where the other Locale lives, how to reach the owner, and what accessibility standard the site is composed to. It speaks about the site, never about the person, which is what keeps it out of the PDF. It emits a `<footer>` because that is the correct landmark, and is the only Chrome in normal flow.
+The block at the foot of the page, below the paper, carrying the five statements the site makes about itself — who owns the work, what regime the personal data on the page falls under, where the other Locale lives, how to reach the owner, and what accessibility standard the site is composed to. It speaks about the site, never about the person, which is what keeps it out of the PDF. It emits a `<footer>` because that is the correct landmark, and is the Chrome that scrolls away with the paper — the Toolbar is in normal flow too since ADR-0025, but sticks to the top edge once it reaches it.
 _Avoid_: footer (the running foot repeated at the bottom of every printed page — this appears once, is not on the Sheets, and is excluded from the PDF), credits
 
 **Chrome**:

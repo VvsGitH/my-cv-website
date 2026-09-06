@@ -141,7 +141,7 @@ test.describe('print', () => {
     await openPainted(page, routeFor('it'));
     const light = await surfaces(page);
 
-    await page.locator('.toolbar-theme').click();
+    await page.locator('.toolbar-theme [aria-checked="false"]').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
     const dark = await surfaces(page);
     expect(dark.sheet, 'the Sheet should have gone dark on screen').not.toBe(light.sheet);
@@ -212,7 +212,7 @@ test.describe('the OG card', () => {
       // paper through the Toolbar rather than naming an oklch() literal here.
       await openPainted(page, routeFor(locale));
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
-      await page.locator('.toolbar-theme').click();
+      await page.locator('.toolbar-theme [aria-checked="false"]').click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'light');
       const paper = (await surfaces(page)).sheet;
 

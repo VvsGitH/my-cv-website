@@ -1,0 +1,63 @@
+---
+import type { ToolbarLinks } from '../../i18n/locale';
+import type { ToolbarStrings } from '../../i18n/ui';
+import LocaleSwitch from './LocaleSwitch.astro';
+import ModeSwitch from './ModeSwitch';
+import ShareButton from './ShareButton';
+import ThemeSwitch from './ThemeSwitch';
+import './toolbar.css';
+
+/** The Toolbar (CONTEXT.md) — a shell, with an island only where one is needed. */
+interface Props {
+  toolbar: ToolbarStrings;
+  links: ToolbarLinks;
+}
+
+const { toolbar, links } = Astro.props;
+---
+
+<div class="toolbar-sentinel" aria-hidden="true"></div>
+
+<header class="toolbar">
+  <div class="toolbar-rule">
+    <div class="toolbar-actions">
+      <ModeSwitch client:idle reading={toolbar.modeReading} paper={toolbar.modePaper} />
+
+      <LocaleSwitch locales={links.locales} label={toolbar.localeGroup} />
+
+      <span class="toolbar-divider" aria-hidden="true"></span>
+
+      <a
+        class="toolbar-button"
+        href={links.pdfHref}
+        download
+        title={toolbar.download}
+        aria-label={toolbar.download}
+      >
+        <span class="icon-download" aria-hidden="true"></span>
+      </a>
+
+      <ShareButton client:idle share={toolbar.share} shared={toolbar.shared} />
+
+      <span class="toolbar-divider" aria-hidden="true"></span>
+
+      <ThemeSwitch
+        client:idle
+        group={toolbar.themeGroup}
+        light={toolbar.themeLight}
+        dark={toolbar.themeDark}
+      />
+    </div>
+  </div>
+</header>
+
+<script>
+  const sentinel = document.querySelector('.toolbar-sentinel');
+  const bar = document.querySelector('.toolbar');
+
+  if (sentinel && bar) {
+    new IntersectionObserver((entries) => {
+      for (const entry of entries) bar.toggleAttribute('data-stuck', !entry.isIntersecting);
+    }).observe(sentinel);
+  }
+</script>

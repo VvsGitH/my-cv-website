@@ -57,6 +57,8 @@
 
   --sheet-ar: 210 / 297; /* A4 page: 210mm / 297mm */
   --sheet-width: 840px; /* multiple of 210 */
+  --sheets-gap: 1.5rem;
+  --sheets-pad: 0.5rem;
 
   --sheet-pad-inline-start: 1rem;
   --sheet-pad-inline-end: calc(var(--sheet-pad-inline-start) * 2);
@@ -84,18 +86,6 @@
   --space-m: 0.875rem; /* between units: heading -> content, Group -> Group */
   --space-s: 0.375rem; /* within a unit: title -> meta -> summary -> bullets */
   --space-xs: 0.25rem; /* within a unit: small gap between related text */
-
-  /* --- Chrome geometry. Shared rather than local because the Colophon has to keep
-     clear of the Toolbar and line up with the column (ADR-0008, ADR-0013). --- */
-
-  /* Chrome type, not paper type — one size for every Toolbar glyph. */
-  --font-size-button: 1.125rem;
-
-  --toolbar-button-size: 2.25rem;
-  /* The berth from the viewport edge; three things read it. */
-  --toolbar-inset: var(--space-m);
-  /* The Reading Mode row only, and it does not encode the control count (ADR-0008). */
-  --toolbar-block-size: calc(var(--toolbar-button-size) + 2 * var(--space-xs));
 
   /* Reading Mode's measure, and a ceiling only: the Mode is chosen rather than
      triggered, so a narrow phone gets Paper Mode unless it asks otherwise, and
@@ -158,29 +148,6 @@
   }
 }
 
-/* --- The reveal. A theme swap is a View Transition, and the UA's default crossfade
-   would dissolve the wave into a fade, so it is turned off and replaced by a circle
-   growing out of the control in `state.ts` (ADR-0016).
-
-   Layering the new snapshot over the old is what makes one animation serve both
-   directions: nothing ever contracts, the incoming theme simply uncovers the outgoing
-   one. No `screen and` needed, unlike the ladder above — a transition cannot start
-   during a print or a headless capture. --- */
-
-::view-transition-old(root),
-::view-transition-new(root) {
-  animation: none;
-  mix-blend-mode: normal;
-}
-
-::view-transition-old(root) {
-  z-index: 0;
-}
-
-::view-transition-new(root) {
-  z-index: 1;
-}
-
 /* Reading Mode (CONTEXT.md): the CV stops being paper, so the type stops being
    paper type. Everything above transcribes an A4 document; everything below is
    chosen for reading that document on a screen.
@@ -209,15 +176,4 @@ html[data-mode='reading'] {
 
   /* The portrait leads the compact header rather than filling a panel. */
   --photo-size: 10rem;
-}
-
-/* The Chrome's own tier, and the one thing down here that stays a width: a touch
-   target is a property of the device, never of the Mode the reader picked. */
-@media screen and (width < 53.5rem) {
-  :root {
-    /* Only the control grows — the --toolbar-block-size formula still holds. */
-    --toolbar-button-size: 2.75rem;
-    /* The one tier on the bottom edge, where a notched phone puts the home indicator. */
-    --toolbar-inset: calc(0.875rem + env(safe-area-inset-bottom, 0px));
-  }
 }

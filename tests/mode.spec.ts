@@ -56,7 +56,7 @@ test('carries the choice to the other Locale', async ({ page }) => {
   await openPainted(page, routeFor('it'));
   await readingMode(page);
 
-  await toolbar(page).locator('a[hreflang]').click();
+  await toolbar(page).locator('.toolbar-locale a[hreflang="en"]').click();
 
   await expect(page).toHaveURL(routeFor('en'));
   await expect(page.locator('html')).toHaveAttribute('data-mode', 'reading');
@@ -69,9 +69,9 @@ for (const locale of LOCALES) {
     const control = modeControl(page);
 
     // Both names ship and CSS picks, so the control is right pre-hydration (ADR-0003).
-    await expect(control).toHaveAccessibleName(strings.modeToReading);
+    await expect(control).toHaveAccessibleName(strings.modeReading);
     await readingMode(page);
-    await expect(control).toHaveAccessibleName(strings.modeToPaper);
+    await expect(control).toHaveAccessibleName(strings.modePaper);
   });
 }
 
@@ -149,7 +149,7 @@ test.describe('Reading Mode', () => {
     const asideInk = page.locator('.aside .block--about p').first();
     const light = await asideInk.evaluate((element) => getComputedStyle(element).color);
 
-    await toolbar(page).locator('.toolbar-theme').click();
+    await toolbar(page).locator('.toolbar-theme [aria-checked="false"]').click();
     await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
     // On paper the cream panel pins the light ramp (ADR-0015); there is no panel

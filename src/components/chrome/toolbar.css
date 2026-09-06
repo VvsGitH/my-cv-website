@@ -1,73 +1,225 @@
-/* The Toolbar's dressing (ADR-0008). A plain stylesheet, not a scoped `<style>`,
-   because Astro's scoping does not reach a `.tsx` island (coding-standards). */
+/* The Toolbar's dressing. A plain stylesheet, not a scoped `<style>`, because
+   Astro's scoping does not reach a `.tsx` island (coding-standards). */
 
 @layer components {
+  /* ---------------- TOOLBAR BASE ---------------- */
+
+  :root {
+    --toolbar-block-size: 2.875rem; /* Do not delete, used for scrolling management when sticky */
+
+    --toolbar-space-xs: 0.25rem;
+    --toolbar-space-s: 0.375rem;
+    --toolbar-space-m: 0.75rem;
+
+    --toolbar-action-size: 1.875rem;
+    --toolbar-toggle-size: 1.75rem;
+
+    --font-size-toolbar: 0.875rem;
+  }
+
   .toolbar {
-    /* The base shape is Paper Mode's vertical rail; Reading Mode flips it below
-       (ADR-0008). Sizes are tokens because the Colophon reserves this cluster's
-       berth and cannot be left to remember the numbers (ADR-0013). */
-    position: fixed;
-    inset-inline-start: var(--toolbar-inset);
-    inset-block-start: 50%;
-    translate: 0 -50%;
+    position: sticky;
+    inset-block-start: 0;
     z-index: 1;
+
+    min-block-size: var(--toolbar-block-size);
     display: flex;
-    flex-direction: column;
-    gap: var(--space-xs);
-    padding: var(--space-xs);
-    border-radius: 2px;
-    background-color: var(--color-aside-bg);
-    box-shadow: 0 0 8px oklch(0% 0 0 / 0.45);
-  }
+    justify-content: center;
+    backdrop-filter: blur(8px);
 
-  .toolbar-button {
-    display: grid;
-    place-items: center;
-    width: var(--toolbar-button-size);
-    height: var(--toolbar-button-size);
-    padding: 0;
-    border: 0;
-    border-radius: 2px;
-    background: none;
+    font-family: var(--font-body);
+    font-size: var(--font-size-toolbar);
     color: var(--color-heading);
-    font-size: var(--font-size-button);
-    cursor: pointer;
+
+    transition: box-shadow 150ms ease;
   }
 
-  .toolbar-anchor {
-    anchor-name: --toolbar-anchor;
+  .toolbar-rule {
+    position: relative;
+
+    --rule-one: min(var(--sheet-width), 100% - 2 * var(--sheets-pad));
+    --rule-two: calc(2 * var(--sheet-width) + var(--sheets-gap));
+    /* `+ 0.02px`: the residue is 0 at the threshold and `clamp()` would take the
+       MIN, and a whole pixel would claim the fit for the pixel below it too. */
+    /* `100000`, not 1000: 1000 yields a width between MIN and MAX — measured 1016px. */
+    --rule-fits: calc((100% - 2 * var(--sheets-pad) - var(--rule-two) + 0.02px) * 100000);
+
+    inline-size: calc(
+      clamp(var(--rule-one), var(--rule-fits), var(--rule-two)) +
+      2 *
+      var(--sheets-pad)
+    );
+
+    display: flex;
+    align-items: center;
+    padding: 0 var(--sheets-pad);
+  }
+
+  .toolbar-divider {
+    flex: none;
+    inline-size: 1px;
+    block-size: 1em;
+    background-color: var(--color-text);
+    margin-inline: var(--toolbar-space-m);
+  }
+
+  .toolbar-actions {
+    flex: 1;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: end;
+    gap: 0;
+  }
+
+  /* ---------------- TOOLBAR STICKY ---------------- */
+
+  .toolbar-sentinel {
+    block-size: 0;
+  }
+
+  .toolbar[data-stuck] {
+    box-shadow: 0 6px 8px -6px oklch(0% 0 0 / 0.45);
+  }
+
+  /* When the bar is sticky, a focused control may endup under the bar (WCAG 2.2 · 2.4.11).
+    This should prevent it */
+  :root {
+    scroll-padding-block-start: var(--toolbar-block-size);
+  }
+
+  /* ---------------- TOOLBAR ACTIONS ELEMENTS ---------------- */
+
+  .toolbar-mode,
+  .toolbar-button,
+  .toolbar-switch > * {
+    block-size: var(--toolbar-action-size);
+    min-inline-size: var(--toolbar-action-size);
+
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--toolbar-space-xs);
+
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: inherit;
+    cursor: pointer;
   }
 
   /* Gated: a tap otherwise leaves :hover stuck on the control last touched. */
   @media (hover: hover) {
-    .toolbar-button:hover {
+    :is(.toolbar-mode, .toolbar-button):hover {
       background-color: var(--color-aside-accent);
     }
   }
 
-  /* Both glyphs and both names ship; CSS picks, so the control is right before
-     hydration rather than after it (ADR-0003). The Mode's control works the same
-     way for the same reason, off `[data-mode]` instead (ADR-0017). */
-  .toolbar-theme .icon-sun,
-  .toolbar-theme .toolbar-theme-to-light {
-    display: none;
+  .toolbar-switch {
+    --switch-border-radius: 20px;
+    --switch-border-size: 1px;
+
+    position: relative;
+    display: grid;
+    grid-auto-flow: column;
+    grid-auto-columns: 1fr;
+    align-items: center;
+
+    border-radius: var(--switch-border-radius);
+    background-color: var(--color-main-bg);
   }
 
-  [data-theme='dark'] {
-    .toolbar-theme .icon-moon,
-    .toolbar-theme .toolbar-theme-to-dark {
-      display: none;
-    }
+  .toolbar-switch > * {
+    position: relative;
+    block-size: var(--toolbar-toggle-size);
+  }
 
-    .toolbar-theme .icon-sun,
-    .toolbar-theme .toolbar-theme-to-light {
-      display: block;
+  .toolbar-switch::before {
+    content: '';
+    position: absolute;
+    inset-block: 0;
+    inset-inline-start: 0;
+    inline-size: 50%;
+    border-radius: var(--switch-border-radius);
+    border: var(--switch-border-size) solid var(--color-text);
+    background-color: var(--color-aside-accent);
+    transition: translate 260ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  /* ---------------- TOOLBAR THEME SWITCH ---------------- */
+
+  [data-theme='dark'] .toolbar-theme::before {
+    translate: 100%;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    html:not([data-theme='light']) .toolbar-theme::before {
+      translate: 100%;
     }
   }
 
-  /* Paper Mode is the default, so the base state is "offers Reading Mode". With
-     JS off there is no `[data-mode]` at all and this is what remains — honest,
-     because the control cannot work then either. */
+  /* --- 
+   The animation of a circle growing out of the control in `chrome/ThemeSwitch.tsx` (ADR-0016).
+   The animation is started and configured in `chrome/ThemeSwitch.tsx -> revealFrom`.
+   Layering the new snapshot over the old is what makes one animation serve both
+   directions: nothing ever contracts, the incoming theme simply uncovers the outgoing
+   one. 
+  --- */
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+  ::view-transition-old(root) {
+    z-index: 0;
+  }
+  ::view-transition-new(root) {
+    z-index: 1;
+  }
+
+  /* ---------------- TOOLBAR LOCALE SWITCH ---------------- */
+
+  .toolbar-locale:has(> :last-child[aria-current])::before {
+    translate: 100%;
+  }
+
+  .toolbar-locale::before {
+    view-transition-name: lang-pill;
+  }
+  .toolbar-locale :first-child {
+    view-transition-name: lang-it;
+  }
+  .toolbar-locale :last-child {
+    view-transition-name: lang-en;
+  }
+
+  ::view-transition-group(lang-pill) {
+    animation-duration: 320ms;
+    animation-timing-function: cubic-bezier(0.2, 0.8, 0.2, 1);
+    z-index: 1;
+  }
+
+  /* The language labels should be above the pill or they will be covered during the transition */
+  ::view-transition-group(lang-it),
+  ::view-transition-group(lang-en) {
+    z-index: 2;
+  }
+
+  ::view-transition-old(lang-pill),
+  ::view-transition-new(lang-pill) {
+    animation: none;
+    mix-blend-mode: normal;
+  }
+
+  /* ---------------- TOOLBAR MODE BUTTON ---------------- */
+
+  .toolbar-mode {
+    padding-inline: var(--toolbar-space-s);
+    border-radius: 4px;
+    margin-inline-end: auto;
+  }
+
+  /* The default is paper mode */
   .toolbar-mode .icon-file-text,
   .toolbar-mode .toolbar-mode-to-paper {
     display: none;
@@ -85,18 +237,23 @@
     }
   }
 
-  /* Centred and cleared on the two axes the cluster is not using; both flip below. */
+  /* ---------------- TOOLBAR SHARE + TOAST ---------------- */
+
+  .toolbar-share {
+    anchor-name: --toolbar-anchor;
+  }
+
   .toolbar-toast {
     position: absolute;
     position-anchor: --toolbar-anchor;
-    inset-block-start: anchor(center);
-    inset-inline-start: calc(anchor(self-end) + var(--space-s));
-    translate: 0 -50%;
-    padding: var(--space-xs) var(--space-s);
+    inset-block-start: calc(anchor(end) + var(--toolbar-space-xs));
+    inset-inline-start: anchor(center);
+    translate: -50% 0;
+    padding: var(--toolbar-space-xs) var(--toolbar-space-s);
     border-radius: 2px;
     background-color: var(--color-heading);
     color: var(--color-main-bg);
-    font-size: var(--font-size-meta);
+    font-size: var(--font-size-toolbar);
     white-space: nowrap;
     /* Opacity, not `display`: a live region must stay in the a11y tree to announce. */
     opacity: 0;
@@ -107,39 +264,13 @@
   .toolbar-toast[data-visible] {
     opacity: 1;
   }
-
-  /* The narrow tier turns the cluster on its side against the bottom edge, and is
-     the only one needing a `scroll-padding` counterpart for WCAG 2.4.11 (ADR-0008,
-     which also records the rail's open overlap defect on the wide tiers).
-
-     A width, not the Mode (ADR-0017): the cluster answers to the device it is
-     being touched on, not to what the reader chose to look at. */
-  @media screen and (width < 53.5rem) {
-    .toolbar {
-      inset-block: auto var(--toolbar-inset);
-      flex-direction: row;
-      inset-inline-start: 50%;
-      translate: -50% 0;
-    }
-
-    /* Both axes flip with the cluster. */
-    .toolbar-toast {
-      inset-block-start: auto;
-      inset-block-end: calc(anchor(start) + var(--space-s));
-      inset-inline-start: anchor(center);
-      translate: -50% 0;
-    }
-
-    :root {
-      scroll-padding-block-end: calc(var(--toolbar-block-size) + 2 * var(--toolbar-inset));
-    }
-  }
 }
 
 @layer print {
   /* Chrome is never captured (CONTEXT.md). */
   @media print {
-    .toolbar {
+    .toolbar,
+    .toolbar-sentinel {
       display: none;
     }
   }

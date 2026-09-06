@@ -26,6 +26,8 @@ export async function openPainted(page: Page, route: string): Promise<void> {
   await expect(page.locator('astro-island[ssr]')).toHaveCount(0);
 }
 
+const phoneHeight = 812;
+
 /**
  * One viewport per case. `paper` is also the capture viewport (ADR-0009).
  * `reading` is a phone-sized viewport, not a Mode — since ADR-0017 the Mode is
@@ -37,7 +39,8 @@ export async function openPainted(page: Page, route: string): Promise<void> {
  * assertion that it is where the arithmetic says it is.
  */
 export const VIEWPORTS = {
-  reading: { width: 375, height: 812 },
+  narrowest: { width: 368, height: phoneHeight },
+  reading: { width: 375, height: phoneHeight },
   stacked: { width: 1024, height: 1400 },
   twoUp: { width: 2 * 840 + 24 + 2 * 8, height: 1200 },
   paper: { width: 1280, height: 1600 },

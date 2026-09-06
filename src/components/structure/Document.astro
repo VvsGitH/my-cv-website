@@ -35,26 +35,12 @@ const { content } = Astro.props;
     }
 
     .sheets {
-      /* Screen gutters, not paper geometry — and the whole of the arithmetic
-         below: they set both the width the paper is fitted to and, with the gap,
-         the width at which the pair stops sharing a line. Named rather than
-         repeated, and zeroed for print in the layer below. */
-      --sheets-gap: 1.5rem;
-      --sheets-pad: 0.5rem;
-
+      /* Screen gutters, not paper geometry */
       gap: var(--sheets-gap);
       padding: var(--sheets-gap) var(--sheets-pad);
 
-      /* A wrapping line, not a grid with a breakpoint: the pair goes side by side
-         exactly when there is room for it — 1704px of paper inside the two
-         gutters, so 1752px of viewport — and the wide tier stops being a number
-         somebody has to keep in step with the paper's own width. It was the one
-         boundary written down, and it is now emergent.
-
-         Declared for both media and taken back in `print` below rather than
-         fenced behind `@media screen`: the paper's printed geometry is then
-         stated in one place, instead of being whatever survived a guard. The
-         cost is that the print layer has to name what it cancels. */
+      /* A wrapping line, not a grid with a breakpoint.
+         Declared for both media and taken back in `print` below. */
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -124,6 +110,7 @@ const { content } = Astro.props;
         display: block;
         gap: 0;
         padding: 0;
+        margin: 0;
         justify-content: normal;
       }
 

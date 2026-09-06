@@ -3,7 +3,7 @@
 Prescriptive rules for this project. Each section links to the primary-source research it distills:
 [Astro](research/astro-coding-standards.md) · [Preact](research/preact-best-practices.md) · [Modern CSS](research/modern-css-best-practices.md).
 
-Versions in use: Astro 7.1.3, Preact 10.29.7 (+ `@preact/signals` 2.10), TypeScript, Node ≥22.12. **Preact stays on 10**: 11 is beta and outside `@astrojs/preact@6`'s peer range (ADR-0003).
+Versions in use: Astro 7.3, Preact 10.29, TypeScript, Node ≥26. **Preact stays on 10**: 11 is beta and outside `@astrojs/preact@6`'s peer range (ADR-0003). `@preact/signals` is **not** a direct dependency — it arrives only under `@astrojs/preact`, which declares its own (ADR-0025).
 
 ## Foundational principles
 
@@ -27,7 +27,7 @@ Versions in use: Astro 7.1.3, Preact 10.29.7 (+ `@preact/signals` 2.10), TypeScr
 - **Author in `.astro` by default.** `.astro` components ship zero client JS. Use Preact only where interactivity is genuinely required.
 - **Keep `output: 'static'`** (the default). No adapter. Never set `output: 'server'` for this project.
 - `src/pages/` is the only reserved directory — routes live there. Group the rest under `src/components/`, `src/layouts/`, `src/styles/` by convention. Local fonts and images go under `src/assets/`, matching Astro's own docs.
-- **Component tiers** (ADR-0004): `components/primitives/` — reusable, never autonomous; `components/blocks/` — the Blocks of `CONTEXT.md`, autonomous units of CV content, keeping the `Block` suffix; `components/structure/` — the Document → Sheet → Block spine; `components/chrome/` — everything that is not paper (Toolbar, Drawer). The cut is *autonomy on a Sheet*, not composition depth; deliberately not `atoms`/`molecules`/`organisms`.
+- **Component tiers** (ADR-0004): `components/primitives/` — reusable, never autonomous; `components/blocks/` — the Blocks of `CONTEXT.md`, autonomous units of CV content, keeping the `Block` suffix; `components/structure/` — the Document → Sheet → Block spine; `components/chrome/` — everything that is not paper (the Toolbar's shell and its four controls, the Colophon). The cut is *autonomy on a Sheet*, not composition depth; deliberately not `atoms`/`molecules`/`organisms`.
 - Type component props with `interface Props {}` and read via `Astro.props`; destructure with defaults.
 - Capitalize component names. Use `class:list` for conditional classes; `define:vars` to pass server values into `<style>`/`<script>`.
 - Config via `defineConfig` from `astro/config`. For GitHub Pages set `site` and `base`.
@@ -36,7 +36,7 @@ Versions in use: Astro 7.1.3, Preact 10.29.7 (+ `@preact/signals` 2.10), TypeScr
 
 ## Preact islands
 
-Preact is two hydrated client islands — the Toolbar and the Drawer (ADR-0003, amended by ADR-0007 and ADR-0008) — not the framework. See the [decision table](research/preact-best-practices.md#2-which-preact-10-apis-apply-to-this-projects-island--decision-table). `compat` is off, so import hooks from `preact/hooks` and treat the `preact/compat` surface as non-existent.
+Preact is three small hydrated client islands, all of them inside the Toolbar — `ModeSwitch`, `ShareButton` and `ThemeSwitch` (ADR-0003, amended by ADR-0007, ADR-0017 and ADR-0025) — not the framework. The Toolbar itself is an `.astro` shell, and two of its controls are deliberately not islands: the download is an `<a download>` with no logic, and the language pair is two links that must work with JavaScript off. See the [decision table](research/preact-best-practices.md#2-which-preact-10-apis-apply-to-this-projects-island--decision-table). `compat` is off, so import hooks from `preact/hooks` and treat the `preact/compat` surface as non-existent.
 
 **Do not use** (compat-only, or no payoff here):
 - `forwardRef`, `createPortal`, `memo`, `PureComponent`, `Suspense`, `lazy`, `startTransition`, `useDeferredValue`, `useSyncExternalStore` — all `preact/compat`, unavailable here. `useId` and `toChildArray` **are** in core; use them freely.
@@ -44,28 +44,25 @@ Preact is two hydrated client islands — the Toolbar and the Drawer (ADR-0003, 
 - `useMemo` / `useCallback` by default — add only for a proven hot path or to stabilise a ref callback.
 
 **Rules (non-negotiable):**
-- **Never accept `ref` as a component prop.** Preact 10 strips `ref` out of `props` in both `createElement` and the JSX runtime, so `function Drawer({ ref })` silently receives `undefined` — and `forwardRef` is compat-only. Put the `ref` on the DOM element inside the component that owns it, or pass a differently-named prop (`innerRef`).
+- **Never accept `ref` as a component prop.** Preact 10 strips `ref` out of `props` in both `createElement` and the JSX runtime, so `function ThemeSwitch({ ref })` silently receives `undefined` — and `forwardRef` is compat-only. Put the `ref` on the DOM element inside the component that owns it, or pass a differently-named prop (`innerRef`).
 - **Keep the island's first render deterministic** — no `window`, `localStorage`, `matchMedia`, `Date.now()` or `Math.random()`, **including inside a module-level `signal()` initializer**, which also runs during prerender. A mismatch does not warn: Preact stops hydrating and re-renders silently unless `preact/debug` is loaded, which is why the integration runs with `devtools: true`.
 - Follow the Rules of Hooks: top level only, component functions only. **House rule** — preactjs.com has no Rules-of-Hooks page, but Preact's hook state is index-based, so the discipline applies for the same reason it does in React.
 - Derive during render; put action logic in event handlers. Use `useEffect`/`useSignalEffect` **only** to sync with an external system (`matchMedia`, `localStorage`, theme class) and always return the matching cleanup.
 - An inline ref callback that returns no cleanup is called **twice** per re-render (once with `null`). Return a cleanup, or make the callback stable.
 - `onChange` here is the **native** `change` event, not React's input-time synthetic one — use `onInput` for text-ish inputs.
 - Reset state with `key`, not an Effect. List keys: stable and unique; never array index when order changes.
-- `useId` for any id that crosses the SSR/hydration boundary, never for keys. Nothing needs one yet. The Drawer's panel does point at an id — the `<h2>` its `aria-labelledby` names (ADR-0008) — but it is the literal `"drawer-title"`: `Chrome.astro` renders exactly one Drawer, so a singleton's id is deterministic by construction, and that is one fewer moving part than a generated id whose collision domain spans two independently-rendered islands. Reach for `useId` when a component can appear twice.
+- `useId` for any id that crosses the SSR/hydration boundary, never for keys. **Nothing needs one**, and the reason is worth keeping: every accessible name in the Chrome is carried by `aria-label` on the element itself rather than by an `aria-labelledby` pointing at a second one, so no id crosses the boundary at all. Reach for `useId` when a component can appear twice and has to name something by id.
 - `class` and `className` both work — pick one and be consistent. Astro's `class:list` is `.astro`-only; inside a `.tsx` build the string in JS.
 - **`useSignalEffect` re-runs before Preact commits to the DOM.** If the effect needs the committed node, use a plain `useEffect` over the rendered value instead — a hidden element swallows `focus()` in silence, with no error to find.
 - **A listener registered inside an open/close effect is dead for the first frame**, because the effect runs after the paint. Register on mount and read the signal when it fires. Found by a test that pressed Escape promptly, which is also how an impatient reader behaves.
-- **`src/i18n/ui.ts` is handed whole to an island as a prop**, so everything in it is serialized into both pages' HTML. Page-level strings go in the sibling `meta.ts`, not in `ui.ts`.
+- **`src/i18n/ui.ts` feeds island props**, so every string it holds that reaches an island is serialized into both pages' HTML. Page-level strings go in the sibling `meta.ts`, not in `ui.ts`.
 
-**State** — signals are the island's one state API ([why](research/preact-best-practices.md#45-verdict-on-the-prescriptive-rule-signals-for-shared-usestate-for-local)):
-- `signal()` at module scope for state that more than one component reads (the Drawer's open state: the Toolbar opens it, and the Drawer writes it back from the `<dialog>`'s `close` event — the one funnel every way out passes through); `useSignal()`/`useComputed()` inside a component for state that lives and dies there. A module-level signal is shared by every instance of a component — the point for the former, a bug for the latter.
-- Assign a **new** value: a signal does not update when assigned a value equal to its current one, so mutating an object in place and re-assigning the same reference is a no-op.
-- A module-level `effect()` is created once at module scope, with its cleanup — never inside a component body. Signals are lazy outside the component tree: a `computed` nobody reads never recomputes.
-- Rendering a signal directly in JSX updates the text node without re-rendering the component; prefer it where it reads naturally.
-- **One sanctioned exception to the rule above:** `linkCopied` is a module-level signal despite living in a single Toolbar. Moving it into the component would push its 2s revert timer into a `useRef` with a cleanup, for an island that never unmounts — more machinery for identical behaviour. Do not "clean it up".
-- This departs from Astro's documented answer for state shared *between* islands (Nano Stores), and does so deliberately (ADR-0007): both islands import `components/chrome/state.ts`, so Vite emits it once as a chunk they share and the signal is one object at runtime. That is a build-output fact, not a language guarantee — **check it against `dist/_astro/` when the island count or the bundler config changes**, and keep an E2E test that drives one island from the other.
+**State** — **there is none that crosses a component**, and there is no state library. Every island owns what it needs and nothing else ([why signals would be the choice if that changed](research/preact-best-practices.md#45-verdict-on-the-prescriptive-rule-signals-for-shared-usestate-for-local)):
+- **The DOM is the source of truth for the theme and the Mode.** `<html data-theme>` and `<html data-mode>` are written pre-paint by `BaseLayout.astro`'s two `is:inline` scripts, read back by the island that flips them, and everything else — which glyph, which label, where a pill sits — is chosen by CSS off those attributes (ADR-0003, ADR-0017). Do not mirror either into a store. `ThemeSwitch` keeps a `useState` that *follows* `data-theme` for its own `aria-checked`; that is a mirror of the attribute, not a second truth.
+- **`useState` for anything local.** `ShareButton`'s `copied` flag is `useState` with the 2s revert timer in a `useRef` and a cleanup effect. This used to be a module-level signal with a written-down exemption; the exemption's reason was that two islands shared a `state.ts` module, and neither the second island nor `state.ts` exists (ADR-0025).
+- **`@preact/signals` is not installed as a direct dependency.** If shared state ever becomes real, read the research note above before reaching for Nano Stores — but first check whether an attribute on `<html>` will do, because it has so far.
 
-**Hydration directive:** `client:idle`, with the theme and the Mode applied pre-paint by an `is:inline` script outside the island (Astro's own tutorial pattern). **Not** `client:media` — no control is breakpoint-dependent, and since ADR-0017 not even the Mode's is. **Not** `client:only` — the Toolbar would be absent from the static HTML and pop in.
+**Hydration directive:** `client:idle` on all three islands, with the theme and the Mode applied pre-paint by `BaseLayout.astro`'s `is:inline` scripts outside them (Astro's own tutorial pattern). **Not** `client:media` — no control is breakpoint-dependent, and since ADR-0017 not even the Mode's is. **Not** `client:only` — the bar has to be in the static HTML, correct and complete, or it pops in and stops working with JavaScript off. The accepted cost of `client:idle` is stated in ADR-0025: `ThemeSwitch`'s `aria-checked` is wrong until it hydrates, because nothing writes it pre-paint.
 
 ## TypeScript
 
@@ -80,7 +77,7 @@ Preact is two hydrated client islands — the Toolbar and the Drawer (ADR-0003, 
 
 Authored as Astro scoped `<style>`, no framework. See [Baseline table](research/modern-css-best-practices.md#9-baseline-availability-summary) before using newer features.
 
-**Two exceptions, and only these two:** an island's own markup lives in a `.tsx`, which Astro's scoping does not reach — dress it from a plain stylesheet colocated with the island (`components/chrome/drawer.css`), wrapped in `@layer components` so it lands in the same cascade as the paper. And `src/styles/icons.css`, which pairs a font resource with the glyph classes that use it and has no single owning component. Nothing else earns a global stylesheet.
+**Two exceptions, and only these two:** an island's own markup lives in a `.tsx`, which Astro's scoping does not reach — dress it from a plain stylesheet colocated with the island (`components/chrome/toolbar.css`), wrapped in `@layer components` so it lands in the same cascade as the paper. That file also owns the Toolbar's own geometry tokens, declared on `:root` inside its layer rather than in `tokens.css` — a token with one reader belongs beside it, and `tokens.css` arrives in `layer(base)`, so a Toolbar name would win a collision either way (ADR-0025). And `src/styles/icons.css`, which pairs a font resource with the glyph classes that use it and has no single owning component. Nothing else earns a global stylesheet.
 
 **Three cascade traps, each of which fails silently:**
 - The bare `@layer reset, base, components, print;` statement must come **before** the `@import` lines. Placed after them, the production CSS minifier hoists it in a way that reorders the effective layer precedence — and the failure is **minifier-only**, so dev looks correct and the built site does not.
@@ -117,7 +114,8 @@ ADR-0024 owns the reasoning, the declaration and the pipeline. The rules that fo
 ## Accessibility
 
 - Style focus with `:focus-visible`; never remove an outline without a replacement.
-- Collapse transitions under `@media (prefers-reduced-motion: reduce)`. **`reset.css` collapses transition *durations*, not *delays*** — a `transition-delay` survives it and has to be zeroed separately.
+- Collapse transitions under `@media (prefers-reduced-motion: reduce)`. **`reset.css`'s blanket collapse has two holes, and both are silent.** It collapses transition and animation *durations*, not *delays* — a `transition-delay` survives it and has to be zeroed separately. And **it reaches no pseudo-element at all**: `:is()`/`:where()` cannot contain one and their selector lists are *forgiving*, so `:where(*, *::before, *::after, *::backdrop)` parses down to `:where(*)` (the same defect truncates the file's `box-sizing` rule). Anything animated or transitioned on a `::before` needs its own carve-out beside it — `toolbar.css` carries one, and it is load-bearing rather than redundant. Tracked in `docs/issues/reset-pseudo-elements/`.
+- A **cross-document** View Transition is opted out of in CSS, not in JavaScript: `@view-transition { navigation: none }` inside the reduced-motion block. A **same-document** one has to be gated in JavaScript, because `reset.css` reaches neither `::view-transition-*` nor `Element.animate()` (ADR-0016).
 - Every `<Image>` needs meaningful `alt`. Respect user font scaling (type in `rem`/`em`).
 
 ## Tooling

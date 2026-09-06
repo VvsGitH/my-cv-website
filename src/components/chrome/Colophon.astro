@@ -99,17 +99,6 @@ const year = new Date().getFullYear();
         max-width: var(--reading-column-max);
       }
     }
-
-    /* Reserves the rectangle the Toolbar floats in, rather than indenting out of
-       the column to dodge it (ADR-0013). A width, not the Mode: what has to be
-       cleared is the horizontal row against the bottom edge, and that shape is
-       the narrow tier's at either Mode. The rail the wide tiers get instead
-       stands beside the paper, clear of normal flow. */
-    @media screen and (width < 53.5rem) {
-      .colophon {
-        padding-block-end: calc(var(--toolbar-block-size) + var(--toolbar-inset) + var(--space-xl));
-      }
-    }
   }
 
   @layer print {

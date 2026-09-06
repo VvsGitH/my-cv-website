@@ -1,0 +1,24 @@
+---
+import type { ToolbarLinks } from '../../i18n/locale';
+
+interface Props {
+  locales: ToolbarLinks['locales'];
+  label: string;
+}
+
+const { locales, label } = Astro.props;
+---
+
+<nav class="toolbar-switch toolbar-locale" aria-label={label}>
+  {locales.map(({ locale, href, current }) => (
+    <a
+      href={href}
+      lang={locale}
+      hreflang={locale}
+      aria-current={current ? 'page' : undefined}
+      data-astro-prefetch=""
+    >
+      {locale.toLocaleUpperCase()}
+    </a>
+  ))}
+</nav>

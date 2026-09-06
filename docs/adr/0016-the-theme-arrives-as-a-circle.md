@@ -78,3 +78,44 @@ the standards already record for `transition-delay` (`coding-standards.md`), one
   an init script rather than by timing anything. Note that `test.use({ reducedMotion: 'reduce' })`
   does **not** reach `matchMedia` in this Playwright version, and would have asserted the gate
   against a query that is never true; `page.emulateMedia` does.
+
+## Amended
+
+**2026-09-06.** The Toolbar became a sticky bar at the top of the page (ADR-0025). The decision
+above holds whole — the swap is still a View Transition, the circle still grows from
+`event.currentTarget.getBoundingClientRect()`, the reduced-motion gate is still in JavaScript for
+the reason given, and one animation still serves both directions. Four sentences of it are now
+false, and all four are about *where* things are rather than *what* they do.
+
+- **The paragraph on the circle's two origins describes a Toolbar that no longer exists.** It reads
+  *"a rail at the inline start in Paper Mode, so the wave crosses diagonally, and a row on the
+  bottom edge in Reading Mode, so it opens upward"*. Neither shape exists. There is one bar, at the
+  top of the page in both Modes, and the wave now opens **downward** from wherever in that row the
+  activated half of the theme pair sits — the inline end at every width. The radius arithmetic is
+  untouched and is what makes that work without a second case: it is still the smallest circle that
+  covers the screen from wherever the control happens to be.
+- **The three `::view-transition-*(root)` rules moved to `src/components/chrome/toolbar.css`.**
+  This ADR argues them into `tokens.css` by name — *"Not `toolbar.css`: … the root snapshot tree is
+  the document's, not the Toolbar's"* — and the owner moved them anyway, so that the whole reveal,
+  the circle's own narrative comment included, sits beside the component that starts it. The
+  argument was about ownership, not about behaviour: both files are plain stylesheets in the same
+  cascade, and the move puts the rules in `components` where `global.css`'s
+  `@import … layer(base)` had them in `base`. Nothing measured changed — nothing else in the tree
+  styles a root snapshot, so there is no rule for the later layer to start winning against. Read
+  the paragraph as a record of why it was once the other way.
+- **`state.ts` is deleted; `revealFrom`, `applyTheme` and `swapTheme` live in
+  `chrome/ThemeSwitch.tsx`.** Every reference to `state.ts` and to `Toolbar.tsx` above should be
+  read as pointing there.
+- **`applyTheme` takes its target instead of toggling, and the sweep is 500ms rather than 620.** A
+  radiogroup selects a value; it does not flip one, and pressing the already-checked half is a
+  no-op that starts no transition at all. The easing is `ease-in`. `toolbar.spec.ts` still pins the
+  gate from both ends, and its `page.emulateMedia` warning still applies.
+
+**One thing this ADR did not have to consider and now does:** the document opts into
+**cross-document** View Transitions, `@view-transition { navigation: auto }` in `reset.css`, for the
+language pill's travel between the two Locales (ADR-0025). The `animation: none` on both root
+snapshots above is what keeps the two from colliding — a navigation gets no root crossfade either,
+so the pill is the only thing that moves — and the reduced-motion opt-out for that one is
+`@view-transition { navigation: none }` in CSS, not the JavaScript gate this ADR argues for. The
+gate here is still in JavaScript, and still for the reason stated: `reset.css` reaches neither
+`::view-transition-*` nor `Element.animate()`.

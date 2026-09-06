@@ -92,7 +92,7 @@ for (const locale of LOCALES) {
       );
       expect(light.ratio, 'the Colophon against the light page').toBeGreaterThanOrEqual(4.5);
 
-      await toolbar(page).locator('.toolbar-theme').click();
+      await toolbar(page).locator('.toolbar-theme [aria-checked="false"]').click();
       await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
 
       const dark = await readability(page);
@@ -121,9 +121,8 @@ for (const locale of LOCALES) {
 }
 
 test.describe('Reading Mode', () => {
-  // The narrowest column the site targets (Document.astro's `min-width`), which
-  // is where the Toolbar's berth is tightest.
-  test.use({ viewport: { width: 368, height: VIEWPORTS.reading.height } });
+  // The narrowest column the site targets (Document.astro's `min-width`).
+  test.use({ viewport: VIEWPORTS.narrowest });
 
   test.beforeEach(async ({ page }) => {
     await openPainted(page, routeFor('it'));
@@ -145,26 +144,5 @@ test.describe('Reading Mode', () => {
       await contentLeft(page.locator('.sheets')),
       1,
     );
-  });
-
-  test('leaves the Toolbar its berth at the foot of the scroll', async ({ page }) => {
-    await expect(toolbar(page)).toBeVisible();
-
-    const covered = await page.evaluate(() => {
-      const strip = document.querySelector('.toolbar')!.getBoundingClientRect();
-      return [...document.querySelectorAll('footer :is(p, li)')]
-        .filter((element) => {
-          const box = element.getBoundingClientRect();
-          return (
-            box.left < strip.right &&
-            box.right > strip.left &&
-            box.top < strip.bottom &&
-            box.bottom > strip.top
-          );
-        })
-        .map((element) => element.textContent?.trim().slice(0, 40) ?? '');
-    });
-
-    expect(covered, 'the Toolbar floats over these lines').toEqual([]);
   });
 });

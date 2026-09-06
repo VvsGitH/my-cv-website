@@ -77,9 +77,21 @@
   color: inherit;
 }
 
+:where(button) {
+  border: none;
+  background: none;
+  text-align: inherit;
+  margin: 0;
+  padding: 0;
+}
+
 :focus-visible {
   outline: 2px solid var(--color-text);
   outline-offset: 2px;
+}
+
+@view-transition {
+  navigation: auto;
 }
 
 /* biome-ignore-start lint/complexity/noImportantStyles: reduced-motion should 
@@ -92,6 +104,10 @@ apply to every animation and where has 0 specificity. !Important is required */
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
     scroll-behavior: auto !important;
+  }
+
+  @view-transition {
+    navigation: none;
   }
 }
 /* biome-ignore-end lint/complexity/noImportantStyles: as explained */

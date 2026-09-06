@@ -12,7 +12,7 @@ Vito's CV exists only as a static PDF made in Canva. He can't share it as a live
 
 ## Solution
 
-A minimal website whose only job is to present the CV as sheets of paper and to download it as a PDF. It shows the CV as two A4 **Sheets** — two side by side on wide screens, stacked on medium screens, and one Sheet scaled to fit the device on a phone. That is **Paper Mode**, and it is what a first visit gets at every width. A reader who would rather read than look switches to **Reading Mode**, where the same content reflows into one column at reading type; the choice is theirs and it is remembered (ADR-0017). A floating **Toolbar** offers five actions: switch Mode, switch language (Italian default / English), download the PDF, share (copy URL), and toggle a light/dark background. The downloadable PDF is pre-rendered at build time from the exact same page, one file per **Locale**, so it is byte-stable and pixel-identical to the desktop rendering. Below the paper sits the **Colophon**, the one piece of Chrome in normal flow: five small statements the *site* makes about itself — copyright, the data regime the page falls under, the other Locale, the owner's channels, and the accessibility standard it is composed to. Nothing else frames the paper, and nothing the Colophon says reaches the PDF (ADR-0013).
+A minimal website whose only job is to present the CV as sheets of paper and to download it as a PDF. It shows the CV as two A4 **Sheets** — two side by side on wide screens, stacked on medium screens, and one Sheet scaled to fit the device on a phone. That is **Paper Mode**, and it is what a first visit gets at every width. A reader who would rather read than look switches to **Reading Mode**, where the same content reflows into one column at reading type; the choice is theirs and it is remembered (ADR-0017). A **Toolbar** sticky at the top of the page offers five actions: switch Mode, switch language (Italian default / English), download the PDF, share (copy URL), and toggle a light/dark theme (ADR-0025). The downloadable PDF is pre-rendered at build time from the exact same page, one file per **Locale**, so it is byte-stable and pixel-identical to the desktop rendering. Below the paper sits the **Colophon**: five small statements the *site* makes about itself — copyright, the data regime the page falls under, the other Locale, the owner's channels, and the accessibility standard it is composed to. Nothing else frames the paper, and nothing the Colophon says reaches the PDF (ADR-0013).
 
 ## User Stories
 
@@ -57,7 +57,7 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 ## Implementation Decisions
 
 ### Stack
-- **Astro** (static output) + **one Preact island**, the Toolbar — see ADR-0003, as amended by ADR-0007, ADR-0008 and ADR-0017, which deleted the second. One component tree is the single source of truth for both the live page and the PDF-captured page.
+- **Astro** (static output) + **three small Preact islands**, all of them inside the Toolbar — see ADR-0003, as amended by ADR-0007, ADR-0017 and ADR-0025. The Toolbar itself is an `.astro` shell; nothing on the paper hydrates. One component tree is the single source of truth for both the live page and the PDF-captured page.
 - **Playwright** headless Chromium for the build-time PDF — see ADR-0001.
 - Deployed static to **GitHub Pages** via **GitHub Actions**, at the default `github.io` URL under base `/my-cv-website/`.
 
@@ -77,11 +77,11 @@ A minimal website whose only job is to present the CV as sheets of paper and to 
 | Token | Value | Use |
 |---|---|---|
 | `--color-heading` | Name, section headings |
-| `--color-text` | Body copy |
+| `--color-text` | Body copy, the focus ring, and the **1px border on the Toolbar's pills** — the fill is ~1.1–1.6:1 against what it sits on, so the border is what carries WCAG 2.2 · 1.4.11 (ADR-0025) |
 | `--color-signature` | Signature script on the privacy statement |
-| `--color-aside-bg` | Aside panel, and the Toolbar's own surface |
-| `--color-aside-accent` | Disc behind the photo, Toolbar button hover; the OG card's subtitle reads its light end |
-| `--color-main-bg` | Main column / Sheet base |
+| `--color-aside-bg` | Aside panel |
+| `--color-aside-accent` | Disc behind the photo, Toolbar button hover, and the fill of the Toolbar's two pills; the OG card's subtitle reads its light end |
+| `--color-main-bg` | Main column / Sheet base, and the track under each Toolbar pill |
 | `--color-page-bg` | The page behind the Sheets — a surface of its own, never the paper's colour; in Reading Mode, where there are no Sheets left, it is the reading column's ground too |
 
 - **Every one of those tokens is themed**, each carrying a `-light` / `-dark` pair behind it. The pairs are raw material: no component names one, with a single documented exception in `og.astro`, whose card is a fixed dark ground regardless of theme. One ladder on `:root` rebinds all seven, and nothing anywhere in the tree re-declares a semantic token locally — the Aside's panel and the Toolbar used to, and stopped when the panel became themed (ADR-0019).
@@ -97,20 +97,22 @@ The Mode is the reader's choice and is never inferred from the viewport (ADR-001
 
 **Paper Mode** — the default at every width. Neither of its two thresholds is declared: the Sheets sit on a wrapping flex line and each Sheet fits itself, so both fall out of the paper's own 840px and the 1.5rem gutters.
 - **From 1752px** — two Sheets side by side, with page padding/gap (the "grid of pages"). That is 2 × 840px plus the gap and both gutters, and it is where the line stops wrapping.
-- **888px–1752px** — Sheets stacked one per row at the full 840px box in A4's 210/297 ratio. One rendering is the reference rendering; resizing is the browser's zoom to offer.
-- **Below 888px** — one Sheet, `zoom`ed to the width left inside the gutter. ADR-0006 dropped scale-to-fit in favour of fidelity; ADR-0017 puts back the half of it a phone needs, capped at `min(1, …)` so the paper is never scaled *up*. Physical millimetres still apply to the PDF, not the screen.
+- **840px–1752px** — Sheets stacked one per row at the full 840px box in A4's 210/297 ratio. One rendering is the reference rendering; resizing is the browser's zoom to offer. The designed 8px gutter either side only reappears from **856px**; between 840 and 856 the Sheet is unscaled and eats into it, without ever scrolling sideways.
+- **Below 840px** — one Sheet, `zoom`ed to fit the viewport. ADR-0006 dropped scale-to-fit in favour of fidelity; ADR-0017 puts back the half of it a phone needs, capped at `min(1, …)` so the paper is never scaled *up*. Physical millimetres still apply to the PDF, not the screen.
 
 **Reading Mode** — chosen from the Toolbar, at any width: the same components reflow to a single column at reading type, bounded to a 75ch measure and centred, on the page surface rather than the paper's (there are no Sheets left to be a surface against). The column has no minimum width: the Mode has to survive a 320px phone. Aside and Main Blocks interleave by `readOrder`; nothing is hidden and nothing is rendered twice. A4 is dropped here. On a phone this is also the site's answer to WCAG 2.2 · 1.4.4.
 
 - Paper styles must be identical under `screen` and `print` media so the PDF equals the desktop rendering. Reading Mode styles must not reach print: the print layer takes the paper back explicitly, because the Mode is remembered and a reader may print from it.
 
 ### Toolbar
-Floating cluster, five actions at every tier. It takes one shape per tier — a vertical rail against the inline start where there is room beside the paper, a horizontal row against the bottom edge on the narrow tier (ADR-0008); the shape is a width, the Mode it offers is not. The five actions:
-0. **Mode** — Paper/Reading toggle. Persisted in `localStorage` and applied pre-paint, like the theme.
-1. **Language** — toggle EN/IT (navigates to the equivalent route in the other Locale).
-2. **Download** — serves the current Locale's pre-rendered PDF.
-3. **Share** — copies the current page URL to the clipboard, with a brief confirmation.
-4. **Theme** — light/dark toggle. Dark repaints the page behind the Sheets *and* the paper itself, in that order of depth: the page goes to a mid blue, the Sheet to the darker navy under it, and the inks go from near-black to near-white with them (ADR-0015). What the theme never touches is the cream — the Aside's panel in Paper Mode, and the Toolbar at every tier, keep their surface and their dark ink in both themes. In Reading Mode there is no panel, so the Aside's ink rejoins the theme with everything else (ADR-0017). The PDF and the OG card are unaffected, because the whole ladder lives inside `@media screen`. Persist choice in `localStorage`, applied pre-hydration to avoid flash.
+A sticky bar at the top of the page, one shape at every width and in both Modes (ADR-0025). It has no surface of its own — text and icons on the page background, in the Colophon's register, blurring what scrolls under it — and its one piece of chrome is the rule underneath, as wide as the content below it and derived from `--sheet-width` rather than written down. It takes a shadow only while it is holding the top edge, which costs the site's one `IntersectionObserver`. The five actions arrive as six controls, in this order: the Mode at the inline start, then the language pair, download and share, then the theme pair at the inline end, with a divider between the groups.
+0. **Mode** — Paper/Reading toggle, and the one control with a **visible label** as well as a glyph, since it is what a phone visitor has to find (WCAG 2.2 · 1.4.4). Its visible text is its accessible name, so it carries neither `title` nor `aria-label` (2.5.3). Persisted in `localStorage` and applied pre-paint, like the theme.
+1. **Language** — **both Locales written out**, `IT` / `EN`, as two `<a hreflang lang>` with `aria-current="page"` on the one being read. Links, not buttons: they navigate, they work with JavaScript off, and they are crawled. Switching is a cross-document View Transition, so the pill marking the current Locale travels between the two documents instead of cutting.
+2. **Download** — serves the current Locale's pre-rendered PDF. Icon-only, so it keeps both `title` and `aria-label`.
+3. **Share** — copies the current page URL to the clipboard, with a brief confirmation in a `role="status"` toast. Icon-only, same pair of attributes.
+4. **Theme** — **both themes offered**, `sun` / `moon`, as a `role="radiogroup"` with two `role="radio"` and a roving tabindex: one tab stop, arrows within it. Dark repaints the page behind the Sheets *and* the paper itself, in that order of depth: the page goes to a mid blue, the Sheet to the darker navy under it, and the inks go from near-black to near-white with them (ADR-0015). Since ADR-0019 the cream goes with them — the Aside's panel is an ordinary themed pair, and the bar has no surface of its own to pin. The PDF and the OG card are unaffected, because the whole ladder lives inside `@media screen`. Persist choice in `localStorage`, applied pre-paint to avoid flash.
+
+Both pairs are the same mechanism and are marked up differently on purpose (ADR-0025): a track with a pill that slides between two halves, placed by CSS off `[data-theme]` and off `aria-current`, so both are right in the static HTML. The pill's fill cannot mark the selection on its own — it measures ~1.1–1.6:1 against what it sits on — so it carries a **1px border in `--color-text`**, which is what answers WCAG 2.2 · 1.4.11.
 
 ### Content model
 - **TypeScript data modules**, one set per Locale, against a shared typed schema. Each Block carries `paperSheet`, `paperColumn` and `readOrder` — one position per Mode. The compiler rejects invalid Sheet/column values, and the build rejects a `readOrder` that is not a permutation of `1..n`, or a Continuation that does not read immediately after the Block it resumes.
@@ -133,11 +135,11 @@ Floating cluster, five actions at every tier. It takes one shape per tier — a 
 **ADR-0010 owns this.** A good test here asserts externally observable behavior of the built artifact — never component internals. Coverage:
 
 - **Content & structure:** load `/` (IT) and `/en/`; assert the expected Blocks render in the correct Sheet and column, and that Italian vs English text differs where expected.
-- **Toolbar behavior:** language toggle navigates to the equivalent route in the other Locale; theme toggle changes the background behind the Sheets while the Sheet surface stays white; share writes the current URL to the clipboard; download links to the correct per-Locale PDF filename.
-- **Responsive tiers:** with viewport emulation, assert two Sheets side by side from 1752px, stacked and unscaled from 888px, and whole-but-fitted paper below it. Both thresholds are computed from the paper and the gutters in the test rather than written down, because no stylesheet holds them either. Assert too that no supported width scrolls sideways, 375px upward — which is the sharpest guard on the fit.
+- **Toolbar behavior:** each language link navigates to the equivalent route in the other Locale and marks itself `aria-current`; the theme radiogroup repaints page, paper and panel together; share writes the current URL to the clipboard and announces it through `role="status"`; download links to the correct per-Locale PDF filename **and that file exists in `dist/`**. The rule's width is measured against the Sheets' own boxes on both sides of the wrap, and the pills' border contrast is pinned in both themes.
+- **Responsive tiers:** with viewport emulation, assert two Sheets side by side from 1752px, stacked and unscaled from 840px, and whole-but-fitted paper below it. Both thresholds are computed from the paper and the gutters in the test rather than written down, because no stylesheet holds them either. Assert too that no supported width scrolls sideways, 375px upward — which is the sharpest guard on the fit.
 - **The Mode:** the Toolbar control flips `data-mode`; the choice survives a reload and a language switch; the reading column runs the Blocks in `readOrder` with the Aside among them; a print from Reading Mode is still paper.
 - **PDF validity:** each generated PDF is exactly 2 A4 pages, has the CV fonts embedded, and contains expected key strings (name, section headings, a sample bullet) for its Locale.
-- **Accessibility smoke:** every Toolbar control is keyboard-operable and labeled.
+- **Accessibility smoke:** every Toolbar control is keyboard-operable and labeled, the theme pair is one tab stop with arrow keys inside it, and no focused control is parked entirely behind the sticky bar (2.4.11).
 
 Pixel-perfect fidelity is **not** asserted automatically — it is verified manually against `CV_page1.png` / `CV_page2.png` (see Out of Scope).
 

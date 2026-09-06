@@ -15,10 +15,10 @@ const A4_WIDTH = 595.28;
 const A4_HEIGHT = 841.89;
 const SIZE_TOLERANCE = 1;
 
-// Never below 53.5rem, and always set before `goto` (ADR-0009).
+// Never below the width the paper needs to fit (856px), and always set before `goto` (ADR-0009).
 const CAPTURE_VIEWPORT = { width: 1280, height: 1600 };
 
-// Must stay the names Chrome.astro and BaseLayout.astro point at.
+// Must stay the names i18n/locale.ts's chromeLinks and BaseLayout.astro point at.
 const pdfPath = (locale) => `${outDir}/Vito_Paparella_Santorsola_CV_${locale.toUpperCase()}.pdf`;
 const cardPath = (locale) => `${outDir}/og-${locale}.png`;
 

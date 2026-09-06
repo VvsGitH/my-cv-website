@@ -1,8 +1,11 @@
-/* Minimal modern reset (:where() throughout for zero specificity, so
-   component styles always win without fighting this layer) + base
-   typography wired to the tokens from fonts.css/tokens.css. */
+/* Minimal modern reset (:where() for zero specificity, so component styles
+   always win without fighting this layer; the pseudo-element compounds sit
+   outside it, which :where() cannot hold) + base typography wired to the
+   tokens from fonts.css/tokens.css. */
 
-:where(*, *::before, *::after) {
+:where(*),
+::before,
+::after {
   box-sizing: border-box;
 }
 
@@ -97,12 +100,15 @@
 /* biome-ignore-start lint/complexity/noImportantStyles: reduced-motion should 
 apply to every animation and where has 0 specificity. !Important is required */
 @media (prefers-reduced-motion: reduce) {
-  /* `::backdrop` is a descendant of nothing, so `*` does not reach it.
-     Note this collapses durations, not delays (coding-standards). */
-  :where(*, *::before, *::after, *::backdrop) {
+  /* Note this collapses durations, not delays (coding-standards). */
+  :where(*),
+  ::before,
+  ::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0ms !important;
     scroll-behavior: auto !important;
   }
 

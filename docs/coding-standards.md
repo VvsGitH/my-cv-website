@@ -114,7 +114,8 @@ ADR-0024 owns the reasoning, the declaration and the pipeline. The rules that fo
 ## Accessibility
 
 - Style focus with `:focus-visible`; never remove an outline without a replacement.
-- Collapse transitions under `@media (prefers-reduced-motion: reduce)`. **`reset.css`'s blanket collapse has two holes, and both are silent.** It collapses transition and animation *durations*, not *delays* — a `transition-delay` survives it and has to be zeroed separately. And **it reaches no pseudo-element at all**: `:is()`/`:where()` cannot contain one and their selector lists are *forgiving*, so `:where(*, *::before, *::after, *::backdrop)` parses down to `:where(*)` (the same defect truncates the file's `box-sizing` rule). Anything animated or transitioned on a `::before` needs its own carve-out beside it — `toolbar.css` carries one, and it is load-bearing rather than redundant. Tracked in `docs/issues/reset-pseudo-elements/`.
+- Collapse transitions under `@media (prefers-reduced-motion: reduce)`.
+- **Never put a pseudo-element inside `:is()` or `:where()`.** Neither can contain one, and their selector lists are *forgiving*, so the item is dropped and the rule still parses — `:where(*, *::before, *::after)` is `:where(*)`. Give the pseudo-element compounds their own selector beside the `:where()` one, as `reset.css` does for `box-sizing` and for the reduced-motion collapse, and remember that a bare `::before` is (0,0,1) rather than zero.
 - A **cross-document** View Transition is opted out of in CSS, not in JavaScript: `@view-transition { navigation: none }` inside the reduced-motion block. A **same-document** one has to be gated in JavaScript, because `reset.css` reaches neither `::view-transition-*` nor `Element.animate()` (ADR-0016).
 - Every `<Image>` needs meaningful `alt`. Respect user font scaling (type in `rem`/`em`).
 

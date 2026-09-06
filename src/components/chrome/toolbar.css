@@ -139,19 +139,11 @@
     position: absolute;
     inset-block: 0;
     inset-inline-start: 0;
-    box-sizing: border-box;
     inline-size: 50%;
     border-radius: var(--switch-border-radius);
     border: var(--switch-border-size) solid var(--color-text);
     background-color: var(--color-aside-accent);
     transition: translate 260ms cubic-bezier(0.22, 1, 0.36, 1);
-  }
-
-  /* Not redundant with `reset.css` */
-  @media (prefers-reduced-motion: reduce) {
-    .toolbar-switch::before {
-      transition-duration: 0.01ms;
-    }
   }
 
   /* ---------------- TOOLBAR THEME SWITCH ---------------- */

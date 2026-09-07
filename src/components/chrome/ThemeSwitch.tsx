@@ -47,7 +47,7 @@ function swapTheme(next: Theme, origin: DOMRect): void {
   }
 
   document
-    .startViewTransition(() => applyTheme(next))
+    .startViewTransition({ update: () => applyTheme(next), types: ['theme'] })
     // A second swap skipping the first one rejects `ready`, and is not a failure.
     .ready.then(() => revealFrom(origin))
     .catch(() => {});

@@ -5,9 +5,13 @@ import { openPainted, readingMode, sheet, toolbar, VIEWPORTS } from './support/p
 import { LOCALES, routeFor } from './support/site';
 
 /**
- * The Mode (CONTEXT.md, ADR-0017). Paper Mode is the default at every width and
- * Reading Mode is reached from the Toolbar, so everything here goes through the
+ * The Mode (CONTEXT.md, ADR-0017). It is the reader's, and the Toolbar is the
+ * only way to change it, so everything below the seed tests goes through the
  * control rather than through a viewport.
+ *
+ * What the viewport decides is only the value a first visit opens on — paper
+ * where the paper stands unscaled, reading below 856px (ADR-0017, amended). The
+ * seed is evaluated at load, so those tests each do their own `goto`.
  *
  * These run at `paper` unless a test says otherwise, deliberately: Reading Mode
  * on a wide screen is the case that never existed before, and the one nothing
@@ -17,14 +21,31 @@ test.use({ viewport: VIEWPORTS.paper });
 
 const modeControl = (page: Page) => toolbar(page).locator('.toolbar-mode');
 
+/** The paper's own width: --sheet-width + 2 * --sheets-pad, the seed's threshold. */
+const PAPER_FITS_FROM = 840 + 2 * 8;
+
 /** The Blocks of one Locale, by the rank the content declares. */
 const headingsByReadOrder = (locale: (typeof LOCALES)[number]) =>
   [...cv[locale].blocks]
     .sort((a, b) => a.readOrder - b.readOrder)
     .flatMap((block) => ('heading' in block ? [block.heading] : []));
 
-test('opens in Paper Mode, at a width that used to be Reading Mode', async ({ page }) => {
-  await page.setViewportSize(VIEWPORTS.reading);
+/**
+ * The seed, pinned from both sides of its one width. `responsive.spec.ts` pins
+ * the same 855/856 pair against the fit; between them, the two files say the
+ * paper stops being fitted exactly where it stops being the opening Mode.
+ */
+test('opens a first visit in Reading Mode below the paper’s own width', async ({ page }) => {
+  await page.setViewportSize({ width: PAPER_FITS_FROM - 1, height: 812 });
+  await openPainted(page, routeFor('it'));
+
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'reading');
+  // No panel down here: the Aside's Blocks read in the column (CONTEXT.md).
+  await expect(page.locator('.sheets .block--about')).toBeVisible();
+});
+
+test('opens a first visit in Paper Mode the moment the paper fits', async ({ page }) => {
+  await page.setViewportSize({ width: PAPER_FITS_FROM, height: 812 });
   await openPainted(page, routeFor('it'));
 
   await expect(page.locator('html')).toHaveAttribute('data-mode', 'paper');
@@ -38,11 +59,36 @@ test('is set before the first paint, not after hydration', async ({ page }) => {
   await expect(page.locator('html')).toHaveAttribute('data-mode', 'paper');
 });
 
+test('seeds the phone before the first paint too, or it flashes 5px type', async ({ page }) => {
+  await page.setViewportSize(VIEWPORTS.reading);
+  await page.goto(routeFor('it'));
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'reading');
+});
+
 test('is remembered across a visit, and only the reader sets it', async ({ page }) => {
   await openPainted(page, routeFor('it'));
   await readingMode(page);
 
   await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'reading');
+
+  await modeControl(page).click();
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'paper');
+
+  await page.reload();
+  await expect(page.locator('html')).toHaveAttribute('data-mode', 'paper');
+});
+
+/**
+ * The trap the seed introduces, and the reason the script tests for `'paper'`
+ * as well as `'reading'`: a stored choice has to beat the width in *both*
+ * directions. Reading it as `storedMode === 'reading' ? … : 'paper'` — correct
+ * while paper was the unconditional default — flips this reader back on every
+ * reload, so the control looks like it does not stick (ADR-0017, amended).
+ */
+test('lets a phone reader keep Paper Mode across a reload', async ({ page }) => {
+  await page.setViewportSize(VIEWPORTS.reading);
+  await openPainted(page, routeFor('it'));
   await expect(page.locator('html')).toHaveAttribute('data-mode', 'reading');
 
   await modeControl(page).click();

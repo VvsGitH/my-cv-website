@@ -20,6 +20,30 @@
 > indirection did fix it; it is simply not the fix in the tree. Everything else in this ADR is
 > untouched.
 
+> **Amended on print, 2026-09-07.** The bullet below headed *"The layout is declared for both media
+> and cancelled in `@layer print`"* is reversed, and the section *"Print takes the paper back on its
+> own"* describes machinery that is gone. **Every Reading Mode rule now sits inside `@media screen`**
+> — in `tokens.css`, `Document.astro`, `Sheet.astro`, `HeaderBlock.astro`, `GroupMeta.astro` and
+> `MainSectionBlock.astro` — and `Sheet.astro`'s `@layer print` is down to its `zoom`, with the
+> re-asserted `display`s and the zeroed `order` deleted because nothing is left standing for them to
+> take back. The cancellation lost because it was never complete: four of those six files had no
+> print block at all, so the reading type scale, the centred header and the stacked meta reached
+> paper — and nothing caught it, because the Sheet is a fixed box and type overflowing inside it
+> changes no page count. `coding-standards` carries the generalised exception. The Mode as an
+> attribute, the reading order, the split of the 53.5rem boundary and the Drawer's deletion are
+> untouched.
+
+> **Amended on the default, 2026-09-07.** One sentence of this ADR is reversed, and it is one this
+> file argues for by name: *"Nothing pre-selects Reading Mode — not a narrow viewport, not a touch
+> pointer."* **Below 856px a first visit now opens in Reading Mode.** The Mode is still the
+> reader's, `<html data-mode>` is still its only source of truth, and everything else here — the
+> attribute, the reading order, the Drawer's deletion, the split of the 53.5rem boundary,
+> scale-to-fit — is untouched. The reasoning is below, under *The default is seeded from the width*.
+>
+> The paragraph headed *"The two defaults differ on purpose"* should be read as the record of why
+> it was once the other way. Its first half still holds: the theme falls back to
+> `prefers-color-scheme` because nobody has to be asked what light they are sitting in.
+
 Reading Mode was never a mode. It was `@media screen and (width < 53.5rem)`, repeated in six
 files, and the reader had no say in it. **It is now `<html data-mode>`, flipped from the Toolbar
 and remembered in `localStorage`, with Paper Mode the default at every width — phone included,
@@ -59,6 +83,65 @@ otherwise. Nothing pre-selects Reading Mode — not a narrow viewport, not a tou
 **No View Transition on the swap.** `tokens.css` sets `animation: none` on both root snapshots so
 that ADR-0016's circle can be the only thing that moves; `startViewTransition` without a bespoke
 animation would buy a hard cut for the price of a transition. Left for a follow-up.
+
+## The default is seeded from the width
+
+*Added 2026-09-07, reversing the last sentence of the paragraph above.*
+
+The reason to reopen it is written into this ADR already, further down, as the cost it knowingly
+accepted: *"at 390px the Sheet zooms to ~0.44 and body text lands near 5px … it means the Mode
+control is this site's answer to WCAG 2.2 · 1.4.4, and that control has to stay obvious on a
+phone."* A phone visitor's first paint is 5px type, and the remedy is a control they have to
+notice. **Seeding the Mode from the width moves the remedy in front of the first paint.** The
+control is unchanged and so is everything it does; what changed is the value the attribute opens
+on when the reader has not chosen yet. Reading Mode is now the site's *first* answer to 1.4.4 and
+the control is the second, where before it was the only one.
+
+```js
+const narrow = matchMedia('(width < 856px)').matches;
+document.documentElement.dataset.mode =
+  storedMode === 'reading' || storedMode === 'paper' ? storedMode : narrow ? 'reading' : 'paper';
+```
+
+**A width, not `(pointer: coarse)`.** The defect is that the paper is being scaled down, which is a
+fact about the viewport and not about the input device. A coarse pointer hands Reading Mode to a
+1024px tablet where the paper fits perfectly, and leaves a 375px desktop window on 5px type.
+
+**856px, and it is the first width literal in `src/` since this ADR deleted them.** It is
+`--sheet-width + 2 * --sheets-pad` — the width at which the Sheet stands unscaled with its designed
+gutter — and it is the same number ADR-0009 fixes the capture viewport above, for an unrelated
+reason. Named here rather than left to be found, with the distinction that makes it acceptable
+where 107.5rem was not: **this is a seed for a default, not a layout breakpoint.** Nothing measures
+against it and nothing is laid out by it, so if it ever drifts from the two tokens, a reader near
+the boundary opens in the other Mode and presses one control. The 107.5rem literal changed the
+track count of a grid.
+
+**Asked as `(width < 856px)`, not `(min-width: 856px)`.** A `matchMedia` whose query cannot be
+parsed answers `false` without erring. Spelled this way that failure seeds Paper Mode — the
+behaviour this ADR originally shipped — rather than handing Reading Mode to every desktop reader.
+
+**Seeded once, pre-paint, with no listener.** The Mode is still a choice; the width only opens it.
+A reader who crosses the boundary by rotating a tablet or resizing a window keeps the Mode they
+are in, and `responsive.spec.ts` — which opens at 1280px and resizes down — is unaffected for the
+same reason.
+
+**A stored `'paper'` is now honoured, and that is the one trap this introduces.** The script read
+`storedMode === 'reading' ? 'reading' : 'paper'`, which was correct while paper was the
+unconditional default: every other value, `null` included, fell through to it. Left as it was, a
+phone reader who explicitly pressed for Paper Mode would be flipped back to Reading on every
+reload, and the control would appear not to stick. `mode.spec.ts` asserts the choice beats the seed
+in **both** directions, which is the assertion that fails against the old line.
+
+**Rejected: a CSS fallback for the no-JS case.** With JavaScript off there is no `data-mode` at all,
+so a phone still gets Paper Mode. Covering it means giving every Reading Mode selector an
+`html:not([data-mode])` twin inside a width query, in all six files that carry one — which is
+precisely the repetition this ADR was written to delete, and it would put the literal in six more
+places. The floor is stated instead: **no JavaScript, no seed.** It is not a regression, only not
+an improvement, and it is the same trade ADR-0025 accepted for the theme pair's announced state.
+
+**Nothing about the PDF or the cards changes.** `render-captures.mjs` captures at 1280×1600, above
+the threshold, so the capture is in Paper Mode; `openPainted` in that script also opens a fresh
+context with empty storage. `assertTwoA4Pages()` still guards it.
 
 ## What the 53.5rem boundary meant, and what it means now
 

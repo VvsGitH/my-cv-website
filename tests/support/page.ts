@@ -29,9 +29,11 @@ export async function openPainted(page: Page, route: string): Promise<void> {
 const phoneHeight = 812;
 
 /**
- * One viewport per case. `paper` is also the capture viewport (ADR-0009).
- * `reading` is a phone-sized viewport, not a Mode — since ADR-0017 the Mode is
- * chosen, and a phone gets Paper Mode there until something calls `readingMode`.
+ * One viewport per case. `paper` is also the capture viewport (ADR-0009) and the
+ * suite's default (`playwright.config.ts`), so a test lands in Paper Mode unless
+ * it says otherwise. `narrowest` and `reading` are the two below 856px, where a
+ * first visit is seeded into Reading Mode instead (ADR-0017, amended) — still
+ * only a seed, so either Mode is reachable at either width.
  *
  * `twoUp` is the exact width at which the pair stops wrapping: 2 × 840px of
  * paper, the 24px between them and the 8px gutter either side. No stylesheet
@@ -46,11 +48,24 @@ export const VIEWPORTS = {
   paper: { width: 1280, height: 1600 },
 } as const;
 
-/** Puts the page in Reading Mode the way a reader does — through the control. */
-export async function readingMode(page: Page): Promise<void> {
-  await toolbar(page).locator('.toolbar-mode').click();
-  await expect(page.locator('html')).toHaveAttribute('data-mode', 'reading');
+/**
+ * Puts the page in a Mode the way a reader does — through the control — and is
+ * idempotent, because since ADR-0017's amendment the viewport may have seeded
+ * the wanted Mode already and a bare click would leave it.
+ */
+async function setMode(page: Page, mode: 'paper' | 'reading'): Promise<void> {
+  const html = page.locator('html');
+
+  if ((await html.getAttribute('data-mode')) !== mode) {
+    await toolbar(page).locator('.toolbar-mode').click();
+  }
+
+  await expect(html).toHaveAttribute('data-mode', mode);
 }
+
+export const readingMode = (page: Page): Promise<void> => setMode(page, 'reading');
+
+export const paperMode = (page: Page): Promise<void> => setMode(page, 'paper');
 
 export const sheet = (page: Page, number: SheetNumber): Locator =>
   page.locator('.sheet').nth(number - 1);

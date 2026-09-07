@@ -28,7 +28,11 @@ export interface PdfReport {
 export const withoutWhitespace = (text: string): string => text.replace(/\s+/g, '');
 
 export async function readPdf(path: string): Promise<PdfReport> {
-  const document = await PDFDocument.load(await readFile(path));
+  return readPdfBytes(await readFile(path));
+}
+
+export async function readPdfBytes(bytes: Uint8Array): Promise<PdfReport> {
+  const document = await PDFDocument.load(bytes);
   const pages = document.getPages();
 
   return {

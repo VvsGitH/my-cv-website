@@ -3,7 +3,7 @@ import { expect, type Locator, type Page, test } from '@playwright/test';
 import type { Locale } from '../src/i18n/locale';
 import { ui } from '../src/i18n/ui';
 import { contrastRatio, inkOn } from './support/contrast';
-import { openPainted, readingMode, sheet, toolbar, VIEWPORTS } from './support/page';
+import { openPainted, paperMode, readingMode, sheet, toolbar, VIEWPORTS } from './support/page';
 import { distPathForHref, LOCALES, otherLocale, routeFor } from './support/site';
 
 // The Clipboard API silently no-ops on a denied permission, which would read as
@@ -500,11 +500,24 @@ const expectNoControlBehindTheToolbar = async (page: Page): Promise<void> => {
 };
 
 test.describe('Focus Not Obscured', () => {
+  /**
+   * Both Modes, because this width now seeds Reading Mode (ADR-0017, amended)
+   * and ADR-0025 measured its one-line thresholds — 354px Paper, 344px Reading —
+   * against both. At 368px the bar is one line either way, so neither sweep is
+   * expected to find the 12px partial obscuring that ADR records as accepted.
+   */
   test.describe('the narrowest column', () => {
     test.use({ viewport: VIEWPORTS.narrowest });
 
     test('never parks a focused control entirely behind the bar', async ({ page }) => {
       await openPainted(page, routeFor('it'));
+      await readingMode(page);
+      await expectNoControlBehindTheToolbar(page);
+    });
+
+    test('never parks one behind it in Paper Mode either', async ({ page }) => {
+      await openPainted(page, routeFor('it'));
+      await paperMode(page);
       await expectNoControlBehindTheToolbar(page);
     });
   });

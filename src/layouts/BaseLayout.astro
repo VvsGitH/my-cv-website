@@ -75,13 +75,20 @@ const ogImage = new URL(`${import.meta.env.BASE_URL}og-${locale}.png`, Astro.sit
       document.documentElement.style.colorScheme = theme;
     </script>
 
-    <!-- Setting the mode in a blocking way to avoid flashes. The default is paper (ADR-0017). -->
+    <!-- Setting the mode in a blocking way to avoid flashes. The default is based on viewport. -->
     <script is:inline>
       let storedMode = null;
       try {
         storedMode = localStorage.getItem('cv-mode');
       } catch {}
-      document.documentElement.dataset.mode = storedMode === 'reading' ? 'reading' : 'paper';
+      // 856px is --sheet-width + 2 * --sheets-pad -- a viewport smaller than a page goes to reading mode.
+      const narrow = matchMedia('(width < 856px)').matches;
+      document.documentElement.dataset.mode =
+        storedMode === 'reading' || storedMode === 'paper'
+          ? storedMode
+          : narrow
+            ? 'reading'
+            : 'paper';
     </script>
 
     <!-- Define css layers: this must precede the imports or the minifier reorders it -->

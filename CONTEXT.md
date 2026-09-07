@@ -33,15 +33,15 @@ The rule that every Block declares where it belongs, in the content itself, rath
 _Avoid_: pagination, auto-flow
 
 **Mode**:
-Which of the two presentations the reader is looking at — Paper or Reading. It is their choice, not their screen: `<html data-mode>` is its only source of truth, set pre-paint, flipped from the Toolbar and remembered across visits. Paper Mode is what a first visit gets, at every width (ADR-0017).
-_Avoid_: view, layout, breakpoint (the Mode is not a width — what is left of the widths governs the Chrome alone)
+Which of the two presentations the reader is looking at — Paper or Reading. It is theirs to choose: `<html data-mode>` is its only source of truth, set pre-paint, flipped from the Toolbar and remembered across visits. A first visit, having chosen nothing yet, opens on the Mode the width can carry — Paper where the paper stands unscaled, Reading below it (ADR-0017, amended).
+_Avoid_: view, layout, breakpoint (the Mode is not a width but an attribute the reader owns; a width only picks the value it opens on, and governs nothing else on the page)
 
 **Paper Mode**:
-The Mode where Sheets keep rigid A4 geometry, and the default one. Two Sheets side by side when wide, stacked one per row when medium, and — below the paper's own width, a phone included — one Sheet scaled to fit the device rather than allowed over the edge (ADR-0017). It is what the PDF is captured from, and what a print takes back to whatever the reader's Mode is.
+The Mode where Sheets keep rigid A4 geometry, and the one a first visit gets wherever the paper stands unscaled. Two Sheets side by side when wide, stacked one per row when medium, and — below the paper's own width, a phone included — one Sheet scaled to fit the device rather than allowed over the edge. That last case is reachable on a phone, but it is no longer where a phone opens (ADR-0017). It is what the PDF is captured from, and what a print takes back to whatever the reader's Mode is.
 _Avoid_: desktop view, print view
 
 **Reading Mode**:
-The Mode where the same content reflows into a single column at reading type, abandoning A4 geometry — every Block of both Sheets and both columns, in the order `readOrder` declares. Available at any width, and never captured for the PDF. On a phone it is also the site's answer to WCAG 2.2 · 1.4.4, since Paper Mode there is A4 fitted to the device.
+The Mode where the same content reflows into a single column at reading type, abandoning A4 geometry — every Block of both Sheets and both columns, in the order `readOrder` declares. Available at any width, chosen at any width, and never captured for the PDF. Below the paper's own width it is also what a first visit opens on, which is the site's answer to WCAG 2.2 · 1.4.4 — Paper Mode there is A4 fitted to the device, and a reader who wants it presses the control rather than having to find it (ADR-0017).
 _Avoid_: mobile view, responsive view
 
 **Toolbar**:

@@ -65,8 +65,10 @@ const { block } = Astro.props;
        takes the ordinary gap between Groups — which is the whole of what makes
        the two halves read as one section down here (ADR-0017). The Mode, not a
        width: it is the reflow that removes the column, never the viewport. */
-    :global(html[data-mode='reading']) .group:first-of-type {
-      margin-block-start: var(--space-m);
+    @media screen {
+      :global(html[data-mode='reading']) .group:first-of-type {
+        margin-block-start: var(--space-m);
+      }
     }
   }
 </style>

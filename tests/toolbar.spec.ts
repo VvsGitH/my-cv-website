@@ -592,12 +592,23 @@ test.describe('the language’s travel', () => {
         pseudo ?? null,
       );
 
+  const classOf = (page: Page, selector: string, pseudo?: string): Promise<string> =>
+    page
+      .locator(selector)
+      .first()
+      .evaluate(
+        (element, part) => getComputedStyle(element, part).viewTransitionClass,
+        pseudo ?? null,
+      );
+
   test('names the pill and both labels so the two documents can pair them', async ({ page }) => {
     await openPainted(page, routeFor('it'));
 
     expect(await nameOf(page, '.toolbar-locale', '::before')).toBe('lang-pill');
-    expect(await nameOf(page, '.toolbar-locale a[hreflang="it"]')).toBe('lang-it');
-    expect(await nameOf(page, '.toolbar-locale a[hreflang="en"]')).toBe('lang-en');
+    expect(await nameOf(page, '.toolbar-locale a[hreflang="it"]')).toBe('match-element');
+    expect(await nameOf(page, '.toolbar-locale a[hreflang="en"]')).toBe('match-element');
+    expect(await classOf(page, '.toolbar-locale a[hreflang="it"]')).toBe('lang-label');
+    expect(await classOf(page, '.toolbar-locale a[hreflang="en"]')).toBe('lang-label');
   });
 
   test('leaves for the other Locale as a transition, not a cut', async ({ page }) => {
@@ -610,7 +621,6 @@ test.describe('the language’s travel', () => {
     expect(await departure(page), 'the navigation opted into a view transition').toBe('transition');
 
     await expect(controls(page).locale('en')).toHaveAttribute('aria-current', 'page');
-    await expect(controls(page).locale('en')).toHaveCSS('view-transition-name', 'lang-en');
   });
 
   test('does not travel when the reader arrived directly', async ({ page }) => {

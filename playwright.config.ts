@@ -32,5 +32,12 @@ export default defineConfig({
     command: `npm run preview -- --port ${PREVIEW_PORT}`,
     url: `${ORIGIN}${BASE}`,
     reuseExistingServer: !isCI,
+    // Astro 7.3 asks `am-i-vibing` whether an AI agent is running it and, if so,
+    // daemonizes `astro preview` — the command then exits 0 immediately and
+    // Playwright reports `Process from config.webServer exited early`. This
+    // variable is read only as "the background decision was made explicitly, do
+    // not auto-detect"; with no `--background` flag beside it, that decision is
+    // the foreground, which is the only thing `webServer` can supervise.
+    env: { ASTRO_PREVIEW_BACKGROUND: '1' },
   },
 });

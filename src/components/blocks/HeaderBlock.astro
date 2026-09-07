@@ -84,26 +84,28 @@ const { block } = Astro.props;
 
     /* Reading Mode's compact header: the portrait sits above this Block, so the
        cluster centres under it and the three contact columns become one. */
-    :global(html[data-mode='reading']) {
-      .cv-header {
-        text-align: center;
-      }
+    @media screen {
+      :global(html[data-mode='reading']) {
+        .cv-header {
+          text-align: center;
+        }
 
-      .name {
-        line-height: 1.05;
-        margin-inline-end: -0.25em;
-      }
+        .name {
+          line-height: 1.05;
+          margin-inline-end: -0.25em;
+        }
 
-      .contacts {
-        grid-template-columns: minmax(0, 1fr);
-        gap: var(--space-s);
-        width: fit-content;
-        margin-inline: auto;
-      }
+        .contacts {
+          grid-template-columns: minmax(0, 1fr);
+          gap: var(--space-s);
+          width: fit-content;
+          margin-inline: auto;
+        }
 
-      .contact {
-        display: flex;
-        gap: var(--space-m);
+        .contact {
+          display: flex;
+          gap: var(--space-m);
+        }
       }
     }
   }

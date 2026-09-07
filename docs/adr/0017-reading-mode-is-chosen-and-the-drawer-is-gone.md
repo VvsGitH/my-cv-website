@@ -20,6 +20,19 @@
 > indirection did fix it; it is simply not the fix in the tree. Everything else in this ADR is
 > untouched.
 
+> **Amended on print, 2026-09-07.** The bullet below headed *"The layout is declared for both media
+> and cancelled in `@layer print`"* is reversed, and the section *"Print takes the paper back on its
+> own"* describes machinery that is gone. **Every Reading Mode rule now sits inside `@media screen`**
+> — in `tokens.css`, `Document.astro`, `Sheet.astro`, `HeaderBlock.astro`, `GroupMeta.astro` and
+> `MainSectionBlock.astro` — and `Sheet.astro`'s `@layer print` is down to its `zoom`, with the
+> re-asserted `display`s and the zeroed `order` deleted because nothing is left standing for them to
+> take back. The cancellation lost because it was never complete: four of those six files had no
+> print block at all, so the reading type scale, the centred header and the stacked meta reached
+> paper — and nothing caught it, because the Sheet is a fixed box and type overflowing inside it
+> changes no page count. `coding-standards` carries the generalised exception. The Mode as an
+> attribute, the reading order, the split of the 53.5rem boundary and the Drawer's deletion are
+> untouched.
+
 Reading Mode was never a mode. It was `@media screen and (width < 53.5rem)`, repeated in six
 files, and the reader had no say in it. **It is now `<html data-mode>`, flipped from the Toolbar
 and remembered in `localStorage`, with Paper Mode the default at every width — phone included,

@@ -2,8 +2,8 @@ import { existsSync } from 'node:fs';
 import { expect, type Page, test } from '@playwright/test';
 import { cv } from '../src/content';
 import type { Locale } from '../src/i18n/locale';
-import { openPainted } from './support/page';
-import { type PdfReport, readPdf, withoutWhitespace } from './support/pdf';
+import { openPainted, readingMode } from './support/page';
+import { type PdfReport, readPdf, readPdfBytes, withoutWhitespace } from './support/pdf';
 import {
   distPathForHref,
   LOCALES,
@@ -162,14 +162,22 @@ test.describe('print', () => {
 /**
  * The Mode is remembered, so a reader can be in Reading Mode when they reach for
  * their own printer — and unlike the build's capture, that page carries whatever
- * `localStorage` held. The print layer has to take the paper back on its own
- * (ADR-0017); a leak would still produce two A4 pages, so nothing downstream
- * would catch it (ADR-0009).
+ * `localStorage` held. Every Reading Mode rule is fenced behind `@media screen`
+ * (coding-standards), so what prints is the paper whichever Mode is standing.
+ *
+ * The geometry is compared rather than a handful of `display` values: the Sheet is
+ * a fixed box, so reading type on paper overflows inside it instead of paginating,
+ * and neither the page count nor `assertTwoA4Pages()` can see that (ADR-0009).
  */
 test('prints as paper even from Reading Mode', async ({ page }) => {
   await openPainted(page, routeFor('it'));
-  await page.locator('.toolbar-mode').click();
-  await expect(page.locator('html')).toHaveAttribute('data-mode', 'reading');
+
+  await page.emulateMedia({ media: 'print' });
+  const paper = await printedGeometry(page);
+
+  // The Toolbar is `display: none` under print, so the control needs screen back.
+  await page.emulateMedia({ media: null });
+  await readingMode(page);
 
   const dismantled = await page
     .locator('.sheet')
@@ -178,25 +186,70 @@ test('prints as paper even from Reading Mode', async ({ page }) => {
   expect(dismantled, 'Reading Mode should dismantle the Sheet on screen').toBe('contents');
 
   await page.emulateMedia({ media: 'print' });
+  const reading = await printedGeometry(page);
 
-  const printed = await page
-    .locator('.sheet')
-    .first()
-    .evaluate((element) => ({
-      sheet: getComputedStyle(element).display,
-      columns: getComputedStyle(element.querySelector('.columns')!).display,
-      aside: getComputedStyle(element.querySelector('.aside')!).display,
-      main: getComputedStyle(element.querySelector('.main')!).display,
-      width: element.getBoundingClientRect().width,
-    }));
+  expect(reading.sheet, 'the Sheet is a box again').toBe('block');
+  expect(reading.columns).toBe('grid');
+  expect(reading.aside).toBe('flex');
+  expect(reading.main).toBe('block');
 
-  expect(printed.sheet, 'the Sheet is a box again').toBe('block');
-  expect(printed.columns).toBe('grid');
-  expect(printed.aside).toBe('flex');
-  expect(printed.main).toBe('block');
-  // Real paper, not a reflowed column: `zoom` has taken the box back to 210mm.
-  expect(printed.width).toBeGreaterThan(0);
+  expect(reading.blocks, 'a printed Block sits somewhere else than it does on paper').toEqual(
+    paper.blocks,
+  );
+  expect(reading.height, 'the printed document is a different height').toBe(paper.height);
 });
+
+/**
+ * The acceptance the geometry cannot state on its own: a live `Ctrl+P` from Reading
+ * Mode is the same two A4 pages Paper Mode gives. `page.pdf()` is headless-Chromium
+ * only, which is how this suite runs.
+ */
+for (const locale of LOCALES) {
+  test(`prints two A4 pages from Reading Mode (${locale})`, async ({ page }) => {
+    await openPainted(page, routeFor(locale));
+    await readingMode(page);
+
+    const report = await readPdfBytes(await page.pdf({ preferCSSPageSize: true }));
+
+    expect(report.pages, 'a print from Reading Mode should be the two Sheets').toHaveLength(2);
+
+    report.pages.forEach((printed, index) => {
+      expect(
+        Math.abs(printed.width - A4.width),
+        `page ${index + 1} is ${printed.width}pt wide`,
+      ).toBeLessThanOrEqual(TOLERANCE);
+      expect(
+        Math.abs(printed.height - A4.height),
+        `page ${index + 1} is ${printed.height}pt tall`,
+      ).toBeLessThanOrEqual(TOLERANCE);
+    });
+  });
+}
+
+/** Every Block's printed box in document order, in page coordinates. */
+const printedGeometry = (page: Page) =>
+  page.evaluate(() => {
+    const sheet = document.querySelector('.sheet')!;
+    const round = (value: number) => Math.round(value * 100) / 100;
+
+    return {
+      sheet: getComputedStyle(sheet).display,
+      columns: getComputedStyle(sheet.querySelector('.columns')!).display,
+      aside: getComputedStyle(sheet.querySelector('.aside')!).display,
+      main: getComputedStyle(sheet.querySelector('.main')!).display,
+      height: document.documentElement.scrollHeight,
+      blocks: [...document.querySelectorAll('.block')].map((block) => {
+        const box = block.getBoundingClientRect();
+        return [
+          block.className,
+          round(box.x + window.scrollX),
+          round(box.y + window.scrollY),
+          round(box.width),
+          round(box.height),
+        ].join(' ');
+      }),
+    };
+  });
 
 /**
  * The link-preview card is a route that gets screenshotted (ADR-0009), so the

@@ -91,53 +91,55 @@ const asideBlocks = blocksIn('aside');
        and both columns become items of Document.astro's single grid (ADR-0004).
        Nothing is hidden and nothing is rendered twice — the Aside reads here now,
        and `--read-order` is what sequences it against Main. */
-    :global(html[data-mode='reading']) {
-      .sheet,
-      .columns,
-      .aside,
-      .main {
-        display: contents;
-      }
+    @media screen {
+      :global(html[data-mode='reading']) {
+        .sheet,
+        .columns,
+        .aside,
+        .main {
+          display: contents;
+        }
 
-      /* Content order is the paper's; `order` is the reading column's (ADR-0017).
-         The Blocks are items of `.sheets` by the time this reaches them. */
-      .aside > :global(.block),
-      .main > :global(.block) {
-        order: var(--read-order);
-        /* The gap above each Block, rather than above each heading. Spacing cannot
-           be keyed off `:first-child` under `order` — the DOM-first Block is not
-           the visually-first one — so every Block carries its own, and `.sheets`
-           drops its block padding to match. The head of the column then measures
-           --space-xl whichever Block sorts there. */
-        margin-block-start: var(--space-xl);
-      }
+        /* Content order is the paper's; `order` is the reading column's (ADR-0017).
+           The Blocks are items of `.sheets` by the time this reaches them. */
+        .aside > :global(.block),
+        .main > :global(.block) {
+          order: var(--read-order);
+          /* The gap above each Block, rather than above each heading. Spacing cannot
+             be keyed off `:first-child` under `order` — the DOM-first Block is not
+             the visually-first one — so every Block carries its own, and `.sheets`
+             drops its block padding to match. The head of the column then measures
+             --space-xl whichever Block sorts there. */
+          margin-block-start: var(--space-xl);
+        }
 
-      /* A Continuation resumes its parent rather than opening a section, and
-         `readOrder` puts it immediately after it, so it takes the gap between
-         Groups instead — MainSectionBlock's `.group:first-of-type` supplies it. */
-      .aside > :global(.block[data-continues]),
-      .main > :global(.block[data-continues]) {
-        margin-block-start: 0;
-      }
+        /* A Continuation resumes its parent rather than opening a section, and
+           `readOrder` puts it immediately after it, so it takes the gap between
+           Groups instead — MainSectionBlock's `.group:first-of-type` supplies it. */
+        .aside > :global(.block[data-continues]),
+        .main > :global(.block[data-continues]) {
+          margin-block-start: 0;
+        }
 
-      /* The gap lives on the Block now, so the heading must not add a second one. */
-      .aside :global(.block > .section-heading),
-      .main :global(.block > .section-heading) {
-        margin-block-start: 0;
-      }
+        /* The gap lives on the Block now, so the heading must not add a second one. */
+        .aside :global(.block > .section-heading),
+        .main :global(.block > .section-heading) {
+          margin-block-start: 0;
+        }
 
-      /* The rule bled into the panel's padding; there is no panel to bleed into. */
-      .aside :global(.block > .section-heading) {
-        margin-inline-end: 0;
-      }
+        /* The rule bled into the panel's padding; there is no panel to bleed into. */
+        .aside :global(.block > .section-heading) {
+          margin-inline-end: 0;
+        }
 
-      .aside > :global(.block--photo) {
-        justify-self: center;
-      }
+        .aside > :global(.block--photo) {
+          justify-self: center;
+        }
 
-      /* With no Aside beside it there is nothing to answer to. */
-      .main :global(.block--header) {
-        min-block-size: auto;
+        /* With no Aside beside it there is nothing to answer to. */
+        .main :global(.block--header) {
+          min-block-size: auto;
+        }
       }
     }
   }
@@ -149,31 +151,6 @@ const asideBlocks = blocksIn('aside');
     @media print {
       .sheet {
         zoom: calc(210mm / var(--sheet-width));
-      }
-
-      /* The Mode is remembered, so a reader can be in Reading Mode when they
-         print. Taken back rather than assumed: a leak here would still produce
-         two A4 pages and `assertTwoA4Pages()` would pass in silence (ADR-0009). */
-      .sheet {
-        display: block;
-      }
-
-      .columns {
-        display: grid;
-      }
-
-      .aside {
-        display: flex;
-      }
-
-      .main {
-        display: block;
-      }
-
-      .aside > :global(.block),
-      .main > :global(.block) {
-        order: 0;
-        margin-block-start: 0;
       }
     }
   }

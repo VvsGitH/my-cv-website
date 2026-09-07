@@ -148,32 +148,35 @@
   }
 }
 
-/* Reading Mode (CONTEXT.md): the CV stops being paper, so the type stops being
+/* ---
+   Reading Mode (CONTEXT.md): the CV stops being paper, so the type stops being
    paper type. Everything above transcribes an A4 document; everything below is
    chosen for reading that document on a screen.
 
-   It is an attribute, not a width (ADR-0017). `<html data-mode>` is the Mode's
-   only source of truth, set pre-paint by BaseLayout's inline script and flipped by
-   the Toolbar — the same arrangement as the theme, for the same reason (ADR-0003):
-   no `@media` can be asked what the reader chose. No `screen and` guard is needed
-   on it either, and none is wanted: the print layer overrides the geometry
-   directly, so a reader who prints from Reading Mode still gets paper. */
+   It is controlled only by the following attribute `<html data-mode>` (ADR-0017).
+   
+   The `screen` guard is load-bearing: we always want @media print to output the correct paper version.
+   Every `html[data-mode='reading']` rule should be put under `@media screen` in order to limit its
+   influence to the non-print version.
+--- */
 
-html[data-mode='reading'] {
-  /* Name, subtitle and button carry their paper values down here unchanged. */
-  --font-size-heading: 1.75rem;
-  --font-size-subheading: 1.25rem;
-  --font-size-meta: 1.125rem;
-  --font-size-body: 1rem;
-  --prose-leading: 1.55;
-  --prose-align: start;
+@media screen {
+  html[data-mode='reading'] {
+    /* Name, subtitle and button carry their paper values down here unchanged. */
+    --font-size-heading: 1.75rem;
+    --font-size-subheading: 1.25rem;
+    --font-size-meta: 1.125rem;
+    --font-size-body: 1rem;
+    --prose-leading: 1.55;
+    --prose-align: start;
 
-  /* Three steps of the scale open up for the reading column. */
-  --space-s: 0.5rem;
-  --space-m: 1.5rem;
-  --space-l: 1.5rem;
-  --space-xl: 3rem;
+    /* Three steps of the scale open up for the reading column. */
+    --space-s: 0.5rem;
+    --space-m: 1.5rem;
+    --space-l: 1.5rem;
+    --space-xl: 3rem;
 
-  /* The portrait leads the compact header rather than filling a panel. */
-  --photo-size: 10rem;
+    /* The portrait leads the compact header rather than filling a panel. */
+    --photo-size: 10rem;
+  }
 }

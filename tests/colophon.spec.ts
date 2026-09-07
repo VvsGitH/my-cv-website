@@ -126,8 +126,9 @@ test.describe('Reading Mode', () => {
 
   test.beforeEach(async ({ page }) => {
     await openPainted(page, routeFor('it'));
-    // Entered rather than assumed: since ADR-0017 the Mode is chosen, and Paper
-    // Mode is what a phone gets until something asks for this one.
+    // Asserted rather than assumed. This width seeds Reading Mode (ADR-0017,
+    // amended), but the seed is not the contract — the Mode is — so the helper
+    // states which one this block runs in and is a no-op when it is already there.
     await readingMode(page);
     await page.evaluate(() => window.scrollTo(0, document.body.scrollHeight));
   });

@@ -87,11 +87,8 @@
   --space-s: 0.375rem; /* within a unit: title -> meta -> summary -> bullets */
   --space-xs: 0.25rem; /* within a unit: small gap between related text */
 
-  /* Reading Mode's measure, and a ceiling only: the Mode is chosen rather than
-     triggered, so a narrow phone gets Paper Mode unless it asks otherwise, and
-     nothing here is a floor on the supported viewport width (ADR-0017). In `ch`
-     because a measure is counted in characters, not in millimetres — the one
-     length in this file that answers to the type rather than to the paper. */
+  /* Reading Mode's measure, and a ceiling only. 
+     The maximum number of charactes that is confortable to read. */
   --reading-column-max: 75ch;
 }
 

@@ -92,6 +92,14 @@ Authored as Astro scoped `<style>`, no framework. See [Baseline table](research/
 - **Print fidelity:** `print-color-adjust: exact` **plus** `-webkit-print-color-adjust: exact` on colored surfaces; keep screen/print rendering identical.
 - **Layout:** Grid with `grid-template-areas` for the Aside/Main sheet (the areas step out of the flow entirely under `[data-mode='reading']` — ADR-0017); Flexbox for 1-D runs, the row of Sheets included, where a wrapping line replaces a wide-tier breakpoint; `gap` over child margins.
 - **Responsive trigger:** viewport/print → media query; element's own space → `@container`; presence/state of descendants → `:has()`.
+  - **`src/` holds exactly one width literal, and no stylesheet may grow a second.** It is `856px`
+    in `BaseLayout.astro`'s Mode script — `--sheet-width + 2 * --sheets-pad` — and it seeds a
+    *default*, which is why it is allowed where ADR-0017 deleted every breakpoint: nothing is laid
+    out by it, so drift costs a reader one press of a control (ADR-0017, amended). Layout still
+    derives its thresholds from the tokens. The invariant is greppable —
+    `grep -rn '856' src/ --include='*.astro' --include='*.css' --include='*.ts' --include='*.tsx'`
+    returns that one line and its comment; the bare `grep` also hits the icon font's
+    `selection.json`, which is generated path data.
   - **Not `@container` above a page break.** `container-type: inline-size` brings layout containment, and a layout-contained box is monolithic for fragmentation — over the two Sheets it would swallow the `break-before: page` that makes the CV two pages. Size from the viewport there instead.
   - **`:has()` cannot cross an Astro scope.** The compiler leaves `:global()` untouched inside it, and the browser then drops the whole rule as an unknown pseudo-class, silently. Test the built CSS, or key off an attribute the component sets itself.
 - **Theming:** `color-scheme: light dark` on `:root`, tokens as custom properties in `oklch()`, `light-dark()` for per-property pairs (keep a `prefers-color-scheme` fallback since it's only newly available). `@property` only if you animate a custom property.

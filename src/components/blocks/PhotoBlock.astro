@@ -16,7 +16,15 @@ const { block } = Astro.props;
 ---
 
 <div class="photo">
-  <Picture src={profilePhoto} format="webp" alt={block.alt} width={400} height={400} />
+  <Picture
+    src={profilePhoto}
+    format="webp"
+    alt={block.alt}
+    width={400}
+    height={400}
+    fetchpriority="high"
+    loading="eager"
+  />
 </div>
 
 <style>

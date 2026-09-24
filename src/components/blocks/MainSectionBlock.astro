@@ -17,6 +17,8 @@ interface Props {
 }
 
 const { block } = Astro.props;
+
+const displayUrl = (url: string) => url.replace(/^https?:\/\//, '');
 ---
 
 <SectionHeading text={block.heading} srOnly={block.continues} />
@@ -26,6 +28,11 @@ const { block } = Astro.props;
       {/* A Continuation resumes mid-Group, so it never repeats the
           organisation or the period — the union makes them unavailable. */}
       {!group.continues && <GroupMeta lines={group.meta} period={group.period} />}
+      {!group.continues && group.url && (
+        <p class="link">
+          <a href={group.url}>{displayUrl(group.url)}</a>
+        </p>
+      )}
       {group.summary && (
         <div class="summary">
           {group.summary.map((paragraph) => (
@@ -36,12 +43,44 @@ const { block } = Astro.props;
         </div>
       )}
       {group.bullets && <Bullets items={group.bullets} />}
+      {!group.continues && group.stack && (
+        <p class="stack">
+          {/* The separator is text, not a pseudo-element, so the PDF's text keeps it (spec §4.2). */}
+          {group.stack.map((item, i) => (
+            <>
+              {i > 0 && <span class="sep"> · </span>}
+              {item}
+            </>
+          ))}
+        </p>
+      )}
     </section>
   ))}
 
 <style>
   @layer components {
     .summary {
+      margin-block-start: var(--space-s);
+      line-height: var(--prose-leading);
+      color: var(--color-text);
+    }
+
+    /* The link stands where the meta would, so it takes the meta's face. */
+    .link {
+      margin-block-start: var(--space-s);
+      font-family: var(--font-display);
+      font-weight: var(--font-weight-display);
+      font-size: var(--font-size-meta);
+      line-height: 1.15;
+      color: var(--color-heading);
+
+      a {
+        text-decoration: underline;
+        text-underline-offset: 0.15em;
+      }
+    }
+
+    .stack {
       margin-block-start: var(--space-s);
       line-height: var(--prose-leading);
       color: var(--color-text);

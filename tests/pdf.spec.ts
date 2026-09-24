@@ -136,6 +136,29 @@ for (const locale of LOCALES)
           );
         }
       });
+
+      test('prints every stack with its separators, and every link in full', () => {
+        const groups = cv[locale].blocks.flatMap((block) =>
+          block.kind === 'mainSection' ? block.groups : [],
+        );
+
+        for (const group of groups) {
+          if (group.continues) continue;
+          // The separator is text in the DOM, so the extraction must carry it (spec §4.2).
+          if (group.stack) {
+            expect(report.text, `${group.title}’s stack`).toContain(
+              withoutWhitespace(group.stack.join(' · ')),
+            );
+          }
+          // A printed PDF cannot be clicked, so the address is read as well as linked.
+          if (group.url) {
+            expect(report.links, `${group.title}’s link`).toContain(group.url);
+            expect(report.text, `${group.title}’s address`).toContain(
+              group.url.replace(/^https?:\/\//, ''),
+            );
+          }
+        }
+      });
     });
   }
 

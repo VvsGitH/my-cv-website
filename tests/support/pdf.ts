@@ -4,11 +4,13 @@ import {
   PDFArray,
   PDFDict,
   PDFDocument,
+  PDFHexString,
   PDFName,
   type PDFPage,
   PDFRawStream,
   PDFRef,
   PDFStream,
+  PDFString,
 } from 'pdf-lib';
 
 /** Enough of a PDF reader for ADR-0010's assertions, which also records the two encoding traps. */
@@ -26,6 +28,8 @@ export interface PdfReport {
   /** Distinct image XObjects, including any drawn inside a form XObject. */
   images: number;
   text: string;
+  /** The URI of every link annotation, in page order. */
+  links: string[];
 }
 
 /** Chromium positions one glyph at a time, leaving no usable word spacing. */
@@ -44,7 +48,17 @@ export async function readPdfBytes(bytes: Uint8Array): Promise<PdfReport> {
     fonts: pages.flatMap(fontsOf),
     images: imagesOf(pages),
     text: withoutWhitespace(pages.map(textOf).join('')),
+    links: pages.flatMap(linksOf),
   };
+}
+
+function linksOf(page: PDFPage): string[] {
+  const annotations = page.node.lookupMaybe(PDFName.of('Annots'), PDFArray)?.asArray() ?? [];
+  return annotations.flatMap((ref) => {
+    const action = page.node.context.lookup(ref, PDFDict).lookupMaybe(PDFName.of('A'), PDFDict);
+    const uri = action?.lookup(PDFName.of('URI'));
+    return uri instanceof PDFString || uri instanceof PDFHexString ? [uri.decodeText()] : [];
+  });
 }
 
 function imagesOf(pages: PDFPage[]): number {

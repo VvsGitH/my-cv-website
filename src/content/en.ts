@@ -30,7 +30,7 @@ export const en: CvContent = {
       kind: 'skills',
       paperSheet: 1,
       paperColumn: 'aside',
-      readOrder: 7,
+      readOrder: 8,
       heading: 'Tech Skills',
       groups: [
         {
@@ -174,6 +174,7 @@ export const en: CvContent = {
             'Team coordination, PR review and technical support over more complex tasks.',
             'Technical documentation and testing.',
           ],
+          stack: ['Next.js', 'React', 'i18n'],
         },
       ],
     },
@@ -183,7 +184,7 @@ export const en: CvContent = {
       kind: 'bullets',
       paperSheet: 2,
       paperColumn: 'aside',
-      readOrder: 8,
+      readOrder: 9,
       heading: 'Soft Skills',
       items: [
         'Creativity',
@@ -200,7 +201,7 @@ export const en: CvContent = {
       kind: 'languages',
       paperSheet: 2,
       paperColumn: 'aside',
-      readOrder: 11,
+      readOrder: 12,
       heading: 'Languages',
       entries: [
         { name: 'Italian', level: 'Native', proficiency: 1 },
@@ -211,7 +212,7 @@ export const en: CvContent = {
       kind: 'certifications',
       paperSheet: 2,
       paperColumn: 'aside',
-      readOrder: 10,
+      readOrder: 11,
       heading: 'Certifications',
       entries: [
         {
@@ -231,7 +232,7 @@ export const en: CvContent = {
       kind: 'bullets',
       paperSheet: 2,
       paperColumn: 'aside',
-      readOrder: 12,
+      readOrder: 13,
       heading: 'Other Info',
       items: [
         'Driving licence: B.',
@@ -243,7 +244,7 @@ export const en: CvContent = {
       kind: 'privacy',
       paperSheet: 2,
       paperColumn: 'aside',
-      readOrder: 13,
+      readOrder: 14,
       heading: 'Privacy',
       statement:
         'I authorize the processing of my personal data pursuant to Legislative Decree 2018/101 and art. 13 GDPR (EU Regulation 2016/679) for the purposes of personnel research and selection.',
@@ -278,47 +279,33 @@ export const en: CvContent = {
             'Development of a single-page, responsive, web application in React.js, with 4 different types of users, OAuth2.0 authentication and routing.',
             'Management of the GitHub repository.',
           ],
+          stack: ['React.js', 'OAuth2.0', 'GitHub'],
         },
         {
           title: 'Beyond Knowledge',
           meta: ['Senior Frontend Developer', 'CyberSecurity S.r.l. ~ Beyond Knowledge'],
           period: '2023.01 - 2023.06',
-          summary: [
-            '“Beyond Knowledge” is an in-development subscription based platform for AI services. It offers solutions for Industry4.0, Network Monitoring and Financial Planning.',
-          ],
-          bullets: [
-            'Development of a single-page, responsive, web application in React.js, using state of the art libraries like @tanstack/react-query and @tanstack/react-table.',
-            'Development of a design-system with tailwind.css, based on Figma mockups.',
-            'Teamwork in an scrum based project, using the Atlassian suite.',
-          ],
+          stack: ['React.js', 'TanStack Query', 'TanStack Table', 'Tailwind CSS', 'Figma'],
         },
         {
           title: 'VEDO Tool & ABC Monitoring',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ ENI Italia'],
           period: '2022.10 - 2022.12',
-          summary: [
-            '“VEDO Tool” is an application based of Microsoft Power Apps, used by ENI employees for internal organization. “ABC Monitoring” (Anti Bribery Compliance) is a SharePoint application used by ENI to monitor some legal aspects of joints ventures.',
-          ],
-          bullets: [
-            'Development of a multipage web application using Typescript, JQuery and Boostrap 4.',
-            'Using Open Data Protocol (OData) to communicate with Microsoft Dataverse.',
+          stack: [
+            'Power Apps',
+            'SharePoint',
+            'TypeScript',
+            'jQuery',
+            'Bootstrap 4',
+            'OData',
+            'Dataverse',
           ],
         },
         {
           title: 'Dam Dossier',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ Enel Green Power'],
           period: '2022.04 - 2022.10',
-          summary: [
-            '“Dam Dossier” is a web application to catalogue and manage all the dams used by ENEL in Italy. It’s one of the many applications inside the Enel Platform.',
-          ],
-          bullets: [
-            'Development of a responsive spa with Angular 14 and SCSS.',
-            'Integrating and improving the components from the Enel Design System.',
-            'Implementing new angular components based on Adobe XD mockups.',
-            'Web Accessibility WCAG 2.1 compliance.',
-            'Unit testing with Karma and Jasmine.',
-            'Working in an agile (scrum) context, supported by the Atlassian suite.',
-          ],
+          stack: ['Angular 14', 'SCSS', 'Enel Design System', 'WCAG 2.1', 'Jasmine/Karma'],
         },
       ],
     },
@@ -326,7 +313,27 @@ export const en: CvContent = {
       kind: 'mainSection',
       paperSheet: 2,
       paperColumn: 'main',
-      readOrder: 9,
+      readOrder: 7,
+      heading: 'Personal Projects',
+      // Names in English, as in `it.ts` (spec §4.4).
+      groups: [
+        {
+          title: 'CV Management & Display',
+          url: 'https://github.com/VvsGitH/my-cv-website',
+          stack: ['Astro', 'Preact', 'TypeScript', 'Playwright', 'modern CSS', 'WCAG 2.2'],
+        },
+        {
+          title: 'Expense Dashboard',
+          url: 'https://github.com/VvsGitH/expense-dashboard',
+          stack: ['Python', 'Streamlit', 'SQLite', 'pytest'],
+        },
+      ],
+    },
+    {
+      kind: 'mainSection',
+      paperSheet: 2,
+      paperColumn: 'main',
+      readOrder: 10,
       heading: 'Education',
       groups: [
         {

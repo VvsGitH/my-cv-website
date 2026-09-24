@@ -74,11 +74,16 @@ export type MainSectionGroup =
   | {
       continues?: false;
       title: string;
-      /** Organisations only: `[company]`, `[role, client]`, `[institution]`. */
-      meta: string[];
-      period: string;
+      /** Organisations only: `[company]`, `[role, client]`, `[institution]`. A Group with a `url` usually has none. */
+      meta?: string[];
+      /** Absent on a Group with no dates, such as a personal project (spec D23). */
+      period?: string;
       summary?: RichText[];
       bullets?: RichText[];
+      /** Technologies, rendered as one inline line. A Group with `stack` and no `bullets` is a slim Group. */
+      stack?: string[];
+      /** A public link — repository or demo. Rendered in full, not hidden behind the title: a printed PDF cannot be clicked. */
+      url?: string;
     }
   | {
       continues: true;

@@ -180,16 +180,15 @@ export const en: CvContent = {
       paperSheet: 2,
       paperColumn: 'aside',
       readOrder: 9,
-      heading: 'Soft Skills',
+      heading: 'How I Work',
       items: [
-        'Creativity',
-        'Growth mindset',
-        'Leadership',
-        'Problem solving',
-        'Teamwork & communication',
-        'Time & work management',
-        'Tutoring',
-        'Work under pressure',
+        '**Performance first**: Core Web Vitals as a requirement, monitored with SpeedCurve.',
+        '**Accessibility**: WCAG 2.1, W3C certified.',
+        '**Tested code**: unit tests with Jest, e2e with Playwright.',
+        '**Code review and mentoring** as part of the daily work.',
+        '**Incremental modernisation** of legacy code, no big-bang rewrites.',
+        '**AI-assisted development**: Claude Code and Copilot, with team-wide guidelines.',
+        '**Agile/Scrum** with product, design and non-technical stakeholders.',
       ],
     },
     {
@@ -200,7 +199,7 @@ export const en: CvContent = {
       heading: 'Languages',
       entries: [
         { name: 'Italian', level: 'Native', proficiency: 1 },
-        { name: 'English', level: 'B2 - C1', proficiency: 0.7 },
+        { name: 'English', level: 'B2 certified, C1 in daily use', proficiency: 0.7 },
       ],
     },
     {
@@ -232,7 +231,8 @@ export const en: CvContent = {
       items: [
         'Driving licence: B.',
         'I own a car.',
-        'I’m open to relocate but I highly value remote work.',
+        'Preference for remote work; open to hybrid roles in Italy, without relocation.',
+        'Based in Bari, Italy (CET). EU citizen.',
       ],
     },
     {
@@ -242,7 +242,7 @@ export const en: CvContent = {
       readOrder: 14,
       heading: 'Privacy',
       statement:
-        'I authorize the processing of my personal data pursuant to Legislative Decree 2018/101 and art. 13 GDPR (EU Regulation 2016/679) for the purposes of personnel research and selection.',
+        'I authorise the processing of the personal data in this CV pursuant to Legislative Decree 196/2003, as amended by Legislative Decree 101/2018, and art. 13 of Regulation (EU) 2016/679 (GDPR), for the purposes of personnel research and selection.',
       place: 'Bari',
       signature: 'Vito Paparella Santorsola',
     },
@@ -260,14 +260,13 @@ export const en: CvContent = {
           continues: true,
           title: 'Registro Ufficiale degli Operatori Professionali (continued)',
           summary: [
-            '“Registro Ufficiale degli Operatori Professionali”, or RUOP, is one of the applications inside the MASAF portal of the Italian minister of agriculture. Businesses have to subscribe to the RUOP registry in order to run activities related to import/export of plants.',
+            '“Registro Ufficiale degli Operatori Professionali”, or RUOP, is one of the applications inside the MASAF portal of the Italian Ministry of Agriculture. Businesses have to subscribe to the RUOP registry in order to run activities related to import/export of plants.',
           ],
           bullets: [
-            'Coordination of the frontend team, composed by me and other 3 developers.',
-            'Definition of the architecture of the React application.',
-            'Translation of the client’s requirements into technical requirements; estimation and task assignment.',
-            'Development of a single-page, responsive, web application in React, with 4 different types of users, OAuth2.0 authentication and routing.',
-            'Management of the GitHub repository.',
+            'Led a frontend team of **4 developers**.',
+            'Defined the application’s **React architecture**.',
+            'Translated the client’s requirements into technical ones; estimated and assigned tasks.',
+            'Built a responsive single-page application in React with **4 user types**, **OAuth2.0** authentication and routing.',
           ],
           stack: ['React', 'TanStack Query', 'Zustand', 'Tailwind CSS', 'WCAG 2.1', 'OAuth2.0'],
         },
@@ -279,8 +278,8 @@ export const en: CvContent = {
             '“Beyond Knowledge” is an in-development subscription based platform for AI services. It offers solutions for Industry4.0, Network Monitoring and Financial Planning.',
           ],
           bullets: [
-            'Development of a single-page, responsive, web application in React, using state of the art libraries like @tanstack/react-query and @tanstack/react-table.',
-            'Development of a design system with Tailwind CSS, based on Figma mockups.',
+            'Built a responsive single-page application in React with **TanStack Query** and **TanStack Table**.',
+            'Created a **design system** in Tailwind CSS from Figma mockups.',
           ],
           stack: [
             'React',
@@ -351,7 +350,7 @@ export const en: CvContent = {
           meta: ['Polytechnic University of Bari, Bari, Italy'],
           period: '08/2014 - 10/2018',
           summary: [
-            'Grade: **110/110** | EQF Level: **6**',
+            'Grade: **110/110** | Bachelor’s degree (EQF **6**)',
             'Experimental thesis: **Analisi e Miglioramento delle Prestazioni di Processi Produttivi Industriali mediante Reti di Petri, il caso Dream Project**.',
           ],
         },

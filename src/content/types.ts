@@ -109,7 +109,7 @@ export interface BulletsBlock extends SectionBlock {
 
 export interface LanguageEntry {
   name: string;
-  /** CEFR label shown beside the bar, e.g. "Native", "B2 - C1". */
+  /** CEFR label shown beside the bar, e.g. "Native", "B2 certified, C1 in daily use". */
   level: string;
   /** Bar fill, 0–1. */
   proficiency: number;

@@ -174,16 +174,15 @@ export const it: CvContent = {
       paperSheet: 2,
       paperColumn: 'aside',
       readOrder: 9,
-      heading: 'Soft skills',
+      heading: 'Come lavoro',
       items: [
-        'Creatività',
-        'Growth mindset',
-        'Leadership',
-        'Problem solving',
-        'Lavoro in team e comunicazione',
-        'Gestione del tempo e delle attività',
-        'Tutoraggio',
-        'Lavoro sotto pressione',
+        '**Performance first**: Core Web Vitals come requisito, monitorati con SpeedCurve.',
+        '**Accessibilità**: WCAG 2.1, con certificazione W3C.',
+        '**Codice testato**: unit test con Jest, e2e con Playwright.',
+        '**Code review e mentoring** nel lavoro di ogni giorno.',
+        '**Modernizzazione incrementale** del legacy, senza riscritture da zero.',
+        '**Sviluppo assistito da AI**: Claude Code e Copilot, con linee guida condivise nel team.',
+        '**Agile/Scrum** con product, design e stakeholder non tecnici.',
       ],
     },
     {
@@ -194,7 +193,7 @@ export const it: CvContent = {
       heading: 'Lingue',
       entries: [
         { name: 'Italiano', level: 'Madrelingua', proficiency: 1 },
-        { name: 'Inglese', level: 'B2 - C1', proficiency: 0.7 },
+        { name: 'Inglese', level: 'B2 certificato, C1 d’uso', proficiency: 0.7 },
       ],
     },
     {
@@ -226,7 +225,7 @@ export const it: CvContent = {
       items: [
         'Patente di guida: B.',
         'Automunito.',
-        'Disponibile al trasferimento, ma attribuisco grande valore al lavoro da remoto.',
+        'Preferenza per il lavoro da remoto; disponibile per posizioni ibride in Italia, senza cambio di residenza.',
       ],
     },
     {
@@ -236,7 +235,7 @@ export const it: CvContent = {
       readOrder: 14,
       heading: 'Privacy',
       statement:
-        'Autorizzo il trattamento dei miei dati personali ai sensi del D.lgs. 101/2018 e dell’art. 13 GDPR (Regolamento UE 2016/679) ai fini della ricerca e selezione del personale.',
+        'Autorizzo il trattamento dei miei dati personali presenti nel curriculum vitae ai sensi del D.Lgs. 196/2003, come modificato dal D.Lgs. 101/2018, e dell’art. 13 del Regolamento (UE) 2016/679 (GDPR), ai fini della ricerca e selezione del personale.',
       place: 'Bari',
       signature: 'Vito Paparella Santorsola',
     },
@@ -257,11 +256,10 @@ export const it: CvContent = {
             '“Registro Ufficiale degli Operatori Professionali”, o RUOP, è una delle applicazioni all’interno del portale MASAF del Ministero dell’Agricoltura. Le imprese devono iscriversi al registro RUOP per svolgere attività di import/export di piante.',
           ],
           bullets: [
-            'Coordinamento del team frontend, composto da me e altri 3 sviluppatori.',
-            'Definizione dell’architettura dell’applicazione React.',
-            'Traduzione dei requisiti del cliente in requisiti tecnici; stima e assegnazione delle attività.',
-            'Sviluppo di una web application single-page e responsive in React, con 4 tipologie di utenti, autenticazione OAuth2.0 e routing.',
-            'Gestione del repository GitHub.',
+            'Guidato un team frontend di **4 sviluppatori**.',
+            'Definita l’**architettura React** dell’applicazione.',
+            'Tradotti i requisiti del cliente in requisiti tecnici; stimate e assegnate le attività.',
+            'Sviluppata una SPA responsive in React con **4 tipologie di utenti**, autenticazione **OAuth2.0** e routing.',
           ],
           stack: ['React', 'TanStack Query', 'Zustand', 'Tailwind CSS', 'WCAG 2.1', 'OAuth2.0'],
         },
@@ -273,8 +271,8 @@ export const it: CvContent = {
             '“Beyond Knowledge” è una piattaforma in sviluppo, su modello ad abbonamento, per servizi di AI. Offre soluzioni per Industry4.0, Network Monitoring e Financial Planning.',
           ],
           bullets: [
-            'Sviluppo di una web application single-page e responsive in React, con librerie allo stato dell’arte come @tanstack/react-query e @tanstack/react-table.',
-            'Sviluppo di un design system con Tailwind CSS, a partire da mockup Figma.',
+            'Sviluppata una SPA responsive in React con **TanStack Query** e **TanStack Table**.',
+            'Creato un **design system** in Tailwind CSS a partire dai mockup Figma.',
           ],
           stack: [
             'React',

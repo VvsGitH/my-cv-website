@@ -12,11 +12,11 @@ In `it.ts` e `en.ts`. In EN gli stessi fatti e gli stessi numeri, scritti per il
 
 - **Header**: contatto GitHub dopo LinkedIn: `{ label: 'GitHub', value: 'VvsGitH', url: 'https://github.com/VvsGitH' }`. Niente telefono (D3). `title` invariato (D9).
 - **Profilo**: stessa lunghezza (D7). "5+ anni", specializzazione frontend React/TypeScript e clienti in apertura, un numero N1/N2 se c'è, una frase finale concreta al posto di "sinceramente curioso…" e, in chiusura, cosa si cerca (D14). La bozza è in spec §3.2.
-- **RCS**: cinque bullet con la formula XYZ (spec §3.3), il più forte per primo. Il bullet Gazzetta è `KEEP TIGHT`: se N1 lo allunga, si compensa altrove.
+- **RCS**: cinque bullet con la formula XYZ (spec §3.3), il più forte per primo. Il bullet Gazzetta in IT è già tirato per stare in 2 righe: se N1 lo allunga, si compensa altrove.
 - **CyberSecurity**: Trainee e Software Developer si uniscono in `Software Developer`, `04/2021 – 05/2024`, con una riga sulla promozione (D13). Bullet al participio con N5 (spec §3.4).
 - **Skill**: niente "e altri…", le voci "di base" (Java Spring, React Native) si tolgono o vanno in una riga *"Familiarità con"*, Java e Python restano in *Linguaggi* (D18). Nuove voci, se c'è spazio in Sheet 1 Aside: Web performance / Core Web Vitals, Accessibilità (WCAG 2.1), Micro-frontend, Astro, Playwright, CI/CD, Design system. Quelle che non ci stanno le copre il blocco "Come lavoro" (ticket 05).
 - **Forma verbale in IT**: participio passato, una sola forma per ruolo (spec §2).
-- **Commenti in `it.ts`**: il commento di testa (le quattro decisioni `OWNER`, i tre bullet `KEEP TIGHT`) si aggiorna in base a quello che resta vero.
+- **Nessun commento nei content** (decisione dell'owner, 2026-09-24): `it.ts` ed `en.ts` hanno solo i separatori di Sheet e colonna.
 
 ## Numeri da ricevere (spec §1)
 

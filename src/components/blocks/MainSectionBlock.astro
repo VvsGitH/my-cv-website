@@ -43,7 +43,7 @@ const displayUrl = (url: string) => url.replace(/^https?:\/\//, '');
         </div>
       )}
       {group.bullets && <Bullets items={group.bullets} />}
-      {!group.continues && group.stack && (
+      {group.stack && (
         <p class="stack">
           {/* The separator is text, not a pseudo-element, so the PDF's text keeps it (spec §4.2). */}
           {group.stack.map((item, i) => (

@@ -90,6 +90,8 @@ export type MainSectionGroup =
       title: string;
       summary?: RichText[];
       bullets?: RichText[];
+      /** The stack closes a Group, so on a split Group it travels with the half that holds the end. */
+      stack?: string[];
     };
 
 /** A Main section, or as much of one as fits a Sheet; the rest is a Continuation (ADR-0005). */

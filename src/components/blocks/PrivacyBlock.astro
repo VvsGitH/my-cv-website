@@ -9,16 +9,16 @@ interface Props {
 
 const { block } = Astro.props;
 
-// From the build, not the page load — as with the Colophon's © (ADR-0013). Dotted
-// and zero-padded, year first: a full date that keeps its shape across Locales,
-// so the two renderings of the statement cannot drift apart. Periods and
-// certifications are `MM/YYYY` instead — they name a month, not a day.
+// From the build, not the page load — as with the Colophon's © (ADR-0013).
+// `DD/MM/YYYY`, zero-padded, in both Locales: the European order the place (Bari)
+// implies, and the same slashes as the periods' `MM/YYYY`. One shape for both
+// renderings of the statement, so they cannot drift apart.
 const now = new Date();
 const date = [
-  now.getFullYear(),
-  String(now.getMonth() + 1).padStart(2, '0'),
   String(now.getDate()).padStart(2, '0'),
-].join('.');
+  String(now.getMonth() + 1).padStart(2, '0'),
+  now.getFullYear(),
+].join('/');
 ---
 
 <SectionHeading text={block.heading} />

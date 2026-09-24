@@ -148,7 +148,7 @@ test('dates the Privacy statement at build time, identically in both Locales', a
   const english = await placeDateOf('en');
 
   // Not today's date spelled out here: the point is the shape the build writes.
-  expect(italian).toMatch(/^Bari, \d{4}\.\d{2}\.\d{2}$/);
+  expect(italian).toMatch(/^Bari, \d{2}\/\d{2}\/\d{4}$/);
   // One build, one date — the two Locales cannot drift apart the way two
   // hand-written strings could.
   expect(english).toBe(italian);

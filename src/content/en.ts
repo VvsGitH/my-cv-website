@@ -1,10 +1,5 @@
 import type { CvContent } from './types';
 
-/**
- * English CV content, transcribed from the reference CV in `docs/assets/`.
- * Blocks are listed in reading order — Sheet 1 Aside, Sheet 1 Main, Sheet 2
- * Aside, Sheet 2 Main — and that array order is what the layout renders.
- */
 export const en: CvContent = {
   locale: 'en',
   blocks: [
@@ -125,7 +120,7 @@ export const en: CvContent = {
         {
           title: 'Senior Software Developer',
           meta: ['RCS Innovation S.r.l.'],
-          period: '05/2024 – present',
+          period: '05/2024 - present',
           bullets: [
             'Active development and maintenance of RCS’s flagship news platforms: **Corriere della Sera** (serving up to **40k concurrent users**) and **Gazzetta dello Sport**, with a strong focus on **stability**, **performance** and user experience.',
             '**Subject matter expert** for the video-manager component, coordinating the maintenance team and driving precise, continuous refactors.',
@@ -137,7 +132,7 @@ export const en: CvContent = {
         {
           title: 'Software Developer',
           meta: ['CyberSecurity S.r.l.'],
-          period: '07/2021 – 05/2024',
+          period: '07/2021 - 05/2024',
           bullets: [
             '**Full-stack development** as a consultant for both medium and large scale projects across multiple domains (utilities, energy, finance, AI platforms).',
             '**Technical leader** of small teams (up to 4 developers), responsible for architecture decisions, PR reviews, task estimation and technical support.',
@@ -148,7 +143,7 @@ export const en: CvContent = {
         {
           title: 'Trainee Software Developer',
           meta: ['CyberSecurity S.r.l.'],
-          period: '04/2021 – 07/2021',
+          period: '04/2021 - 07/2021',
           summary: [
             'Reinforced core programming and software development skills through **hands-on training** and project work: **Clean Code**, **SOLID** principles, **OO** programming and **design patterns**.',
           ],
@@ -165,16 +160,24 @@ export const en: CvContent = {
         {
           title: 'B2B Environment',
           meta: ['Senior Frontend Developer & Team Leader', 'CyberSecurity S.r.l. ~ A2A S.p.a'],
-          period: '03/2024 – 05/2024',
-          summary: [
-            '“B2B Environment” is a small web application, structured like a wizard, that will be used by the clients of A2A to order and customize garbage collecting services.',
+          period: '03/2024 - 05/2024',
+          stack: [
+            'Next.js - App Router',
+            'React',
+            'i18n',
+            'TypeScript',
+            'Tailwind CSS',
+            'WCAG 2.1',
+            'React Testing Library',
           ],
-          bullets: [
-            'Initial setup and configuration of the Next.js application, with app-router, state-management, i18n and standalone deploy. Definition of folder structure and code patterns.',
-            'Team coordination, PR review and technical support over more complex tasks.',
-            'Technical documentation and testing.',
+        },
+        {
+          title: 'Registro Ufficiale degli Operatori Professionali',
+          meta: [
+            'Senior Frontend Developer & Team Leader',
+            'CyberSecurity S.r.l. ~ Leonardo S.p.a.',
           ],
-          stack: ['Next.js', 'React', 'i18n'],
+          period: '07/2023 - 02/2024',
         },
       ],
     },
@@ -217,8 +220,8 @@ export const en: CvContent = {
       entries: [
         {
           date: '12/2022',
-          issuer: 'W3Cx',
-          title: 'WAI0.1x: Introduction to Web Accessibility',
+          issuer: 'W3C (via edX)',
+          title: 'Introduction to Web Accessibility',
           url: 'https://www.edx.org/learn/web-accessibility/the-world-wide-web-consortium-w3c-introduction-to-web-accessibility',
         },
         {
@@ -258,39 +261,48 @@ export const en: CvContent = {
       paperSheet: 2,
       paperColumn: 'main',
       readOrder: 6,
-      // A Continuation (ADR-0005) — see the note in `it.ts`.
       heading: 'Selected Projects (continued)',
       continues: true,
       groups: [
         {
-          title: 'Registro Ufficiale degli Operatori Professionali',
-          meta: [
-            'Senior Frontend Developer & Team Leader',
-            'CyberSecurity S.r.l. ~ Leonardo S.p.a.',
-          ],
-          period: '07/2023 – 02/2024',
+          continues: true,
+          title: 'Registro Ufficiale degli Operatori Professionali (continued)',
           summary: [
             '“Registro Ufficiale degli Operatori Professionali”, or RUOP, is one of the applications inside the MASAF portal of the Italian minister of agriculture. Businesses have to subscribe to the RUOP registry in order to run activities related to import/export of plants.',
           ],
           bullets: [
-            'Coordination of the fronted team, composed by me and other 3 developers.',
+            'Coordination of the frontend team, composed by me and other 3 developers.',
             'Definition of the architecture of the React application.',
             'Translation of the client’s requirements into technical requirements; estimation and task assignment.',
             'Development of a single-page, responsive, web application in React, with 4 different types of users, OAuth2.0 authentication and routing.',
             'Management of the GitHub repository.',
           ],
-          stack: ['React', 'OAuth2.0', 'GitHub'],
+          stack: ['React', 'TanStack Query', 'Zustand', 'Tailwind CSS', 'WCAG 2.1', 'OAuth2.0'],
         },
         {
           title: 'Beyond Knowledge',
           meta: ['Senior Frontend Developer', 'CyberSecurity S.r.l. ~ Beyond Knowledge'],
-          period: '01/2023 – 06/2023',
-          stack: ['React', 'TanStack Query', 'TanStack Table', 'Tailwind CSS', 'Figma'],
+          period: '01/2023 - 06/2023',
+          summary: [
+            '“Beyond Knowledge” is an in-development subscription based platform for AI services. It offers solutions for Industry4.0, Network Monitoring and Financial Planning.',
+          ],
+          bullets: [
+            'Development of a single-page, responsive, web application in React, using state of the art libraries like @tanstack/react-query and @tanstack/react-table.',
+            'Development of a design system with Tailwind CSS, based on Figma mockups.',
+          ],
+          stack: [
+            'React',
+            'TanStack Query',
+            'TanStack Table',
+            'React Testing Library',
+            'TypeScript',
+            'Tailwind CSS',
+          ],
         },
         {
           title: 'VEDO Tool & ABC Monitoring',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ ENI Italia'],
-          period: '10/2022 – 12/2022',
+          period: '10/2022 - 12/2022',
           stack: [
             'Power Apps',
             'SharePoint',
@@ -304,8 +316,15 @@ export const en: CvContent = {
         {
           title: 'Dam Dossier',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ Enel Green Power'],
-          period: '04/2022 – 10/2022',
-          stack: ['Angular 14', 'SCSS', 'Enel Design System', 'WCAG 2.1', 'Jasmine/Karma'],
+          period: '04/2022 - 10/2022',
+          stack: [
+            'Angular 14',
+            'SCSS',
+            'Enel Design System',
+            'TypeScript',
+            'WCAG 2.1',
+            'Jasmine/Karma',
+          ],
         },
       ],
     },
@@ -315,7 +334,6 @@ export const en: CvContent = {
       paperColumn: 'main',
       readOrder: 7,
       heading: 'Personal Projects',
-      // Names in English, as in `it.ts` (spec §4.4).
       groups: [
         {
           title: 'CV Management & Display',
@@ -339,7 +357,7 @@ export const en: CvContent = {
         {
           title: 'Bachelor of Information and Automation Engineering',
           meta: ['Polytechnic University of Bari, Bari, Italy'],
-          period: '08/2014 – 10/2018',
+          period: '08/2014 - 10/2018',
           summary: [
             'Grade: **110/110** | EQF Level: **6**',
             'Experimental thesis: **Analisi e Miglioramento delle Prestazioni di Processi Produttivi Industriali mediante Reti di Petri, il caso Dream Project**.',
@@ -348,7 +366,7 @@ export const en: CvContent = {
         {
           title: 'High School Diploma',
           meta: ['Liceo Scientifico Amaldi, Bitetto, Italy'],
-          period: '09/2009 – 07/2014',
+          period: '09/2009 - 07/2014',
           summary: ['Grade: **100/100** | EQF Level: **4**'],
         },
       ],

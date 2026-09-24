@@ -67,7 +67,7 @@ L'owner ha pochi numeri e può recuperarne qualcuno. Qui sotto sono **ordinati p
 - **Forma verbale unica in IT: participio passato** ("Guidato", "Introdotto", "Sviluppato"). Si toglie la prima persona ("Ho guidato") e si tolgono i sostantivi deverbali in apertura ("Sviluppo di…", "Coordinamento del…"). Per il ruolo attuale va bene anche il presente, ma una sola forma per ruolo. **EN:** verbo d'azione al passato per i ruoli conclusi (*Led, Built, Introduced*) e al presente per quello attuale (*Lead, Build, Own*).
 - **Grafie canoniche delle tecnologie**, uguali in IT ed EN: `JavaScript`, `TypeScript`, `React`, `Next.js`, `Angular`, `RxJS`, `jQuery`, `Tailwind CSS`, `SVN`, `Node.js`, `Express`, `MongoDB`, `Vite`, `webpack`. Si corregge anche `tailwind.css` nel progetto Beyond Knowledge.
 - **Stessi fatti e stessi numeri** nelle due Locale.
-- **Explicit Paging:** ogni modifica si verifica sul PDF (`npm run build` + i test). I tre bullet `KEEP TIGHT` in `it.ts` segnalano che **Sheet 1 Main è al limite**: un bullet XYZ più lungo si compensa accorciandone un altro o togliendo un bullet debole. Mai spostando contenuto a un'altra posizione senza aggiornare `paperSheet`/`readOrder`.
+- **Explicit Paging:** ogni modifica si verifica sul PDF (`npm run build` + i test). **Sheet 1 Main è al limite** (in IT il bullet Gazzetta è già accorciato per stare in 2 righe): un bullet XYZ più lungo si compensa accorciandone un altro o togliendo un bullet debole. Mai spostando contenuto a un'altra posizione senza aggiornare `paperSheet`/`readOrder`.
 
 ## 3. Modifiche al contenuto, sezione per sezione
 
@@ -107,7 +107,7 @@ Obiettivo: il primo bullet deve contenere il risultato più forte. Bozze IT con 
 4. **Architettura**: resta com'è (è già buono), con le grafie sistemate: "vanilla JS/TS e React".
 5. **Modernizzazione (N3)**: *"Guidata la **modernizzazione di [N] repository legacy**: **TypeScript/JSDoc**, **unit testing con Jest** ([copertura / numero di test]) e linee guida di testing per il team, incluse le best practice per il **coding assistito da AI**."*
 
-I bullet sono cinque come oggi, con lo stesso budget di righe. **Il bullet 2 oggi è `KEEP TIGHT`**: se N1 lo allunga, si recupera spazio nel bullet 4.
+I bullet sono cinque come oggi, con lo stesso budget di righe. **Il bullet 2 in IT è già accorciato per stare in 2 righe**: se N1 lo allunga, si recupera spazio nel bullet 4.
 
 ### 3.4 Esperienza: CyberSecurity
 
@@ -161,7 +161,7 @@ EN: resta, come traduzione della stessa clausola. Toglierla dal CV EN richiedere
 
 ### 3.11 Date (tutte le sezioni)
 
-`2024.05` diventa `05/2024`, e `2024.05 - oggi` diventa `05/2024 – oggi` (EN `05/2024 – present`), con il trattino lungo (en dash) come separatore. `–` è già nel subset del font (`fonts.config.mjs` → `PUNCTUATION`). Le date delle certificazioni (`2022.12.20`) diventano `12/2022`.
+`2024.05` diventa `05/2024`, e `2024.05 - oggi` diventa `05/2024 – oggi` (EN `05/2024 – present`), con il trattino semplice `-` come separatore (l'owner ha preferito il trattino all'en dash, 2026-09-24). Le date delle certificazioni (`2022.12.20`) diventano `12/2022`.
 
 ## 4. Progetti: formato completo e formato slim
 
@@ -170,9 +170,9 @@ EN: resta, come traduzione della stessa clausola. Toglierla dal CV EN richiedere
 | Progetto | Formato | Motivo |
 |---|---|---|
 | **RUOP** (Leonardo / MASAF) | **Completo** | Leadership (4 persone), architettura React, OAuth2, portale nazionale |
-| **B2B Environment** (A2A) | **Completo** | Setup Next.js da zero, team leader, il più recente |
+| **B2B Environment** (A2A) | **Slim** | Rivisto dall'owner (2026-09-24). RUOP copre già leadership e setup React |
 | **Dam Dossier** (Enel) | **Slim** | Tecnologie diverse (Angular, WCAG) che lo slim mostra comunque |
-| **Beyond Knowledge** | **Slim** | Stack React/TanStack/Tailwind, già coperto dai progetti completi |
+| **Beyond Knowledge** | **Completo** | Rivisto dall'owner (2026-09-24). Il bullet generico "Lavoro in team… suite Atlassian" è tolto |
 | **VEDO Tool & ABC Monitoring** (ENI) | **Slim** | Cliente noto, tecnologie Microsoft (Power Apps, SharePoint, OData) |
 
 I bullet dei progetti completi si riscrivono con gli stessi principi (§2). Si tolgono i bullet generici ("Gestione del repository GitHub", "Documentazione tecnica e testing", "Lavoro in team… suite Atlassian") o si fondono in un bullet che dica qualcosa di specifico.

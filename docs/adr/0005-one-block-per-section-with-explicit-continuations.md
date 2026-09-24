@@ -81,3 +81,19 @@ sits in one column of one Sheet".
   therefore has no consumer in the real content — it was proven by a temporary
   split rather than by production use. That is why it looks untested, and why it
   should not be deleted as dead.
+
+## Amended
+
+**2026-09-24.** The Group-level `continues` mechanism has its first consumer in the real content.
+B2B Environment became a slim Group (title, meta, period and stack only), and once Beyond
+Knowledge was expanded again, Sheet 2 Main no longer fitted. **RUOP is now split across the Sheet
+boundary.** Its title, role, client and period close Sheet 1. Its summary, bullets and stack open
+Sheet 2, under a Continuation Group whose title is the marked, screen-reader-only copy
+`… (continua)` / `… (continued)`. The consequence above, *"B2B Environment is the only Group in the
+CV that sits on a Sheet boundary"*, is no longer true in either half: it is RUOP, and the mechanism
+is no longer proven only by a temporary split.
+
+One field joined the Continuation side of the union: **`stack`**. The stack line closes a Group,
+after its bullets, so on a split Group it travels with the half that holds the end. `stack` is the
+only field a Continuation Group has gained. `meta`, `period` and `url` are still unavailable on
+it, because a Continuation never repeats the organisation or the dates.

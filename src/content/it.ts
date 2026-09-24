@@ -1,29 +1,5 @@
 import type { CvContent } from './types';
 
-/**
- * Italian CV content — net-new text, not a transcription, because the source CV
- * is English.
- *
- * The owner owns the final professional wording. **Four** decisions need his
- * judgement, each tagged with an `OWNER` comment beside the text it governs.
- *
- * Register: first person, professional, matching the English. Product names,
- * company names, technologies, certificate titles and the thesis title are
- * left as-is — they are proper nouns. Typographic apostrophes (’) and quotes
- * (“ ”) match `en.ts` and the reference CV; both are in the font subset.
- *
- * OWNER: **English is kept for role and technical labels throughout** —
- * every `role` field ("Senior Software Developer", "Frontend Developer", …),
- * the inline labels "Subject matter expert", "Technical leader" and "Lead
- * frontend developer", "Senior frontend engineer" opening About, and
- * "State management:" among the skills. This is the norm in Italian tech
- * CVs, but it is one global decision, not a per-line one: if you want a
- * fully Italian register, all of the above change together.
- *
- * **Three bullets are deliberately tighter than their English source**, and
- * must stay that way — see the note beside them. Restoring literal fidelity
- * puts Sheet 1 Main back over the paper edge.
- */
 export const it: CvContent = {
   locale: 'it',
   blocks: [
@@ -33,9 +9,6 @@ export const it: CvContent = {
       paperSheet: 1,
       paperColumn: 'aside',
       readOrder: 1,
-      // Not blanked like the prose below: an empty `alt` reads as
-      // "decorative" to a screen reader, which fails silently rather than
-      // visibly. The name is the same in both Locales anyway.
       alt: 'Vito Paparella Santorsola',
     },
     {
@@ -141,13 +114,10 @@ export const it: CvContent = {
         {
           title: 'Senior Software Developer',
           meta: ['RCS Innovation S.r.l.'],
-          // The one period that isn't just digits — "oggi" is prose ("now").
-          period: '05/2024 – oggi',
+          period: '05/2024 - oggi',
           bullets: [
             'Sviluppo attivo e manutenzione delle piattaforme news di punta di RCS: **Corriere della Sera** (fino a **40k utenti concorrenti**) e **Gazzetta dello Sport**, con forte attenzione a **stabilità**, **performance** ed esperienza utente.',
             '**Subject matter expert** per il componente video-manager, con coordinamento del team di manutenzione e refactoring continui e puntuali.',
-            // KEEP TIGHT (1 of 3): shorter than en.ts to hold 2 lines. The literal
-            // reading wraps to 3 and overflows Sheet 1 Main (ADR-0002).
             '**Lead frontend developer** per la nuova homepage e il restyling in corso di Gazzetta, coordinando sviluppo e trade-off tra stabilità e performance.',
             'Lavoro su un’**architettura micro-frontend ibrida basata sull’islands pattern**, con componenti scritti sia in **vanilla JS/TS sia in React**, bilanciando integrazione del legacy e sviluppo moderno.',
             'Ho guidato la **modernizzazione incrementale di codebase legacy**: adozione progressiva di **TypeScript e JSDoc** su più repository, introduzione dello **unit testing con Jest** e di linee guida di testing per tutto il team — incluse le best practice per gli **strumenti di coding assistito da AI**.',
@@ -156,7 +126,7 @@ export const it: CvContent = {
         {
           title: 'Software Developer',
           meta: ['CyberSecurity S.r.l.'],
-          period: '07/2021 – 05/2024',
+          period: '07/2021 - 05/2024',
           bullets: [
             '**Sviluppo full-stack** come consulente su progetti di media e larga scala in domini diversi (utility, energia, finanza, piattaforme AI).',
             '**Technical leader** di piccoli team (fino a 4 sviluppatori), con responsabilità su scelte architetturali, revisione delle PR, stima delle attività e supporto tecnico.',
@@ -167,7 +137,7 @@ export const it: CvContent = {
         {
           title: 'Trainee Software Developer',
           meta: ['CyberSecurity S.r.l.'],
-          period: '04/2021 – 07/2021',
+          period: '04/2021 - 07/2021',
           summary: [
             'Consolidamento delle competenze di base di programmazione e sviluppo software attraverso **formazione pratica** e lavoro su progetto: **Clean Code**, principi **SOLID**, programmazione **OO** e **design pattern**.',
           ],
@@ -184,21 +154,24 @@ export const it: CvContent = {
         {
           title: 'B2B Environment',
           meta: ['Senior Frontend Developer & Team Leader', 'CyberSecurity S.r.l. ~ A2A S.p.a'],
-          period: '03/2024 – 05/2024',
-          summary: [
-            '“B2B Environment” è una piccola web application, strutturata come un wizard, che sarà utilizzata dai clienti di A2A per ordinare e personalizzare i servizi di raccolta rifiuti.',
+          period: '03/2024 - 05/2024',
+          stack: [
+            'Next.js - App Router',
+            'React',
+            'i18n',
+            'TypeScript',
+            'Tailwind CSS',
+            'WCAG 2.1',
+            'React Testing Library',
           ],
-          bullets: [
-            // KEEP TIGHT (2 of 3): colon instead of "con", and "di struttura
-            // cartelle e pattern" instead of "della struttura delle cartelle e
-            // dei pattern" — holds 2 lines instead of 3.
-            'Setup e configurazione iniziale dell’applicazione Next.js: app-router, state management, i18n, deploy standalone. Definizione di struttura cartelle e pattern di codice.',
-            // KEEP TIGHT (3 of 3): "revisione PR" and "attività complesse"
-            // without articles — holds 1 line instead of 2.
-            'Coordinamento del team, revisione PR e supporto tecnico sulle attività complesse.',
-            'Documentazione tecnica e testing.',
+        },
+        {
+          title: 'Registro Ufficiale degli Operatori Professionali',
+          meta: [
+            'Senior Frontend Developer & Team Leader',
+            'CyberSecurity S.r.l. ~ Leonardo S.p.a.',
           ],
-          stack: ['Next.js', 'React', 'i18n'],
+          period: '07/2023 - 02/2024',
         },
       ],
     },
@@ -210,9 +183,6 @@ export const it: CvContent = {
       paperColumn: 'aside',
       readOrder: 9,
       heading: 'Soft skills',
-      // OWNER: "Growth mindset", "Leadership" and "Problem solving" are
-      // established loanwords in Italian professional usage — kept.
-      // "Mentalità di crescita" etc. if you want them fully translated.
       items: [
         'Creatività',
         'Growth mindset',
@@ -241,13 +211,11 @@ export const it: CvContent = {
       paperColumn: 'aside',
       readOrder: 11,
       heading: 'Certificazioni',
-      // Both titles are official course/certificate names — proper nouns,
-      // left untranslated.
       entries: [
         {
           date: '12/2022',
-          issuer: 'W3Cx',
-          title: 'WAI0.1x: Introduction to Web Accessibility',
+          issuer: 'W3C (via edX)',
+          title: 'Introduction to Web Accessibility',
           url: 'https://www.edx.org/learn/web-accessibility/the-world-wide-web-consortium-w3c-introduction-to-web-accessibility',
         },
         {
@@ -265,7 +233,6 @@ export const it: CvContent = {
       heading: 'Altre info',
       items: [
         'Patente di guida: B.',
-        // "Automunito" is the idiomatic Italian CV term for "I own a car".
         'Automunito.',
         'Disponibile al trasferimento, ma attribuisco grande valore al lavoro da remoto.',
       ],
@@ -276,8 +243,6 @@ export const it: CvContent = {
       paperColumn: 'aside',
       readOrder: 14,
       heading: 'Privacy',
-      // The canonical Italian formula, not a literal translation: the English
-      // is itself a rendering of this standard clause.
       statement:
         'Autorizzo il trattamento dei miei dati personali ai sensi del D.lgs. 101/2018 e dell’art. 13 GDPR (Regolamento UE 2016/679) ai fini della ricerca e selezione del personale.',
       place: 'Bari',
@@ -290,21 +255,12 @@ export const it: CvContent = {
       paperSheet: 2,
       paperColumn: 'main',
       readOrder: 6,
-      // A Continuation (ADR-0005): the heading is a marked copy of Sheet 1's,
-      // rendered for screen readers only. On paper the two halves are a column
-      // apart; in Reading Mode `readOrder` puts this one immediately after the
-      // half it resumes, which the build asserts (ADR-0017). The marker is read
-      // in both cases, and in neither does a sighted reader see a second rule.
       heading: 'Progetti selezionati (continua)',
       continues: true,
       groups: [
         {
-          title: 'Registro Ufficiale degli Operatori Professionali',
-          meta: [
-            'Senior Frontend Developer & Team Leader',
-            'CyberSecurity S.r.l. ~ Leonardo S.p.a.',
-          ],
-          period: '07/2023 – 02/2024',
+          continues: true,
+          title: 'Registro Ufficiale degli Operatori Professionali (continua)',
           summary: [
             '“Registro Ufficiale degli Operatori Professionali”, o RUOP, è una delle applicazioni all’interno del portale MASAF del Ministero dell’Agricoltura. Le imprese devono iscriversi al registro RUOP per svolgere attività di import/export di piante.',
           ],
@@ -315,18 +271,32 @@ export const it: CvContent = {
             'Sviluppo di una web application single-page e responsive in React, con 4 tipologie di utenti, autenticazione OAuth2.0 e routing.',
             'Gestione del repository GitHub.',
           ],
-          stack: ['React', 'OAuth2.0', 'GitHub'],
+          stack: ['React', 'TanStack Query', 'Zustand', 'Tailwind CSS', 'WCAG 2.1', 'OAuth2.0'],
         },
         {
           title: 'Beyond Knowledge',
           meta: ['Senior Frontend Developer', 'CyberSecurity S.r.l. ~ Beyond Knowledge'],
-          period: '01/2023 – 06/2023',
-          stack: ['React', 'TanStack Query', 'TanStack Table', 'Tailwind CSS', 'Figma'],
+          period: '01/2023 - 06/2023',
+          summary: [
+            '“Beyond Knowledge” è una piattaforma in sviluppo, su modello ad abbonamento, per servizi di AI. Offre soluzioni per Industry4.0, Network Monitoring e Financial Planning.',
+          ],
+          bullets: [
+            'Sviluppo di una web application single-page e responsive in React, con librerie allo stato dell’arte come @tanstack/react-query e @tanstack/react-table.',
+            'Sviluppo di un design system con Tailwind CSS, a partire da mockup Figma.',
+          ],
+          stack: [
+            'React',
+            'TanStack Query',
+            'TanStack Table',
+            'React Testing Library',
+            'TypeScript',
+            'Tailwind CSS',
+          ],
         },
         {
           title: 'VEDO Tool & ABC Monitoring',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ ENI Italia'],
-          period: '10/2022 – 12/2022',
+          period: '10/2022 - 12/2022',
           stack: [
             'Power Apps',
             'SharePoint',
@@ -340,8 +310,15 @@ export const it: CvContent = {
         {
           title: 'Dam Dossier',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ Enel Green Power'],
-          period: '04/2022 – 10/2022',
-          stack: ['Angular 14', 'SCSS', 'Enel Design System', 'WCAG 2.1', 'Jasmine/Karma'],
+          period: '04/2022 - 10/2022',
+          stack: [
+            'Angular 14',
+            'SCSS',
+            'Enel Design System',
+            'TypeScript',
+            'WCAG 2.1',
+            'Jasmine/Karma',
+          ],
         },
       ],
     },
@@ -351,7 +328,6 @@ export const it: CvContent = {
       paperColumn: 'main',
       readOrder: 7,
       heading: 'Progetti personali',
-      // Project names stay in English in both Locales (spec §4.4).
       groups: [
         {
           title: 'CV Management & Display',
@@ -373,26 +349,18 @@ export const it: CvContent = {
       heading: 'Formazione',
       groups: [
         {
-          // OWNER: the official Italian name of the degree — please confirm.
-          // "Bachelor of Information and Automation Engineering" rendered as the
-          // most likely Politecnico di Bari wording.
           title: 'Laurea triennale in Ingegneria Informatica e dell’Automazione',
           meta: ['Politecnico di Bari, Bari, Italia'],
-          period: '08/2014 – 10/2018',
-          // Body prose, not `meta` — `meta` is plain text, so the markers would print (ADR-0005).
+          period: '08/2014 - 10/2018',
           summary: [
             'Voto: **110/110** | Livello EQF: **6**',
-            // Thesis title is already Italian in the source — left verbatim.
             'Tesi sperimentale: **Analisi e Miglioramento delle Prestazioni di Processi Produttivi Industriali mediante Reti di Petri, il caso Dream Project**.',
           ],
         },
         {
-          // OWNER: "Diploma di Maturità Scientifica" assumes the Liceo
-          // Scientifico track; "Diploma di scuola secondaria superiore" is the
-          // neutral form.
           title: 'Diploma di Maturità Scientifica',
           meta: ['Liceo Scientifico Amaldi, Bitetto, Italia'],
-          period: '09/2009 – 07/2014',
+          period: '09/2009 - 07/2014',
           summary: ['Voto: **100/100** | Livello EQF: **4**'],
         },
       ],

@@ -18,7 +18,7 @@ export const en: CvContent = {
       readOrder: 3,
       heading: 'About Me',
       paragraphs: [
-        'Senior Software Developer with **5+ years** of experience, specialised in **React and TypeScript frontend** for large-scale applications: from enterprise tools for A2A, Leonardo, ENI and Enel to the news platforms of **Corriere della Sera** and **Gazzetta dello Sport** (up to **40k concurrent users**). I’ve led small teams, onboarded new developers and worked closely with product managers, designers and non-technical stakeholders. I’m the frontend **performance** lead for Corriere and Gazzetta, and I bring **TypeScript, tests and accessibility** to legacy codebases too. Looking for remote roles; open to hybrid positions in Italy without relocation.',
+        'Senior Software Developer with **5+ years** of experience, specialised in **React and TypeScript frontend** for large-scale applications: from enterprise tools for A2A, Leonardo, ENI and Enel to the news platforms of **Corriere della Sera** and **Gazzetta dello Sport** (up to **40k concurrent users**). I’ve led small teams, onboarded new developers and worked closely with product managers, designers and non-technical stakeholders. I’m the frontend **performance** lead for Corriere and Gazzetta, and I bring **TypeScript, tests and accessibility** to legacy codebases too.',
       ],
     },
     {
@@ -182,13 +182,13 @@ export const en: CvContent = {
       readOrder: 9,
       heading: 'How I Work',
       items: [
-        '**Performance first**: Core Web Vitals as a requirement, monitored with SpeedCurve.',
-        '**Accessibility**: WCAG 2.1, W3C certified.',
-        '**Tested code**: unit tests with Jest, e2e with Playwright.',
+        '**Performance first**: Core Web Vitals as a requirement, monitored in the field (RUM, SpeedCurve).',
+        '**Accessibility**: WCAG 2.1/2.2, with a W3C certified course.',
+        '**Testing**: unit tests with Jest and React Testing Library, e2e with Playwright.',
         '**Code review and mentoring** as part of the daily work.',
         '**Incremental modernisation** of legacy code, no big-bang rewrites.',
-        '**AI-assisted development**: Claude Code and Copilot, with team-wide guidelines.',
-        '**Agile/Scrum** with product, design and non-technical stakeholders.',
+        '**AI-assisted development**: AI agents and workflows for development and research; analysis and decisions stay mine.',
+        '**A shared language with product**: Domain-Driven Design and continuous exchange between product and development, in Agile/Scrum teams.',
       ],
     },
     {

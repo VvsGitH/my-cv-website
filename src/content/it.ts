@@ -18,7 +18,7 @@ export const it: CvContent = {
       readOrder: 3,
       heading: 'Chi sono',
       paragraphs: [
-        'Senior software developer con **5+ anni** di esperienza, specializzato nel **frontend React e TypeScript** su applicazioni di larga scala: dagli strumenti enterprise per A2A, Leonardo, ENI ed Enel alle piattaforme news di **Corriere della Sera** e **Gazzetta dello Sport** (fino a **40k utenti concorrenti**). Ho guidato piccoli team, seguito l’onboarding di nuovi sviluppatori e lavorato a stretto contatto con product manager, designer e stakeholder non tecnici. Sono il referente per le **performance** frontend di Corriere e Gazzetta, e porto **TypeScript, test e accessibilità** anche nelle codebase legacy. Cerco posizioni da remoto; valuto anche ruoli ibridi in Italia, senza cambio di residenza.',
+        'Senior software developer con **5+ anni** di esperienza, specializzato nel **frontend React e TypeScript** su applicazioni di larga scala: dagli strumenti enterprise per A2A, Leonardo, ENI ed Enel alle piattaforme news di **Corriere della Sera** e **Gazzetta dello Sport** (fino a **40k utenti concorrenti**). Ho guidato piccoli team, seguito l’onboarding di nuovi sviluppatori e lavorato a stretto contatto con product manager, designer e stakeholder non tecnici. Sono il referente per le **performance** frontend di Corriere e Gazzetta, e porto **TypeScript, test e accessibilità** anche nelle codebase legacy.',
       ],
     },
     {
@@ -176,13 +176,13 @@ export const it: CvContent = {
       readOrder: 9,
       heading: 'Come lavoro',
       items: [
-        '**Performance first**: Core Web Vitals come requisito, monitorati con SpeedCurve.',
-        '**Accessibilità**: WCAG 2.1, con certificazione W3C.',
-        '**Codice testato**: unit test con Jest, e2e con Playwright.',
+        '**Performance first**: Core Web Vitals come requisito, monitorati sul campo (RUM, SpeedCurve).',
+        '**Accessibilità**: WCAG 2.1/2.2, con corso certificato W3C.',
+        '**Test**: unit test con Jest e React Testing Library, e2e con Playwright.',
         '**Code review e mentoring** nel lavoro di ogni giorno.',
         '**Modernizzazione incrementale** del legacy, senza riscritture da zero.',
-        '**Sviluppo assistito da AI**: Claude Code e Copilot, con linee guida condivise nel team.',
-        '**Agile/Scrum** con product, design e stakeholder non tecnici.',
+        '**Sviluppo assistito da AI**: agenti e workflow AI per sviluppo e ricerca; analisi e decisioni restano mie.',
+        '**Linguaggio condiviso con il product**: Domain-Driven Design e confronto continuo tra product e sviluppo, in team Agile/Scrum.',
       ],
     },
     {

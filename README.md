@@ -51,11 +51,14 @@ A single-purpose website that presents Vito Paparella Santorsola's CV as two A4 
 opens each Locale's page with headless Chromium and writes, per Locale:
 
 - `Vito_Paparella_Santorsola_CV_<IT|EN>.pdf` — the downloadable CV, two A4
-  pages, which the Toolbar's download control links to.
+  pages, which the Toolbar's download menu links to as the full CV.
+- `Vito_Paparella_Santorsola_CV_<IT|EN>_no-photo.pdf` — the same two pages
+  with the portrait left out and its disc kept, for photo-blind applications:
+  the menu's second link.
 - `og-<it|en>.png` — the 1200×630 link-preview image the page's `og:image`
   points at, screenshotted from the `/og/<locale>/` route.
 
-Neither is committed (ADR-0001), so a build that skipped this step serves a
+None of them is committed (ADR-0001), so a build that skipped this step serves a
 broken download link and an unfurl with no image.
 
 It needs the browser binary once per machine:

@@ -36,7 +36,7 @@ Versions in use: Astro 7.3, Preact 10.29, TypeScript, Node ≥26. **Preact stays
 
 ## Preact islands
 
-Preact is three small hydrated client islands, all of them inside the Toolbar — `ModeSwitch`, `ShareButton` and `ThemeSwitch` (ADR-0003, amended by ADR-0007, ADR-0017 and ADR-0025) — not the framework. The Toolbar itself is an `.astro` shell, and two of its controls are deliberately not islands: the download is an `<a download>` with no logic, and the language pair is two links that must work with JavaScript off. See the [decision table](research/preact-best-practices.md#2-which-preact-10-apis-apply-to-this-projects-island--decision-table). `compat` is off, so import hooks from `preact/hooks` and treat the `preact/compat` surface as non-existent.
+Preact is three small hydrated client islands, all of them inside the Toolbar — `ModeSwitch`, `ShareButton` and `ThemeSwitch` (ADR-0003, amended by ADR-0007, ADR-0017 and ADR-0025) — not the framework. The Toolbar itself is an `.astro` shell, and two of its controls are deliberately not islands: the download is a `popovertarget` button over two `<a download>`, with no logic, and the language pair is two links that must work with JavaScript off. See the [decision table](research/preact-best-practices.md#2-which-preact-10-apis-apply-to-this-projects-island--decision-table). `compat` is off, so import hooks from `preact/hooks` and treat the `preact/compat` surface as non-existent.
 
 **Do not use** (compat-only, or no payoff here):
 - `forwardRef`, `createPortal`, `memo`, `PureComponent`, `Suspense`, `lazy`, `startTransition`, `useDeferredValue`, `useSyncExternalStore` — all `preact/compat`, unavailable here. `useId` and `toChildArray` **are** in core; use them freely.

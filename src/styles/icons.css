@@ -40,6 +40,10 @@
   content: '\e907';
 }
 
+.icon-eye-off:before {
+  content: '\e968';
+}
+
 .icon-file-text:before {
   content: '\e902';
 }

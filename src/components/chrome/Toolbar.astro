@@ -27,15 +27,28 @@ const { toolbar, links } = Astro.props;
 
       <span class="toolbar-divider" aria-hidden="true"></span>
 
-      <a
-        class="toolbar-button"
-        href={links.pdfHref}
-        download
+      <!-- A button revealing two links, not an ARIA menu (spec §5.4). Without
+        popover support the panel renders inline, so the full PDF is still a link. -->
+      <button
+        type="button"
+        class="toolbar-button toolbar-download"
+        popovertarget="download-menu"
         title={toolbar.download}
         aria-label={toolbar.download}
       >
         <span class="icon-download" aria-hidden="true"></span>
-      </a>
+      </button>
+
+      <div id="download-menu" class="toolbar-download-menu" popover="auto">
+        <a class="toolbar-download-link" href={links.pdfHrefs.full} download>
+          <span class="icon-file-text" aria-hidden="true"></span>
+          {toolbar.downloadFull}
+        </a>
+        <a class="toolbar-download-link" href={links.pdfHrefs.noPhoto} download>
+          <span class="icon-eye-off" aria-hidden="true"></span>
+          {toolbar.downloadNoPhoto}
+        </a>
+      </div>
 
       <ShareButton client:idle share={toolbar.share} shared={toolbar.shared} />
 

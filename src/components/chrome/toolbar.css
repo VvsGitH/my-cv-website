@@ -110,7 +110,7 @@
 
   /* Gated: a tap otherwise leaves :hover stuck on the control last touched. */
   @media (hover: hover) {
-    :is(.toolbar-mode, .toolbar-button):hover {
+    :is(.toolbar-mode, .toolbar-button, .toolbar-download-link):hover {
       background-color: var(--color-aside-accent);
     }
   }
@@ -233,6 +233,61 @@
     }
   }
 
+  /* ---------------- TOOLBAR DOWNLOAD MENU ---------------- */
+
+  .toolbar-download {
+    anchor-name: --toolbar-download;
+  }
+
+  /* Only the open state sets `display`: the UA's `display: none` is what keeps
+     the closed popover shut, and an author `display` would override it. */
+  .toolbar-download-menu:popover-open {
+    display: flex;
+    flex-direction: column;
+    gap: var(--toolbar-space-xs);
+  }
+
+  .toolbar-download-menu {
+    padding: var(--toolbar-space-xs);
+    border: 1px solid var(--color-text);
+    border-radius: 4px;
+    background-color: var(--color-main-bg);
+    color: var(--color-heading);
+    box-shadow: 0 6px 8px -6px oklch(0% 0 0 / 0.45);
+    font-family: var(--font-body);
+    font-size: var(--font-size-toolbar);
+  }
+
+  @supports (position-area: block-end) {
+    .toolbar-download-menu {
+      position-anchor: --toolbar-download;
+      position-area: block-end span-inline-start;
+      position-try-fallbacks: flip-block, flip-inline;
+      inset: auto;
+      margin: var(--toolbar-space-xs) 0 0;
+    }
+  }
+
+  /* No anchor positioning: under the bar, centred by the UA's own `margin: auto`. */
+  @supports not (position-area: block-end) {
+    .toolbar-download-menu {
+      inset-block: calc(var(--toolbar-block-size) + var(--toolbar-space-xs)) auto;
+      margin-block: 0;
+    }
+  }
+
+  .toolbar-download-link {
+    display: flex;
+    align-items: center;
+    gap: var(--toolbar-space-s);
+    min-block-size: var(--toolbar-action-size);
+    padding-inline: var(--toolbar-space-s);
+    border-radius: 2px;
+    color: inherit;
+    text-decoration: none;
+    white-space: nowrap;
+  }
+
   /* ---------------- TOOLBAR SHARE + TOAST ---------------- */
 
   .toolbar-share {
@@ -266,7 +321,8 @@
   /* Chrome is never captured (CONTEXT.md). */
   @media print {
     .toolbar,
-    .toolbar-sentinel {
+    .toolbar-sentinel,
+    .toolbar-download-menu {
       display: none;
     }
   }

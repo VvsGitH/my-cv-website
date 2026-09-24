@@ -21,8 +21,11 @@ export const otherLocale = (locale: Locale): Locale => {
 export interface ToolbarLinks {
   /** Fixed order [it, en] — load-bearing: the CSS reads the last child to place the pill. */
   locales: { locale: Locale; href: string; current: boolean }[];
-  pdfHref: string;
+  pdfHrefs: { full: string; noPhoto: string };
 }
+
+const pdfHref = (locale: Locale, suffix = ''): string =>
+  `${import.meta.env.BASE_URL}Vito_Paparella_Santorsola_CV_${locale.toUpperCase()}${suffix}.pdf`;
 
 export const chromeLinks = (locale: Locale): ToolbarLinks => ({
   locales: locales.map((entry) => ({
@@ -30,6 +33,7 @@ export const chromeLinks = (locale: Locale): ToolbarLinks => ({
     href: `${import.meta.env.BASE_URL}${entry}/`,
     current: entry === locale,
   })),
-  // Written down twice, deliberately (ADR-0009). Change one end, change the other.
-  pdfHref: `${import.meta.env.BASE_URL}Vito_Paparella_Santorsola_CV_${locale.toUpperCase()}.pdf`,
+  // Written down twice, deliberately (ADR-0009): here and in render-captures.mjs's
+  // pdfPath. Change one end, change the other.
+  pdfHrefs: { full: pdfHref(locale), noPhoto: pdfHref(locale, '_no-photo') },
 });

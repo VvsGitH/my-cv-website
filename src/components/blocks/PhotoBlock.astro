@@ -46,5 +46,11 @@ const { block } = Astro.props;
       height: 100%;
       object-fit: cover;
     }
+
+    /* Set only by render-captures.mjs, for the no-photo PDF: the disc stays, so
+       nothing on the Sheet moves. */
+    :root[data-photo='off'] .photo picture {
+      display: none;
+    }
   }
 </style>

@@ -59,8 +59,8 @@ export const it: CvContent = {
           name: 'Linguaggi',
           display: 'inline',
           items: [
-            '**Javascript**',
-            '**Typescript**',
+            '**JavaScript**',
+            '**TypeScript**',
             'HTML',
             'CSS',
             'SCSS',
@@ -73,25 +73,19 @@ export const it: CvContent = {
           name: 'Sviluppo frontend',
           display: 'list',
           items: [
-            '**React.js & Next.js**',
-            '**Angular & RxJs**',
-            'JQuery',
+            '**React & Next.js**',
+            '**Angular & RxJS**',
+            'jQuery',
             'State management: Redux, NgRx, Zustand e altri...',
-            'Librerie UI: Material UI, Angular Material, Tailwind css, Bootstrap 4/5 e altre...',
+            'Librerie UI: Material UI, Angular Material, Tailwind CSS, Bootstrap 4/5 e altre...',
             'Testing: Jest, Jasmine + Karma, RTL',
-            'Strumenti: Vite.js, Webpack, Gulp',
+            'Strumenti: Vite, webpack, Gulp',
           ],
         },
         {
           name: 'Sviluppo backend',
           display: 'list',
-          items: [
-            'Node.js / Express.js',
-            'MongoDB',
-            'Java Spring (basi)',
-            'Nginx',
-            'REST & GraphQL',
-          ],
+          items: ['Node.js / Express', 'MongoDB', 'Java Spring (basi)', 'Nginx', 'REST & GraphQL'],
         },
         {
           name: 'Sviluppo mobile',
@@ -103,7 +97,7 @@ export const it: CvContent = {
           display: 'inline',
           items: [
             'Git',
-            'Svn',
+            'SVN',
             'Docker',
             'Jenkins',
             'Jira',
@@ -148,7 +142,7 @@ export const it: CvContent = {
           title: 'Senior Software Developer',
           meta: ['RCS Innovation S.r.l.'],
           // The one period that isn't just digits — "oggi" is prose ("now").
-          period: '2024.05 - oggi',
+          period: '05/2024 – oggi',
           bullets: [
             'Sviluppo attivo e manutenzione delle piattaforme news di punta di RCS: **Corriere della Sera** (fino a **40k utenti concorrenti**) e **Gazzetta dello Sport**, con forte attenzione a **stabilità**, **performance** ed esperienza utente.',
             '**Subject matter expert** per il componente video-manager, con coordinamento del team di manutenzione e refactoring continui e puntuali.',
@@ -162,18 +156,18 @@ export const it: CvContent = {
         {
           title: 'Software Developer',
           meta: ['CyberSecurity S.r.l.'],
-          period: '2021.07 - 2024.05',
+          period: '07/2021 – 05/2024',
           bullets: [
             '**Sviluppo full-stack** come consulente su progetti di media e larga scala in domini diversi (utility, energia, finanza, piattaforme AI).',
             '**Technical leader** di piccoli team (fino a 4 sviluppatori), con responsabilità su scelte architetturali, revisione delle PR, stima delle attività e supporto tecnico.',
-            '**Mentoring e formazione** dei nuovi ingressi su JavaScript, TypeScript e React.js, con onboarding strutturato e sessioni di pairing.',
+            '**Mentoring e formazione** dei nuovi ingressi su JavaScript, TypeScript e React, con onboarding strutturato e sessioni di pairing.',
             'Colloqui tecnici per candidati frontend, con contributo alle decisioni di assunzione.',
           ],
         },
         {
           title: 'Trainee Software Developer',
           meta: ['CyberSecurity S.r.l.'],
-          period: '2021.04 - 2021.07',
+          period: '04/2021 – 07/2021',
           summary: [
             'Consolidamento delle competenze di base di programmazione e sviluppo software attraverso **formazione pratica** e lavoro su progetto: **Clean Code**, principi **SOLID**, programmazione **OO** e **design pattern**.',
           ],
@@ -190,7 +184,7 @@ export const it: CvContent = {
         {
           title: 'B2B Environment',
           meta: ['Senior Frontend Developer & Team Leader', 'CyberSecurity S.r.l. ~ A2A S.p.a'],
-          period: '2024.03 - 2024.05',
+          period: '03/2024 – 05/2024',
           summary: [
             '“B2B Environment” è una piccola web application, strutturata come un wizard, che sarà utilizzata dai clienti di A2A per ordinare e personalizzare i servizi di raccolta rifiuti.',
           ],
@@ -251,13 +245,13 @@ export const it: CvContent = {
       // left untranslated.
       entries: [
         {
-          date: '2022.12.20',
-          issuer: 'WC3x.org',
+          date: '12/2022',
+          issuer: 'W3Cx',
           title: 'WAI0.1x: Introduction to Web Accessibility',
           url: 'https://www.edx.org/learn/web-accessibility/the-world-wide-web-consortium-w3c-introduction-to-web-accessibility',
         },
         {
-          date: '2013.06.27',
+          date: '06/2013',
           issuer: 'University of Cambridge',
           title: 'Cambridge ESOL Level 1 Certificate in ESOL International | CoE Level B2',
         },
@@ -310,29 +304,29 @@ export const it: CvContent = {
             'Senior Frontend Developer & Team Leader',
             'CyberSecurity S.r.l. ~ Leonardo S.p.a.',
           ],
-          period: '2023.07 - 2024.02',
+          period: '07/2023 – 02/2024',
           summary: [
             '“Registro Ufficiale degli Operatori Professionali”, o RUOP, è una delle applicazioni all’interno del portale MASAF del Ministero dell’Agricoltura. Le imprese devono iscriversi al registro RUOP per svolgere attività di import/export di piante.',
           ],
           bullets: [
             'Coordinamento del team frontend, composto da me e altri 3 sviluppatori.',
-            'Definizione dell’architettura dell’applicazione React.js.',
+            'Definizione dell’architettura dell’applicazione React.',
             'Traduzione dei requisiti del cliente in requisiti tecnici; stima e assegnazione delle attività.',
-            'Sviluppo di una web application single-page e responsive in React.js, con 4 tipologie di utenti, autenticazione OAuth2.0 e routing.',
+            'Sviluppo di una web application single-page e responsive in React, con 4 tipologie di utenti, autenticazione OAuth2.0 e routing.',
             'Gestione del repository GitHub.',
           ],
-          stack: ['React.js', 'OAuth2.0', 'GitHub'],
+          stack: ['React', 'OAuth2.0', 'GitHub'],
         },
         {
           title: 'Beyond Knowledge',
           meta: ['Senior Frontend Developer', 'CyberSecurity S.r.l. ~ Beyond Knowledge'],
-          period: '2023.01 - 2023.06',
-          stack: ['React.js', 'TanStack Query', 'TanStack Table', 'Tailwind CSS', 'Figma'],
+          period: '01/2023 – 06/2023',
+          stack: ['React', 'TanStack Query', 'TanStack Table', 'Tailwind CSS', 'Figma'],
         },
         {
           title: 'VEDO Tool & ABC Monitoring',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ ENI Italia'],
-          period: '2022.10 - 2022.12',
+          period: '10/2022 – 12/2022',
           stack: [
             'Power Apps',
             'SharePoint',
@@ -346,7 +340,7 @@ export const it: CvContent = {
         {
           title: 'Dam Dossier',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ Enel Green Power'],
-          period: '2022.04 - 2022.10',
+          period: '04/2022 – 10/2022',
           stack: ['Angular 14', 'SCSS', 'Enel Design System', 'WCAG 2.1', 'Jasmine/Karma'],
         },
       ],
@@ -384,7 +378,7 @@ export const it: CvContent = {
           // most likely Politecnico di Bari wording.
           title: 'Laurea triennale in Ingegneria Informatica e dell’Automazione',
           meta: ['Politecnico di Bari, Bari, Italia'],
-          period: '2014.08 - 2018.10',
+          period: '08/2014 – 10/2018',
           // Body prose, not `meta` — `meta` is plain text, so the markers would print (ADR-0005).
           summary: [
             'Voto: **110/110** | Livello EQF: **6**',
@@ -398,7 +392,7 @@ export const it: CvContent = {
           // neutral form.
           title: 'Diploma di Maturità Scientifica',
           meta: ['Liceo Scientifico Amaldi, Bitetto, Italia'],
-          period: '2009.09 - 2014.07',
+          period: '09/2009 – 07/2014',
           summary: ['Voto: **100/100** | Livello EQF: **4**'],
         },
       ],

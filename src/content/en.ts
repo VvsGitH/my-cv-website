@@ -37,8 +37,8 @@ export const en: CvContent = {
           name: 'Programming Languages',
           display: 'inline',
           items: [
-            '**Javascript**',
-            '**Typescript**',
+            '**JavaScript**',
+            '**TypeScript**',
             'HTML',
             'CSS',
             'SCSS',
@@ -51,20 +51,20 @@ export const en: CvContent = {
           name: 'Frontend Development',
           display: 'list',
           items: [
-            '**React.js & Next.js**',
-            '**Angular & RxJs**',
-            'JQuery',
+            '**React & Next.js**',
+            '**Angular & RxJS**',
+            'jQuery',
             'State management: Redux, NgRx, Zustand, and more...',
-            'UI libraries: Material UI, Angular Material, Tailwind css, Bootstrap 4/5, and more...',
+            'UI libraries: Material UI, Angular Material, Tailwind CSS, Bootstrap 4/5, and more...',
             'Testing: Jest, Jasmine + Karma, RTL',
-            'Tools: Vite.js, Webpack, Gulp',
+            'Tools: Vite, webpack, Gulp',
           ],
         },
         {
           name: 'Backend Development',
           display: 'list',
           items: [
-            'Node.js / Express.js',
+            'Node.js / Express',
             'MongoDB',
             'Java Spring (basics)',
             'Nginx',
@@ -81,7 +81,7 @@ export const en: CvContent = {
           display: 'inline',
           items: [
             'Git',
-            'Svn',
+            'SVN',
             'Docker',
             'Jenkins',
             'Jira',
@@ -125,7 +125,7 @@ export const en: CvContent = {
         {
           title: 'Senior Software Developer',
           meta: ['RCS Innovation S.r.l.'],
-          period: '2024.05 - now',
+          period: '05/2024 – present',
           bullets: [
             'Active development and maintenance of RCS’s flagship news platforms: **Corriere della Sera** (serving up to **40k concurrent users**) and **Gazzetta dello Sport**, with a strong focus on **stability**, **performance** and user experience.',
             '**Subject matter expert** for the video-manager component, coordinating the maintenance team and driving precise, continuous refactors.',
@@ -137,18 +137,18 @@ export const en: CvContent = {
         {
           title: 'Software Developer',
           meta: ['CyberSecurity S.r.l.'],
-          period: '2021.07 - 2024.05',
+          period: '07/2021 – 05/2024',
           bullets: [
             '**Full-stack development** as a consultant for both medium and large scale projects across multiple domains (utilities, energy, finance, AI platforms).',
             '**Technical leader** of small teams (up to 4 developers), responsible for architecture decisions, PR reviews, task estimation and technical support.',
-            '**Mentored and trained** new joiners in JavaScript, TypeScript and React.js, with structured onboarding and pairing sessions.',
+            '**Mentored and trained** new joiners in JavaScript, TypeScript and React, with structured onboarding and pairing sessions.',
             'Technical interviewer for frontend candidates, contributing to hiring decisions.',
           ],
         },
         {
           title: 'Trainee Software Developer',
           meta: ['CyberSecurity S.r.l.'],
-          period: '2021.04 - 2021.07',
+          period: '04/2021 – 07/2021',
           summary: [
             'Reinforced core programming and software development skills through **hands-on training** and project work: **Clean Code**, **SOLID** principles, **OO** programming and **design patterns**.',
           ],
@@ -165,7 +165,7 @@ export const en: CvContent = {
         {
           title: 'B2B Environment',
           meta: ['Senior Frontend Developer & Team Leader', 'CyberSecurity S.r.l. ~ A2A S.p.a'],
-          period: '2024.03 - 2024.05',
+          period: '03/2024 – 05/2024',
           summary: [
             '“B2B Environment” is a small web application, structured like a wizard, that will be used by the clients of A2A to order and customize garbage collecting services.',
           ],
@@ -216,13 +216,13 @@ export const en: CvContent = {
       heading: 'Certifications',
       entries: [
         {
-          date: '2022.12.20',
-          issuer: 'WC3x.org',
+          date: '12/2022',
+          issuer: 'W3Cx',
           title: 'WAI0.1x: Introduction to Web Accessibility',
           url: 'https://www.edx.org/learn/web-accessibility/the-world-wide-web-consortium-w3c-introduction-to-web-accessibility',
         },
         {
-          date: '2013.06.27',
+          date: '06/2013',
           issuer: 'University of Cambridge',
           title: 'Cambridge ESOL Level 1 Certificate in ESOL International | CoE Level B2',
         },
@@ -268,29 +268,29 @@ export const en: CvContent = {
             'Senior Frontend Developer & Team Leader',
             'CyberSecurity S.r.l. ~ Leonardo S.p.a.',
           ],
-          period: '2023.07 - 2024.02',
+          period: '07/2023 – 02/2024',
           summary: [
             '“Registro Ufficiale degli Operatori Professionali”, or RUOP, is one of the applications inside the MASAF portal of the Italian minister of agriculture. Businesses have to subscribe to the RUOP registry in order to run activities related to import/export of plants.',
           ],
           bullets: [
             'Coordination of the fronted team, composed by me and other 3 developers.',
-            'Definition of the architecture of the React.js application.',
+            'Definition of the architecture of the React application.',
             'Translation of the client’s requirements into technical requirements; estimation and task assignment.',
-            'Development of a single-page, responsive, web application in React.js, with 4 different types of users, OAuth2.0 authentication and routing.',
+            'Development of a single-page, responsive, web application in React, with 4 different types of users, OAuth2.0 authentication and routing.',
             'Management of the GitHub repository.',
           ],
-          stack: ['React.js', 'OAuth2.0', 'GitHub'],
+          stack: ['React', 'OAuth2.0', 'GitHub'],
         },
         {
           title: 'Beyond Knowledge',
           meta: ['Senior Frontend Developer', 'CyberSecurity S.r.l. ~ Beyond Knowledge'],
-          period: '2023.01 - 2023.06',
-          stack: ['React.js', 'TanStack Query', 'TanStack Table', 'Tailwind CSS', 'Figma'],
+          period: '01/2023 – 06/2023',
+          stack: ['React', 'TanStack Query', 'TanStack Table', 'Tailwind CSS', 'Figma'],
         },
         {
           title: 'VEDO Tool & ABC Monitoring',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ ENI Italia'],
-          period: '2022.10 - 2022.12',
+          period: '10/2022 – 12/2022',
           stack: [
             'Power Apps',
             'SharePoint',
@@ -304,7 +304,7 @@ export const en: CvContent = {
         {
           title: 'Dam Dossier',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ Enel Green Power'],
-          period: '2022.04 - 2022.10',
+          period: '04/2022 – 10/2022',
           stack: ['Angular 14', 'SCSS', 'Enel Design System', 'WCAG 2.1', 'Jasmine/Karma'],
         },
       ],
@@ -339,7 +339,7 @@ export const en: CvContent = {
         {
           title: 'Bachelor of Information and Automation Engineering',
           meta: ['Polytechnic University of Bari, Bari, Italy'],
-          period: '2014.08 - 2018.10',
+          period: '08/2014 – 10/2018',
           summary: [
             'Grade: **110/110** | EQF Level: **6**',
             'Experimental thesis: **Analisi e Miglioramento delle Prestazioni di Processi Produttivi Industriali mediante Reti di Petri, il caso Dream Project**.',
@@ -348,7 +348,7 @@ export const en: CvContent = {
         {
           title: 'High School Diploma',
           meta: ['Liceo Scientifico Amaldi, Bitetto, Italy'],
-          period: '2009.09 - 2014.07',
+          period: '09/2009 – 07/2014',
           summary: ['Grade: **100/100** | EQF Level: **4**'],
         },
       ],

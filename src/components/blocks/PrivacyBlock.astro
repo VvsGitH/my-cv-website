@@ -10,8 +10,9 @@ interface Props {
 const { block } = Astro.props;
 
 // From the build, not the page load — as with the Colophon's © (ADR-0013). Dotted
-// and zero-padded like certifications and periods: a date that keeps its shape
-// across Locales, so the two renderings of the statement cannot drift apart.
+// and zero-padded, year first: a full date that keeps its shape across Locales,
+// so the two renderings of the statement cannot drift apart. Periods and
+// certifications are `MM/YYYY` instead — they name a month, not a day.
 const now = new Date();
 const date = [
   now.getFullYear(),

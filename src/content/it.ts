@@ -18,7 +18,7 @@ export const it: CvContent = {
       readOrder: 3,
       heading: 'Chi sono',
       paragraphs: [
-        'Senior software developer con **5+ anni** di esperienza, specializzato nel **frontend React e TypeScript** su applicazioni di larga scala: dagli strumenti enterprise per A2A, Leonardo, ENI ed Enel alle piattaforme news di **Corriere della Sera** e **Gazzetta dello Sport** (fino a **40k utenti concorrenti**). Ho guidato piccoli team, seguito l’onboarding di nuovi sviluppatori e lavorato a stretto contatto con product manager, designer e stakeholder non tecnici. Sono il referente per le **performance** frontend di Corriere e Gazzetta, e porto **TypeScript, test e accessibilità** anche nelle codebase legacy.',
+        'Senior software developer con **5+ anni** di esperienza, specializzato nel **frontend**: **React e Next.js**, Angular e vanilla JS/TS. I miei progetti vanno dagli strumenti enterprise per A2A, Leonardo, ENI ed Enel, alle piattaforme news di **Corriere della Sera** e **Gazzetta dello Sport** (oltre **550 mln di pagine viste** al mese). Ho guidato piccoli team, seguito l’onboarding di nuovi sviluppatori e lavorato a stretto contatto con product manager, designer e stakeholder non tecnici. Sto portando **TypeScript**, **test** e **accessibilità** nelle codebase legacy di RCS e sono il referente per le **performance** del frontend. Uso a pieno **l’AI e le tecnologie di sviluppo agentico** per incrementare l’output e migliorare la qualità del prodotto.',
       ],
     },
     {

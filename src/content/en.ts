@@ -18,7 +18,7 @@ export const en: CvContent = {
       readOrder: 3,
       heading: 'About Me',
       paragraphs: [
-        'Senior Software Developer with **5+ years** of experience, specialised in **React and TypeScript frontend** for large-scale applications: from enterprise tools for A2A, Leonardo, ENI and Enel to the news platforms of **Corriere della Sera** and **Gazzetta dello Sport** (up to **40k concurrent users**). I’ve led small teams, onboarded new developers and worked closely with product managers, designers and non-technical stakeholders. I’m the frontend **performance** lead for Corriere and Gazzetta, and I bring **TypeScript, tests and accessibility** to legacy codebases too.',
+        'Senior Software Developer with **5+ years** of experience, specialised in **frontend**: **React and Next.js**, Angular and vanilla JS/TS. My projects range from enterprise tools for A2A, Leonardo, ENI and Enel to the news platforms of **Corriere della Sera** and **Gazzetta dello Sport** (over **550M page views** a month). I’ve led small teams, onboarded new developers and worked closely with product managers, designers and non-technical stakeholders. I’m bringing **TypeScript**, **tests** and **accessibility** to RCS’s legacy codebases, and I’m the frontend **performance** lead. I make full use of **AI and agentic development tools** to increase output while improving product quality.',
       ],
     },
     {

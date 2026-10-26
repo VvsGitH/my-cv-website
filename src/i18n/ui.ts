@@ -7,6 +7,8 @@ import type { Locale } from './locale';
 
 export interface ToolbarStrings {
   download: string;
+  downloadFull: string;
+  downloadNoPhoto: string;
   share: string;
   shared: string;
   modeReading: string;
@@ -34,7 +36,9 @@ export interface UiStrings {
 export const ui: Record<Locale, UiStrings> = {
   it: {
     toolbar: {
-      download: 'Scarica il CV in PDF',
+      download: 'Scarica il CV',
+      downloadFull: 'Scarica CV completo',
+      downloadNoPhoto: 'Scarica CV senza foto',
       share: 'Copia il link a questa pagina',
       shared: 'Link copiato',
       modeReading: 'Mod. Lettura',
@@ -56,7 +60,9 @@ export const ui: Record<Locale, UiStrings> = {
   },
   en: {
     toolbar: {
-      download: 'Download the CV as a PDF',
+      download: 'Download the CV',
+      downloadFull: 'Download full CV',
+      downloadNoPhoto: 'Download CV without photo',
       share: 'Copy the link to this page',
       shared: 'Link copied',
       modeReading: 'Reading Mode',

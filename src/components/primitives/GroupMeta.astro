@@ -2,20 +2,23 @@
 /**
  * The line(s) under a Group's title — employer / institution on the left,
  * the period right-aligned, both in the display face. Only a Group
- * that opens carries this; a Continuation never repeats it.
+ * that opens carries this; a Continuation never repeats it. Either half may be
+ * absent, and with neither there is nothing to render (spec D23).
  */
 interface Props {
-  lines: string[];
-  period: string;
+  lines?: string[];
+  period?: string;
 }
 
-const { lines, period } = Astro.props;
+const { lines = [], period } = Astro.props;
 ---
 
-<div class="group-meta">
-  <div class="lines">{lines.map((line) => <p>{line}</p>)}</div>
-  <p class="period">{period}</p>
-</div>
+{(lines.length > 0 || period) && (
+  <div class="group-meta">
+    <div class="lines">{lines.map((line) => <p>{line}</p>)}</div>
+    {period && <p class="period">{period}</p>}
+  </div>
+)}
 
 <style>
   @layer components {

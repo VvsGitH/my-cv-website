@@ -444,3 +444,39 @@ were checked against `tokens.css` and none of them appears there.
 - **`astro build` empties `dist/`, where the PDFs and the OG cards live.** Never run Playwright
   straight after a bare build: it gives a false 27 failures on missing files. `npm run pretest`
   chains `build` and `captures:render` and is the correct entry point.
+
+## Amended
+
+**2026-09-24.** The download stopped being a link and became a menu, so that the CV can also be
+downloaded without its photo, for recruiters who screen photo-blind. The decision above holds
+whole: one bar, sticky, six controls, one shape at every width and in both Modes. The download is
+still one control in the same place, in the same group as the share, with the same icon, title and
+accessible name. Three sentences of this ADR stopped being true:
+
+- **"an `<a download>` that is markup"** is now a `<button popovertarget="download-menu">` over a
+  `popover="auto"` panel holding two `<a download>`: *full CV* and *CV without photo*. It is still
+  markup, not an island: top layer, light dismiss, Esc and the return of focus to the button are all
+  the browser's. That is also why the rejected option *"Islands for the download"* still stands.
+  There is still no logic to encapsulate. Now it is two links instead of one.
+- **"It has no surface of its own"** has one exception: the open panel. It paints
+  `--color-main-bg` with a 1px `--color-text` border and the stuck bar's shadow, because a list of
+  two links floating over the paper with no surface would not read as one thing. The panel exists
+  only while it is open, and the bar itself still paints nothing. The link ink on the panel clears
+  4.5:1 in both themes, and `toolbar.spec.ts` pins it next to the rows of the table above.
+- **"none of them is a width"** still holds for `@media`. The panel is placed by anchor
+  positioning, `position-area: block-end span-inline-start` with `flip-block, flip-inline`, behind
+  `@supports (position-area: block-end)`. Without it, the panel sits at a fixed offset under the
+  bar. **Known gap:** below 354px the bar wraps onto a second line, and a browser without anchor
+  positioning then overlaps that line by 8px. Current Chromium and Firefox both take the anchored
+  branch, so the gap is left open.
+
+**Semantics.** The panel is a button that reveals a group of links, not an ARIA menu: no
+`role="menu"`, no `menuitem`, no `aria-haspopup`. Those promise an arrow-key contract the pattern
+does not implement. Tab moves between the two links. An outside click closes the panel and leaves
+focus where the click put it. That is native behaviour, and the owner kept it.
+
+**What it costs.** `src/i18n/ui.ts`'s Toolbar block gains `downloadFull` and `downloadNoPhoto`,
+and `download` names the button, no longer a file. `chromeLinks.pdfHref` is now
+`pdfHrefs: { full, noPhoto }`. The icon subset gains `user-x` (`0xea05`), which names the no-photo
+PDF, and the full PDF reuses `file-text`. The button has no chevron, so its width is unchanged.
+The panel is hidden in `@layer print` with the rest of the Chrome. The suite is **122 tests**.

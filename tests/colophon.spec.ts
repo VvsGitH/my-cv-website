@@ -75,7 +75,7 @@ for (const locale of LOCALES) {
       const expected = headerOf(locale).contacts.flatMap((contact) =>
         contact.url ? [contact.url] : [],
       );
-      expect(expected.length, 'the header should carry email and LinkedIn').toBe(2);
+      expect(expected.length, 'the header should carry email, LinkedIn and GitHub').toBe(3);
 
       const onPaper = await hrefsIn(sheet(page, 1).locator('.block--header'));
       expect(onPaper).toEqual(expected);
@@ -99,9 +99,11 @@ for (const locale of LOCALES) {
       expect(dark.ratio, 'the Colophon against the dark page').toBeGreaterThanOrEqual(4.5);
     });
 
-    test('keeps its words out of the PDF', async ({ page }) => {
-      const href = await toolbar(page).locator('a[download]').getAttribute('href');
-      const report = await readPdf(distPathForHref(href!));
+    test('keeps its words out of both PDFs', async ({ page }) => {
+      const hrefs = await toolbar(page)
+        .locator('a[download]')
+        .evaluateAll((links) => links.map((link) => link.getAttribute('href')!));
+      expect(hrefs, 'the Toolbar should offer the two PDFs').toHaveLength(2);
 
       const words = [
         ...Object.values(strings).filter((line) => line !== strings.localeName),
@@ -111,10 +113,13 @@ for (const locale of LOCALES) {
         '©',
       ];
 
-      for (const line of words) {
-        expect(report.text, `“${line}” is Chrome and belongs nowhere near the paper`).not.toContain(
-          withoutWhitespace(line),
-        );
+      for (const href of hrefs) {
+        const report = await readPdf(distPathForHref(href));
+        for (const line of words) {
+          expect(report.text, `“${line}” is Chrome and belongs nowhere near ${href}`).not.toContain(
+            withoutWhitespace(line),
+          );
+        }
       }
     });
   });

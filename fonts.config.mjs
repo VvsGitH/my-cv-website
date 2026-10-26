@@ -10,12 +10,13 @@ const BASIC_LATIN =
 const LATIN1_ACCENTS = 'ÀÁÂÃÄÅÆÇÈÉÊËÌÍÎÏÑÒÓÔÕÖØÙÚÛÜÝàáâãäåæçèéêëìíîïñòóôõöøùúûüýÿ';
 const LATIN_EXTENDED_A =
   'ĀāĂăĄąĆćĈĉĊċČčĎďĐđĒēĔĕĖėĘęĚěĜĝĞğĠġĢģĤĥĦħĨĩĪīĬĭĮįİıĴĵĶķĹĺĻļĽľŁłŃńŅņŇňŌōŎŏŐőŒœŔŕŖŗŘřŚśŜŝŞşŠšŢţŤťŨũŪūŬŭŮůŰűŲųŴŵŶŷŸŹźŻżŽž';
-const PUNCTUATION = '©–—‘’‚“”„†‡•…‰′″‹›€™';
+const PUNCTUATION = '©·–—‘’‚“”„†‡•…‰′″‹›€™';
 
 const TEXT = BASIC_LATIN + LATIN1_ACCENTS + LATIN_EXTENDED_A + PUNCTUATION;
 
 const ICONS = [
-  0xe902, // file-text — offers Reading Mode
+  0xe902, // file-text — offers Reading Mode, and names the full PDF
+  0xea05, // user-x — names the no-photo PDF
   0xe904, // list — offers Paper Mode
   0xe901, // download
   0xe903, // link

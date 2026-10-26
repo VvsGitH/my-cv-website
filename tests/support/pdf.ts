@@ -4,9 +4,13 @@ import {
   PDFArray,
   PDFDict,
   PDFDocument,
+  PDFHexString,
   PDFName,
   type PDFPage,
   PDFRawStream,
+  PDFRef,
+  PDFStream,
+  PDFString,
 } from 'pdf-lib';
 
 /** Enough of a PDF reader for ADR-0010's assertions, which also records the two encoding traps. */
@@ -21,7 +25,11 @@ export interface PdfFont {
 export interface PdfReport {
   pages: { width: number; height: number }[];
   fonts: PdfFont[];
+  /** Distinct image XObjects, including any drawn inside a form XObject. */
+  images: number;
   text: string;
+  /** The URI of every link annotation, in page order. */
+  links: string[];
 }
 
 /** Chromium positions one glyph at a time, leaving no usable word spacing. */
@@ -38,8 +46,40 @@ export async function readPdfBytes(bytes: Uint8Array): Promise<PdfReport> {
   return {
     pages: pages.map((page) => page.getSize()),
     fonts: pages.flatMap(fontsOf),
+    images: imagesOf(pages),
     text: withoutWhitespace(pages.map(textOf).join('')),
+    links: pages.flatMap(linksOf),
   };
+}
+
+function linksOf(page: PDFPage): string[] {
+  const annotations = page.node.lookupMaybe(PDFName.of('Annots'), PDFArray)?.asArray() ?? [];
+  return annotations.flatMap((ref) => {
+    const action = page.node.context.lookup(ref, PDFDict).lookupMaybe(PDFName.of('A'), PDFDict);
+    const uri = action?.lookup(PDFName.of('URI'));
+    return uri instanceof PDFString || uri instanceof PDFHexString ? [uri.decodeText()] : [];
+  });
+}
+
+function imagesOf(pages: PDFPage[]): number {
+  const images = new Set<PDFRef>();
+  const visited = new Set<PDFRef>();
+
+  const walk = (resources: PDFDict | undefined): void => {
+    const xobjects = resources?.lookupMaybe(PDFName.of('XObject'), PDFDict);
+    for (const [, ref] of xobjects?.entries() ?? []) {
+      if (!(ref instanceof PDFRef) || visited.has(ref)) continue;
+      visited.add(ref);
+
+      const xobject = xobjects!.context.lookup(ref, PDFStream);
+      const subtype = String(xobject.dict.get(PDFName.of('Subtype')));
+      if (subtype === '/Image') images.add(ref);
+      if (subtype === '/Form') walk(xobject.dict.lookupMaybe(PDFName.of('Resources'), PDFDict));
+    }
+  };
+
+  for (const page of pages) walk(page.node.Resources());
+  return images.size;
 }
 
 function fontResources(page: PDFPage): [string, PDFDict][] {

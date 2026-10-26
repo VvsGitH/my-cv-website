@@ -35,3 +35,28 @@ This ADR is the reasoning behind the constants in that script. ADR-0001 decides 
 - **No face reaches the PDF as Type3 any more.** Garet and Now did — Chromium redraws CFF outlines as glyph procedures with no `BaseFont`, so nothing scanning `/BaseFont` could see them. JetBrains Mono and Atkinson are TrueType (ADR-0024), so every face is named and countable, and the workaround ADR-0010 built around that blind spot is retired. If a CFF face is ever added back, the blind spot returns with it.
 - After any change to the Chrome's CSS, run `npm run captures:render` **on its own, before Playwright**. Chrome that leaks into the capture would not change the page count, so it would land in `dist/` silently. This was written for the Drawer's closed panel (ADR-0008); the Drawer is gone and the standing case is now the Toolbar, hidden by `@layer print`'s `display: none` in `toolbar.css` (ADR-0025). Note the inverse trap too: `astro build` **empties** `dist/`, where the PDFs and the OG cards live, so Playwright run straight after a bare build fails on missing files rather than on anything real. `npm run pretest` chains the two and is the correct entry point.
 - The same script captures the per-Locale link-preview image off the same page, screenshotting the card element rather than the viewport so the card stays the one place its size is written down.
+
+## Amended
+
+**2026-09-24.** The script now captures **two PDFs per Locale**: the full CV, and a photo-blind one
+for recruiters who do not accept a portrait, `Vito_Paparella_Santorsola_CV_<IT|EN>_no-photo.pdf`.
+The full PDFs keep their names, so links already shared still resolve. The recipe above is
+unchanged, and the second capture reuses the first one's painted page rather than loading it
+again:
+
+- After the full PDF, the script sets `document.documentElement.dataset.photo = 'off'` and prints
+  again. It is an attribute on `<html>`, like `data-mode` and `data-theme`, and not a route: a
+  `/[locale]/no-photo/` page would be a second public, indexable copy of the CV for a file nobody
+  needs to see in a browser.
+- `PhotoBlock.astro` answers with `:root[data-photo='off'] .photo picture { display: none; }`.
+  **Only the portrait goes. The Block stays**, with its size (`--photo-size`) and its disc, so Main's
+  header keeps the floor it is aligned to and every Block lands where it does in the full PDF. The
+  ADR's own method proves it: page 2 is operator-identical, and on page 1 only the disc's and the
+  portrait's drawing paths differ.
+- **Not being visible is not enough.** A portrait still embedded under the disc would defeat the
+  point of the file, so `pdf.spec.ts` counts the image objects in each PDF (`tests/support/pdf.ts`):
+  one in the full PDF, none in the no-photo one.
+- Both captures go through `capturePdf()`, so `assertTwoA4Pages()` guards all four files. The OG
+  card is a fresh navigation and never inherits the attribute.
+- The filename is still written down twice: `pdfPath(locale, suffix)` here, and
+  `chromeLinks().pdfHrefs` in `src/i18n/locale.ts`. Change one end, change the other.

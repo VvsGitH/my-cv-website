@@ -18,8 +18,9 @@ const SIZE_TOLERANCE = 1;
 // Never below the width the paper needs to fit (856px), and always set before `goto` (ADR-0009).
 const CAPTURE_VIEWPORT = { width: 1280, height: 1600 };
 
-// Must stay the names i18n/locale.ts's chromeLinks and BaseLayout.astro point at.
-const pdfPath = (locale) => `${outDir}/Vito_Paparella_Santorsola_CV_${locale.toUpperCase()}.pdf`;
+// Must stay the names i18n/locale.ts's chromeLinks points at (ADR-0009).
+const pdfPath = (locale, suffix = '') =>
+  `${outDir}/Vito_Paparella_Santorsola_CV_${locale.toUpperCase()}${suffix}.pdf`;
 const cardPath = (locale) => `${outDir}/og-${locale}.png`;
 
 const cvRoute = (locale) => `${config.base}${locale}/`;
@@ -64,20 +65,28 @@ async function openPainted(page, route) {
   });
 }
 
+/** Print emulation, never `emulateMedia({ media: 'screen' })` (ADR-0009). */
+async function capturePdf(page, path) {
+  await page.pdf({ path, preferCSSPageSize: true, printBackground: true });
+  await assertTwoA4Pages(path);
+}
+
 try {
   browser = await chromium.launch();
   const page = await browser.newPage({ viewport: CAPTURE_VIEWPORT });
 
   for (const locale of config.i18n.locales) {
     await openPainted(page, cvRoute(locale));
-    // Print emulation, never `emulateMedia({ media: 'screen' })` (ADR-0009).
-    await page.pdf({
-      path: pdfPath(locale),
-      preferCSSPageSize: true,
-      printBackground: true,
-    });
-    await assertTwoA4Pages(pdfPath(locale));
+    await capturePdf(page, pdfPath(locale));
     console.log(`${cvRoute(locale)} -> ${pdfPath(locale)}`);
+
+    // Hides the portrait and keeps its disc (PhotoBlock.astro). The card below
+    // is a fresh navigation, so it never inherits the attribute.
+    await page.evaluate(() => {
+      document.documentElement.dataset.photo = 'off';
+    });
+    await capturePdf(page, pdfPath(locale, '_no-photo'));
+    console.log(`${cvRoute(locale)} -> ${pdfPath(locale, '_no-photo')}`);
 
     await openPainted(page, cardRoute(locale));
     // The element, not the viewport: the card declares its own size.

@@ -19,7 +19,9 @@ const controls = (page: Page) => {
     mode: bar.locator('.toolbar-mode'),
     locales: bar.locator('.toolbar-locale'),
     locale: (locale: Locale) => bar.locator(`.toolbar-locale a[hreflang="${locale}"]`),
-    download: bar.locator('.toolbar-button[download]'),
+    download: bar.locator('.toolbar-download'),
+    downloadMenu: bar.locator('#download-menu'),
+    downloadLinks: bar.locator('#download-menu a[download]'),
     share: bar.locator('.toolbar-share'),
     theme: bar.locator('.toolbar-theme'),
     themeOption: (theme: Theme) => bar.locator(`.toolbar-theme [data-theme-option="${theme}"]`),
@@ -62,6 +64,10 @@ for (const locale of LOCALES) {
       await expect(control.locale('it')).toHaveAccessibleName('IT');
       await expect(control.locale('en')).toHaveAccessibleName('EN');
       await expect(control.download).toHaveAccessibleName(strings.download);
+      await control.download.click();
+      await expect(control.downloadLinks.nth(0)).toHaveAccessibleName(strings.downloadFull);
+      await expect(control.downloadLinks.nth(1)).toHaveAccessibleName(strings.downloadNoPhoto);
+      await page.keyboard.press('Escape');
       await expect(control.share).toHaveAccessibleName(strings.share);
       await expect(control.theme).toHaveAccessibleName(strings.themeGroup);
       await expect(control.themeOption('light')).toHaveAccessibleName(strings.themeLight);
@@ -132,19 +138,57 @@ for (const locale of LOCALES) {
       expect(await page.evaluate(() => navigator.clipboard.readText())).toBe(url);
     });
 
-    test('offers a PDF that was actually rendered', async ({ page }) => {
-      const link = controls(page).download;
-      await expect(link).toHaveAttribute('download', '');
+    test('offers two PDFs that were actually rendered', async ({ page }) => {
+      const links = controls(page).downloadLinks;
+      await expect(links).toHaveCount(2);
 
-      const href = await link.getAttribute('href');
-      expect(href, 'the download link should carry an href').not.toBeNull();
-      expect(href, `the ${locale} bar should offer the ${locale} PDF`).toContain(
-        locale.toUpperCase(),
+      const hrefs: string[] = [];
+      for (const link of await links.all()) {
+        await expect(link).toHaveAttribute('download', '');
+
+        const href = await link.getAttribute('href');
+        expect(href, 'the download link should carry an href').not.toBeNull();
+        expect(href, `the ${locale} bar should offer the ${locale} PDF`).toContain(
+          `_${locale.toUpperCase()}`,
+        );
+        expect(
+          existsSync(distPathForHref(href!)),
+          `${href} is offered for download but no such file was rendered`,
+        ).toBe(true);
+        hrefs.push(href!);
+      }
+
+      const [full, noPhoto] = hrefs;
+      expect(full, 'the full CV keeps the name already-shared links point at').not.toContain(
+        '_no-photo',
       );
-      expect(
-        existsSync(distPathForHref(href!)),
-        `${href} is offered for download but no such file was rendered`,
-      ).toBe(true);
+      expect(noPhoto, 'the second link is the no-photo PDF').toContain('_no-photo');
+    });
+
+    test('opens the download menu, and Escape hands focus back', async ({ page }) => {
+      const control = controls(page);
+      await expect(control.downloadMenu).toBeHidden();
+
+      await control.download.click();
+      await expect(control.downloadMenu).toBeVisible();
+
+      await page.keyboard.press('Tab');
+      await expect(control.downloadLinks.first(), 'the links follow the button').toBeFocused();
+
+      await page.keyboard.press('Escape');
+      await expect(control.downloadMenu).toBeHidden();
+      await expect(control.download, 'focus returns to the button').toBeFocused();
+    });
+
+    test('closes the download menu on a click outside it', async ({ page }) => {
+      const control = controls(page);
+
+      await control.download.click();
+      await expect(control.downloadMenu).toBeVisible();
+
+      const paper = (await sheet(page, 1).boundingBox())!;
+      await page.mouse.click(paper.x + paper.width / 2, paper.y + paper.height / 2);
+      await expect(control.downloadMenu).toBeHidden();
     });
 
     test('repaints all three surfaces, and keeps them apart', async ({ page }) => {
@@ -226,17 +270,69 @@ for (const locale of LOCALES) {
   });
 }
 
-test('offers a different PDF in each Locale', async ({ page }) => {
-  const offered = async (locale: Locale): Promise<string | null> => {
+test('offers different PDFs in each Locale', async ({ page }) => {
+  const offered = async (locale: Locale): Promise<(string | null)[]> => {
     await openPainted(page, routeFor(locale));
-    return controls(page).download.getAttribute('href');
+    return controls(page).downloadLinks.evaluateAll((links) =>
+      links.map((link) => link.getAttribute('href')),
+    );
   };
 
   const italian = await offered('it');
   const english = await offered('en');
 
   // Which file holds which Locale's words is pdf.spec's job.
-  expect(italian).not.toBe(english);
+  for (const href of italian) expect(english).not.toContain(href);
+});
+
+test.describe('the download menu', () => {
+  const insideTheViewport = async (page: Page): Promise<void> => {
+    const control = controls(page);
+    await control.download.click();
+    await expect(control.downloadMenu).toBeVisible();
+
+    const panel = (await control.downloadMenu.boundingBox())!;
+    const { width, height } = page.viewportSize()!;
+    expect(panel.x, 'the panel’s inline start').toBeGreaterThanOrEqual(0);
+    expect(panel.x + panel.width, 'the panel’s inline end').toBeLessThanOrEqual(width);
+    expect(panel.y, 'the panel’s block start').toBeGreaterThanOrEqual(0);
+    expect(panel.y + panel.height, 'the panel’s block end').toBeLessThanOrEqual(height);
+  };
+
+  test.describe('at 320px', () => {
+    test.use({ viewport: { width: 320, height: VIEWPORTS.narrowest.height } });
+
+    test('stays inside the viewport in Paper Mode', async ({ page }) => {
+      await openPainted(page, routeFor('en'));
+      await paperMode(page);
+      await insideTheViewport(page);
+    });
+
+    test('stays inside the viewport in Reading Mode', async ({ page }) => {
+      await openPainted(page, routeFor('en'));
+      await readingMode(page);
+      await insideTheViewport(page);
+    });
+  });
+
+  // The one surface in the Chrome with a background of its own (spec §5.4).
+  test('is legible on its own panel in both themes', async ({ page }) => {
+    await openPainted(page, routeFor('it'));
+    const control = controls(page);
+    const link = '#download-menu a[download]';
+
+    await control.download.click();
+    const light = await inkOn(page, link, '#download-menu');
+    expect(light.ratio, 'a link on the panel, light theme').toBeGreaterThanOrEqual(4.5);
+    await page.keyboard.press('Escape');
+
+    await control.unchosenTheme.click();
+    await expect(page.locator('html')).toHaveAttribute('data-theme', 'dark');
+
+    await control.download.click();
+    const dark = await inkOn(page, link, '#download-menu');
+    expect(dark.ratio, 'a link on the panel, dark theme').toBeGreaterThanOrEqual(4.5);
+  });
 });
 
 test.describe('the keyboard', () => {

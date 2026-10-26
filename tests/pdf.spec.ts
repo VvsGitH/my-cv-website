@@ -1,7 +1,8 @@
 import { existsSync } from 'node:fs';
-import { expect, type Page, test } from '@playwright/test';
+import { type Browser, expect, type Page, test } from '@playwright/test';
 import { cv } from '../src/content';
 import type { Locale } from '../src/i18n/locale';
+import { ui } from '../src/i18n/ui';
 import { openPainted, readingMode } from './support/page';
 import { type PdfReport, readPdf, readPdfBytes, withoutWhitespace } from './support/pdf';
 import {
@@ -40,91 +41,143 @@ const visibleHeadings = (locale: Locale): string[] =>
     'heading' in block && !(block.kind === 'mainSection' && block.continues) ? [block.heading] : [],
   );
 
-for (const locale of LOCALES) {
-  test.describe(locale, () => {
-    let report: PdfReport;
-    let path: string;
+type Variant = 'downloadFull' | 'downloadNoPhoto';
+const VARIANTS: Variant[] = ['downloadFull', 'downloadNoPhoto'];
 
-    test.beforeAll(async ({ browser }) => {
-      const page = await browser.newPage({ baseURL: ORIGIN });
-      await openPainted(page, routeFor(locale));
-      const href = await page.locator('.toolbar a[download]').getAttribute('href');
-      await page.close();
+/** Resolved from the Toolbar's link by its name, never from a template (ADR-0009). */
+async function renderedPdf(browser: Browser, locale: Locale, variant: Variant): Promise<string> {
+  const page = await browser.newPage({ baseURL: ORIGIN });
+  await openPainted(page, routeFor(locale));
+  const href = await page
+    .getByRole('link', { name: ui[locale].toolbar[variant], includeHidden: true })
+    .getAttribute('href');
+  await page.close();
 
-      path = distPathForHref(href!);
-      if (!existsSync(path)) {
-        throw new Error(
-          `${path} was never rendered — run \`npm run captures:render\` after a build.`,
+  const path = distPathForHref(href!);
+  if (!existsSync(path)) {
+    throw new Error(`${path} was never rendered — run \`npm run captures:render\` after a build.`);
+  }
+  return path;
+}
+
+for (const locale of LOCALES)
+  for (const variant of VARIANTS) {
+    test.describe(`${locale}, ${variant}`, () => {
+      let report: PdfReport;
+      let path: string;
+
+      test.beforeAll(async ({ browser }) => {
+        path = await renderedPdf(browser, locale, variant);
+        report = await readPdf(path);
+      });
+
+      test('is exactly two A4 pages', () => {
+        expect(report.pages, `${path} should be the two Sheets of the CV`).toHaveLength(2);
+
+        report.pages.forEach((page, index) => {
+          expect(
+            Math.abs(page.width - A4.width),
+            `page ${index + 1} is ${page.width}pt wide`,
+          ).toBeLessThanOrEqual(TOLERANCE);
+          expect(
+            Math.abs(page.height - A4.height),
+            `page ${index + 1} is ${page.height}pt tall`,
+          ).toBeLessThanOrEqual(TOLERANCE);
+        });
+      });
+
+      test('carries every face it draws with', () => {
+        expect(report.fonts.length, 'the PDF should embed some fonts').toBeGreaterThan(0);
+
+        for (const font of report.fonts) {
+          expect(
+            font.embedded,
+            `${font.baseFont ?? font.subtype} is referenced but not embedded — it would be substituted on another machine`,
+          ).toBe(true);
+        }
+
+        const named = [
+          ...new Set(report.fonts.flatMap((font) => (font.baseFont ? [font.baseFont] : []))),
+        ];
+
+        // A face that failed to load would show up here as whatever system
+        // fallback Chromium reached for instead.
+        for (const face of named) {
+          expect(CV_FACES, `${face} is not one of the CV's faces`).toContain(face);
+        }
+
+        // ...and one that never loaded would be missing from it. Every face is
+        // nameable now, so this is the whole set by name — no longer a count of
+        // anonymous Type3 fonts standing in for the two that could not be checked.
+        // It is what catches the ADR-0009 hazard: the italic and the signature are
+        // only drawn in a corner of the page, and a capture that never renders
+        // them produces a PDF that is right in every other respect.
+        const missing = CV_FACES.filter((face) => !named.includes(face));
+        expect(missing, 'these faces stopped reaching the PDF').toEqual([]);
+      });
+
+      test('holds this Locale’s words, and not the other’s', () => {
+        // Guards the rest of this test against passing on an empty extraction.
+        expect(report.text.length, 'no text came out of the PDF at all').toBeGreaterThan(1000);
+
+        for (const heading of visibleHeadings(locale)) {
+          expect(report.text, `“${heading}” should be in ${path}`).toContain(
+            withoutWhitespace(heading),
+          );
+        }
+
+        const foreign = visibleHeadings(otherLocale(locale)).filter(
+          (heading) => !visibleHeadings(locale).includes(heading),
         );
-      }
 
-      report = await readPdf(path);
-    });
-
-    test('is exactly two A4 pages', () => {
-      expect(report.pages, `${path} should be the two Sheets of the CV`).toHaveLength(2);
-
-      report.pages.forEach((page, index) => {
-        expect(
-          Math.abs(page.width - A4.width),
-          `page ${index + 1} is ${page.width}pt wide`,
-        ).toBeLessThanOrEqual(TOLERANCE);
-        expect(
-          Math.abs(page.height - A4.height),
-          `page ${index + 1} is ${page.height}pt tall`,
-        ).toBeLessThanOrEqual(TOLERANCE);
+        for (const heading of foreign) {
+          expect(report.text, `“${heading}” belongs to the other Locale`).not.toContain(
+            withoutWhitespace(heading),
+          );
+        }
       });
     });
+  }
 
-    test('carries every face it draws with', () => {
-      expect(report.fonts.length, 'the PDF should embed some fonts').toBeGreaterThan(0);
+/**
+ * The no-photo PDF is the full one with the portrait taken out of the file, not
+ * merely covered: `data-photo="off"` hides the `<picture>` and keeps its disc
+ * (spec §5.3, D12).
+ */
+for (const locale of LOCALES) {
+  test.describe(`${locale}, without the photo`, () => {
+    test('leaves the portrait out of the file', async ({ browser }) => {
+      const full = await readPdf(await renderedPdf(browser, locale, 'downloadFull'));
+      const noPhoto = await readPdf(await renderedPdf(browser, locale, 'downloadNoPhoto'));
 
-      for (const font of report.fonts) {
-        expect(
-          font.embedded,
-          `${font.baseFont ?? font.subtype} is referenced but not embedded — it would be substituted on another machine`,
-        ).toBe(true);
-      }
-
-      const named = [
-        ...new Set(report.fonts.flatMap((font) => (font.baseFont ? [font.baseFont] : []))),
-      ];
-
-      // A face that failed to load would show up here as whatever system
-      // fallback Chromium reached for instead.
-      for (const face of named) {
-        expect(CV_FACES, `${face} is not one of the CV's faces`).toContain(face);
-      }
-
-      // ...and one that never loaded would be missing from it. Every face is
-      // nameable now, so this is the whole set by name — no longer a count of
-      // anonymous Type3 fonts standing in for the two that could not be checked.
-      // It is what catches the ADR-0009 hazard: the italic and the signature are
-      // only drawn in a corner of the page, and a capture that never renders
-      // them produces a PDF that is right in every other respect.
-      const missing = CV_FACES.filter((face) => !named.includes(face));
-      expect(missing, 'these faces stopped reaching the PDF').toEqual([]);
+      expect(full.images, 'the full PDF should carry the portrait').toBeGreaterThan(0);
+      expect(noPhoto.images, 'an image drawn under the disc would defeat the variant').toBeLessThan(
+        full.images,
+      );
     });
 
-    test('holds this Locale’s words, and not the other’s', () => {
-      // Guards the rest of this test against passing on an empty extraction.
-      expect(report.text.length, 'no text came out of the PDF at all').toBeGreaterThan(1000);
+    test('keeps the disc, and every Block where it was', async ({ page }) => {
+      await openPainted(page, routeFor(locale));
+      await page.emulateMedia({ media: 'print' });
 
-      for (const heading of visibleHeadings(locale)) {
-        expect(report.text, `“${heading}” should be in ${path}`).toContain(
-          withoutWhitespace(heading),
-        );
-      }
+      const disc = () =>
+        page.locator('.photo').evaluate((element) => ({
+          box: JSON.stringify(element.getBoundingClientRect()),
+          fill: getComputedStyle(element).backgroundColor,
+        }));
 
-      const foreign = visibleHeadings(otherLocale(locale)).filter(
-        (heading) => !visibleHeadings(locale).includes(heading),
+      const withPhoto = { geometry: await printedGeometry(page), disc: await disc() };
+
+      await page.evaluate(() => {
+        document.documentElement.dataset.photo = 'off';
+      });
+
+      await expect(page.locator('.photo picture')).toBeHidden();
+      expect(await disc(), 'the disc keeps its size and its fill').toEqual(withPhoto.disc);
+      expect(withPhoto.disc.fill, 'and the fill is a colour').not.toBe('rgba(0, 0, 0, 0)');
+      expect(await printedGeometry(page), 'a Block moved when the portrait went').toEqual(
+        withPhoto.geometry,
       );
-
-      for (const heading of foreign) {
-        expect(report.text, `“${heading}” belongs to the other Locale`).not.toContain(
-          withoutWhitespace(heading),
-        );
-      }
     });
   });
 }

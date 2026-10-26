@@ -75,7 +75,7 @@ for (const locale of LOCALES) {
       const expected = headerOf(locale).contacts.flatMap((contact) =>
         contact.url ? [contact.url] : [],
       );
-      expect(expected.length, 'the header should carry email and LinkedIn').toBe(2);
+      expect(expected.length, 'the header should carry email, LinkedIn and GitHub').toBe(3);
 
       const onPaper = await hrefsIn(sheet(page, 1).locator('.block--header'));
       expect(onPaper).toEqual(expected);

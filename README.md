@@ -1,12 +1,36 @@
-# My CV Website
+# CV Management & Display
 
-A single-purpose website that presents Vito Paparella Santorsola's CV as two A4 sheets on screen and offers it as a downloadable PDF. Bilingual (Italian default, English secondary).
+**Live: <https://vvsgith.github.io/my-cv-website/>**
+
+A single-purpose website that presents Vito Paparella Santorsola's CV as two A4 sheets on screen and offers it as a downloadable PDF. Bilingual (Italian default, English secondary). The page and the PDF are rendered from the same component tree, from typed content files that hold no layout.
+
+## Features
+
+- **Two Modes**: *Paper* keeps the rigid A4 geometry the PDF is captured from, and *Reading* reflows the same content into one column at reading type. The reader picks the Mode, and a first visit opens on the one the viewport can carry.
+- **Build-time PDF**: headless Chromium prints each Locale to exactly two A4 pages during the build. The page count and page size are asserted, not assumed.
+- **Bilingual**: `it` and `en`, each with its own route, content, PDF and link-preview card.
+- **Light and dark themes**, applied before first paint so there is no flash of the wrong theme, and carried through to the paper.
+- **Accessibility**: designed to meet WCAG 2.2 level AA, with contrast pinned by the test suite.
+- **Minimal JS**: the Sheets ship no JavaScript. Three small Preact islands run the Toolbar's Mode, share and theme controls.
 
 ## Tech stack
 
-- [Astro](https://astro.build/) — static site generation
-- [Preact](https://preactjs.com/) — the single interactive island (the Toolbar)
-- TypeScript
+- [Astro](https://astro.build/): static site generation
+- [Preact](https://preactjs.com/): three islands in the Toolbar (Mode, share, theme)
+- TypeScript: the content schema is typed, and `tsc` is its validator
+- Modern CSS: layers, logical properties, a token-based spacing scale, no CSS framework
+- [Playwright](https://playwright.dev/): PDF and link-preview capture, and the end-to-end test suite that runs against the built output
+- [pdf-lib](https://pdf-lib.js.org): asserting the PDFs' page count and size
+- [subset-font](https://github.com/papandreou/subset-font): self-hosted fonts subset at build time
+- [Biome](https://biomejs.dev/): formatting and linting
+- GitHub Actions + GitHub Pages: deployment
+
+## Documentation
+
+- [`CONTEXT.md`](CONTEXT.md): the domain language (Sheet, Block, Mode, Explicit Paging…)
+- [`docs/adr/`](docs/adr/): the architecture decision records
+- [`docs/issues/`](docs/issues/): specs and implementation tickets
+- [`docs/coding-standards.md`](docs/coding-standards.md)
 
 ## Useful commands
 
@@ -17,6 +41,8 @@ A single-purpose website that presents Vito Paparella Santorsola's CV as two A4 
 | `npm run build`     | Build the production site                     |
 | `npm run captures:render` | Render the PDFs and link-preview images into `dist/` |
 | `npm run preview`   | Preview the production build locally          |
+| `npm test`          | Build, render the captures, run the Playwright suite |
+| `npm run lint`      | Check formatting and lint rules with Biome    |
 | `npm run astro ...` | Run Astro CLI commands (e.g. `astro check`)   |
 
 ## The captured files

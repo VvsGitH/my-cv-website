@@ -74,17 +74,24 @@ export type MainSectionGroup =
   | {
       continues?: false;
       title: string;
-      /** Organisations only: `[company]`, `[role, client]`, `[institution]`. */
-      meta: string[];
-      period: string;
+      /** Organisations only: `[company]`, `[role, client]`, `[institution]`. A Group with a `url` usually has none. */
+      meta?: string[];
+      /** Absent on a Group with no dates, such as a personal project (spec D23). */
+      period?: string;
       summary?: RichText[];
       bullets?: RichText[];
+      /** Technologies, rendered as one inline line. A Group with `stack` and no `bullets` is a slim Group. */
+      stack?: string[];
+      /** A public link — repository or demo. Rendered in full, not hidden behind the title: a printed PDF cannot be clicked. */
+      url?: string;
     }
   | {
       continues: true;
       title: string;
       summary?: RichText[];
       bullets?: RichText[];
+      /** The stack closes a Group, so on a split Group it travels with the half that holds the end. */
+      stack?: string[];
     };
 
 /** A Main section, or as much of one as fits a Sheet; the rest is a Continuation (ADR-0005). */

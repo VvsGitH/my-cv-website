@@ -52,7 +52,7 @@ export const it: CvContent = {
       kind: 'skills',
       paperSheet: 1,
       paperColumn: 'aside',
-      readOrder: 7,
+      readOrder: 8,
       heading: 'Tecnologie',
       groups: [
         {
@@ -204,6 +204,7 @@ export const it: CvContent = {
             'Coordinamento del team, revisione PR e supporto tecnico sulle attività complesse.',
             'Documentazione tecnica e testing.',
           ],
+          stack: ['Next.js', 'React', 'i18n'],
         },
       ],
     },
@@ -213,7 +214,7 @@ export const it: CvContent = {
       kind: 'bullets',
       paperSheet: 2,
       paperColumn: 'aside',
-      readOrder: 8,
+      readOrder: 9,
       heading: 'Soft skills',
       // OWNER: "Growth mindset", "Leadership" and "Problem solving" are
       // established loanwords in Italian professional usage — kept.
@@ -233,7 +234,7 @@ export const it: CvContent = {
       kind: 'languages',
       paperSheet: 2,
       paperColumn: 'aside',
-      readOrder: 11,
+      readOrder: 12,
       heading: 'Lingue',
       entries: [
         { name: 'Italiano', level: 'Madrelingua', proficiency: 1 },
@@ -244,7 +245,7 @@ export const it: CvContent = {
       kind: 'certifications',
       paperSheet: 2,
       paperColumn: 'aside',
-      readOrder: 10,
+      readOrder: 11,
       heading: 'Certificazioni',
       // Both titles are official course/certificate names — proper nouns,
       // left untranslated.
@@ -266,7 +267,7 @@ export const it: CvContent = {
       kind: 'bullets',
       paperSheet: 2,
       paperColumn: 'aside',
-      readOrder: 12,
+      readOrder: 13,
       heading: 'Altre info',
       items: [
         'Patente di guida: B.',
@@ -279,7 +280,7 @@ export const it: CvContent = {
       kind: 'privacy',
       paperSheet: 2,
       paperColumn: 'aside',
-      readOrder: 13,
+      readOrder: 14,
       heading: 'Privacy',
       // The canonical Italian formula, not a literal translation: the English
       // is itself a rendering of this standard clause.
@@ -320,47 +321,33 @@ export const it: CvContent = {
             'Sviluppo di una web application single-page e responsive in React.js, con 4 tipologie di utenti, autenticazione OAuth2.0 e routing.',
             'Gestione del repository GitHub.',
           ],
+          stack: ['React.js', 'OAuth2.0', 'GitHub'],
         },
         {
           title: 'Beyond Knowledge',
           meta: ['Senior Frontend Developer', 'CyberSecurity S.r.l. ~ Beyond Knowledge'],
           period: '2023.01 - 2023.06',
-          summary: [
-            '“Beyond Knowledge” è una piattaforma in sviluppo, su modello ad abbonamento, per servizi di AI. Offre soluzioni per Industry4.0, Network Monitoring e Financial Planning.',
-          ],
-          bullets: [
-            'Sviluppo di una web application single-page e responsive in React.js, con librerie allo stato dell’arte come @tanstack/react-query e @tanstack/react-table.',
-            'Sviluppo di un design system con tailwind.css, a partire da mockup Figma.',
-            'Lavoro in team su progetto in metodologia scrum, con la suite Atlassian.',
-          ],
+          stack: ['React.js', 'TanStack Query', 'TanStack Table', 'Tailwind CSS', 'Figma'],
         },
         {
           title: 'VEDO Tool & ABC Monitoring',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ ENI Italia'],
           period: '2022.10 - 2022.12',
-          summary: [
-            '“VEDO Tool” è un’applicazione basata su Microsoft Power Apps, utilizzata dai dipendenti ENI per l’organizzazione interna. “ABC Monitoring” (Anti Bribery Compliance) è un’applicazione SharePoint usata da ENI per monitorare alcuni aspetti legali delle joint venture.',
-          ],
-          bullets: [
-            'Sviluppo di una web application multipagina con Typescript, JQuery e Bootstrap 4.',
-            'Utilizzo di Open Data Protocol (OData) per la comunicazione con Microsoft Dataverse.',
+          stack: [
+            'Power Apps',
+            'SharePoint',
+            'TypeScript',
+            'jQuery',
+            'Bootstrap 4',
+            'OData',
+            'Dataverse',
           ],
         },
         {
           title: 'Dam Dossier',
           meta: ['Frontend Developer', 'CyberSecurity S.r.l. ~ Enel Green Power'],
           period: '2022.04 - 2022.10',
-          summary: [
-            '“Dam Dossier” è una web application per catalogare e gestire tutte le dighe utilizzate da ENEL in Italia. È una delle tante applicazioni all’interno della Enel Platform.',
-          ],
-          bullets: [
-            'Sviluppo di una SPA responsive con Angular 14 e SCSS.',
-            'Integrazione e miglioramento dei componenti dell’Enel Design System.',
-            'Implementazione di nuovi componenti Angular a partire da mockup Adobe XD.',
-            'Conformità all’accessibilità web WCAG 2.1.',
-            'Unit testing con Karma e Jasmine.',
-            'Lavoro in contesto agile (scrum), con il supporto della suite Atlassian.',
-          ],
+          stack: ['Angular 14', 'SCSS', 'Enel Design System', 'WCAG 2.1', 'Jasmine/Karma'],
         },
       ],
     },
@@ -368,7 +355,27 @@ export const it: CvContent = {
       kind: 'mainSection',
       paperSheet: 2,
       paperColumn: 'main',
-      readOrder: 9,
+      readOrder: 7,
+      heading: 'Progetti personali',
+      // Project names stay in English in both Locales (spec §4.4).
+      groups: [
+        {
+          title: 'CV Management & Display',
+          url: 'https://github.com/VvsGitH/my-cv-website',
+          stack: ['Astro', 'Preact', 'TypeScript', 'Playwright', 'CSS moderno', 'WCAG 2.2'],
+        },
+        {
+          title: 'Expense Dashboard',
+          url: 'https://github.com/VvsGitH/expense-dashboard',
+          stack: ['Python', 'Streamlit', 'SQLite', 'pytest'],
+        },
+      ],
+    },
+    {
+      kind: 'mainSection',
+      paperSheet: 2,
+      paperColumn: 'main',
+      readOrder: 10,
       heading: 'Formazione',
       groups: [
         {
